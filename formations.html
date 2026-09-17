@@ -49,7 +49,7 @@
     }
 
     /* ============================================ */
-    /* MENU MOBILE HAMBURGER */
+    /* MENU MOBILE HAMBURGER — SANS LIGNE BLEUE */
     /* ============================================ */
     #mobileMenu {
       position: fixed;
@@ -89,25 +89,23 @@
       visibility: visible;
     }
 
+    /* Lien du menu mobile — SANS border-left */
     .mobile-nav-link {
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 16px 24px;
+      padding: 16px 20px;
       font-size: 15px;
       font-weight: 600;
       color: #1e293b;
       border-radius: 12px;
-      transition: all 0.3s ease;
-      border-left: 3px solid transparent;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .mobile-nav-link:hover,
     .mobile-nav-link.active {
       background: #eff6ff;
       color: #2563eb;
-      border-left-color: #2563eb;
-      padding-left: 28px;
     }
 
     .mobile-nav-link i {
@@ -130,6 +128,35 @@
     }
     .hamburger.active .hamburger-line:nth-child(3) {
       transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* ============================================ */
+    /* HERO : IMAGE EN FONDU (sans flou) */
+    /* ============================================ */
+    .hero-bg-img {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Dégradé en fondu — bleu marine → transparent → bleu marine */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background: linear-gradient(
+        180deg,
+        rgba(11, 12, 38, 0.88) 0%,
+        rgba(11, 12, 38, 0.72) 35%,
+        rgba(11, 12, 38, 0.62) 65%,
+        rgba(11, 12, 38, 0.85) 100%
+      );
     }
 
     /* ============================================ */
@@ -445,7 +472,6 @@
       }
     }
 
-    /* Scrollbar personnalisée pour le menu mobile */
     #mobileMenu::-webkit-scrollbar {
       width: 4px;
     }
@@ -516,7 +542,7 @@
   </header>
 
   <!-- ============================================================ -->
-  <!-- MENU MOBILE -->
+  <!-- MENU MOBILE — SANS LIGNE BLEUE -->
   <!-- ============================================================ -->
   <div id="mobileOverlay"></div>
   <div id="mobileMenu">
@@ -564,22 +590,20 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- HERO FORMATIONS -->
+  <!-- HERO FORMATIONS — Image en FONDU (sans flou) -->
   <!-- ============================================================ -->
   <section class="relative text-white overflow-hidden py-14 sm:py-20 md:py-24 px-4 sm:px-6 md:px-16 flex items-center justify-center min-h-[400px] sm:min-h-[480px]">
-    <div class="absolute inset-0 z-0">
-      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1920&q=80" 
-           alt="Formations Dunia" 
-           class="w-full h-full object-cover scale-105 filter blur-md">
+    
+    <!-- IMAGE DE FOND (nette, sans blur) -->
+    <div class="hero-bg-img">
+      <img src="https://i.pinimg.com/1200x/63/9e/97/639e972db337148fecce4910e0a7b5e1.jpg" 
+           alt="Formations Dunia">
     </div>
-    <div class="absolute inset-0 z-10 bg-brand-navy/85 backdrop-blur-sm"></div>
+
+    <!-- OVERLAY EN FONDU -->
+    <div class="hero-overlay"></div>
 
     <div class="relative max-w-4xl mx-auto z-20 w-full text-center flex flex-col items-center">
-      <span class="inline-flex items-center gap-2 text-blue-400 font-semibold text-xs tracking-[0.3em] uppercase mb-4">
-        <span class="w-8 h-[2px] bg-blue-400"></span>
-        Nos Formations
-        <span class="w-8 h-[2px] bg-blue-400"></span>
-      </span>
       <h1 class="mobile-hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-3 sm:mb-4 text-white drop-shadow-md max-w-3xl">
         Une compétence commence par une première leçon.
       </h1>
@@ -767,54 +791,6 @@
         </div>
       </div>
 
-      <!-- Formation 3 -->
-      <div class="service-card reveal delay-200 bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group formation-card" 
-           data-category="design" 
-           data-title="Design graphique avec Photoshop"
-           data-description="Découvrez les principes du design graphique et apprenez à créer des visuels professionnels avec Photoshop."
-           data-keywords="design graphique photoshop adobe création visuel logo affiche créatif">
-        <div class="relative overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=500&q=80" alt="Design graphique avec Photoshop" class="service-img h-48 w-full object-cover">
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <span class="absolute top-4 left-4 bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
-            <i class="fa-solid fa-palette mr-1"></i>Créatif
-          </span>
-          <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-slate-700 text-[10px] font-bold px-3 py-1 rounded-full shadow">
-            Débutant
-          </span>
-        </div>
-        <div class="p-6 flex-1 flex flex-col justify-between relative z-10">
-          <div>
-            <div class="flex items-center gap-2 mb-3">
-              <span class="bg-purple-50 text-purple-600 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
-                <i class="fa-solid fa-pen-nib mr-1"></i>Design
-              </span>
-            </div>
-            <h3 class="font-bold text-lg text-slate-800 mb-2 group-hover:text-blue-600 transition-colors formation-title">Design graphique avec Photoshop</h3>
-            <p class="text-xs text-slate-500 mb-4 leading-relaxed formation-description">Découvrez les principes du design graphique et apprenez à créer des visuels professionnels avec Photoshop.</p>
-            <div class="flex items-center gap-4 text-[11px] text-slate-400 mb-4">
-              <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-blue-500"></i> 5 semaines</span>
-              <span class="flex items-center gap-1.5"><i class="fa-solid fa-signal text-blue-500"></i> Débutant</span>
-            </div>
-            <div class="flex items-center gap-3 text-[11px] text-slate-500 mb-4">
-              <span class="flex items-center gap-1.5"><i class="fa-solid fa-laptop text-blue-500"></i> En ligne / Présentiel</span>
-              <span class="flex items-center gap-1.5"><i class="fa-solid fa-tag text-emerald-500"></i> Gratuit</span>
-            </div>
-          </div>
-          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-full overflow-hidden bg-white border border-slate-200 flex items-center justify-center p-0.5">
-                <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
-              </div>
-              <span class="text-[11px] text-slate-500 font-medium">Dunia</span>
-            </div>
-            <a href="#" class="group/btn text-blue-600 text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all">
-              Découvrir <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-
       <!-- Formation 4 : Bientôt disponible -->
       <div class="service-card reveal delay-300 bg-gradient-to-br from-slate-50 to-white rounded-2xl overflow-hidden shadow-lg border-2 border-dashed border-slate-200 flex flex-col group formation-card" 
            data-category="autres" 
@@ -894,9 +870,7 @@
     </div>
     
     <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
-      <div class="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6 border border-white/20 animate-float">
-        <i class="fa-solid fa-chalkboard-user text-white"></i>
-      </div>
+      
       <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold mb-5 leading-tight">
         Vous souhaitez proposer une formation sur Dunia ?
       </h2>
