@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dunia — Apprenez. Créez. Évoluez.</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/logo-dunia.png">
+  <link rel="apple-touch-icon" href="images/logo-dunia.png">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts (Poppins) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#2563eb',
+              darkblue: '#1b1b50',
+              navy: '#0b0c26',
+              purple: '#3b82f6'
+            }
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #334155;
+      overflow-x: hidden;
+      background-color: #ffffff;
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ============================================ */
+    /* ÉCRAN DE CHARGEMENT (LOADER) */
+    /* ============================================ */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background-color: #0b0c26;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+      overflow: hidden;
+    }
+
+    #loader::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: haloPulse 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes haloPulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .spinner {
+      position: absolute;
+      inset: 0;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(37, 99, 235, 0) 0%,
+        rgba(37, 99, 235, 0.15) 20%,
+        rgba(59, 130, 246, 0.6) 70%,
+        rgba(96, 165, 250, 1) 100%
+      );
+      mask: radial-gradient(farthest-side, transparent calc(100% - 44px), #000 calc(100% - 43px));
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 44px), #000 calc(100% - 43px));
+      animation: spin 1.2s linear infinite;
+      filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
+    }
+
+    .spinner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: calc(50% - 22px);
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.9), 0 0 40px rgba(37, 99, 235, 0.6);
+    }
+
+    @keyframes spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader-logo {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      z-index: 10;
+      animation: logoPulse 1.8s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.08); opacity: 0.92; }
+    }
+
+    /* ============================================ */
+    /* MENU MOBILE HAMBURGER — SANS LIGNE BLEUE */
+    /* ============================================ */
+    #mobileMenu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 100%;
+      max-width: 320px;
+      background: #ffffff;
+      z-index: 100;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15);
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #mobileMenu.open {
+      transform: translateX(0);
+    }
+
+    #mobileOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 12, 38, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 99;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    #mobileOverlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Lien du menu mobile — SANS border-left */
+    .mobile-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      border-radius: 12px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .mobile-nav-link:hover,
+    .mobile-nav-link.active {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .mobile-nav-link i {
+      width: 20px;
+      text-align: center;
+      color: #2563eb;
+      font-size: 16px;
+    }
+
+    /* Animation barres du hamburger */
+    .hamburger-line {
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active .hamburger-line:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+    .hamburger.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active .hamburger-line:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* ============================================ */
+    /* HERO : IMAGE EN FONDU (sans flou) */
+    /* ============================================ */
+    .hero-bg-img {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Dégradé en fondu — bleu marine → transparent → bleu marine */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background: linear-gradient(
+        180deg,
+        rgba(11, 12, 38, 0.88) 0%,
+        rgba(11, 12, 38, 0.72) 35%,
+        rgba(11, 12, 38, 0.62) 65%,
+        rgba(11, 12, 38, 0.85) 100%
+      );
+    }
+
+    /* ============================================ */
+    /* BANDEAU OUTILS - DÉFILEMENT SUR UNE LIGNE */
+    /* ============================================ */
+    .tools-marquee {
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      width: 100%;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+    }
+
+    .tools-track {
+      display: inline-flex;
+      align-items: center;
+      gap: 40px;
+      animation: toolsScroll 30s linear infinite;
+      padding-left: 40px;
+    }
+
+    .tools-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes toolsScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .tool-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #94a3b8;
+      transition: color 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .tool-item:hover {
+      color: #2563eb;
+    }
+
+    @media (min-width: 640px) {
+      .tool-item {
+        font-size: 1.125rem;
+      }
+      .tools-track {
+        gap: 50px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .tools-marquee {
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+      .tools-track {
+        animation: none;
+        justify-content: space-between;
+        width: 100%;
+        padding-left: 0;
+        gap: 24px;
+      }
+      .tools-track .tool-item:nth-child(n+8) {
+        display: none;
+      }
+    }
+
+    /* ============================================ */
+    /* AUTRES STYLES DU SITE */
+    /* ============================================ */
+    .cloud-shape-1 {
+      border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+    }
+    .cloud-shape-2 {
+      border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%;
+    }
+    .cloud-card {
+      border-radius: 30px 60px 30px 60px;
+    }
+
+    .service-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.05), transparent);
+      transition: left 0.5s ease;
+      z-index: 1;
+    }
+    .service-card:hover::before {
+      left: 100%;
+    }
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.2);
+    }
+    .service-card:hover .service-img {
+      transform: scale(1.1);
+    }
+    .service-img {
+      transition: transform 0.6s ease;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal-left.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal-right.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .delay-100 { transition-delay: 0.1s; }
+    .delay-200 { transition-delay: 0.2s; }
+    .delay-300 { transition-delay: 0.3s; }
+    .delay-400 { transition-delay: 0.4s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+    .animate-float-slow {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.5; }
+      100% { transform: scale(0.95); opacity: 1; }
+    }
+    .pulse-ring {
+      animation: pulse-ring 2s ease-in-out infinite;
+    }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+      background: linear-gradient(-45deg, #2563eb, #3b82f6, #1d4ed8, #1e40af);
+      background-size: 400% 400%;
+      animation: gradient-shift 8s ease infinite;
+    }
+
+    .step-card {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .step-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.15);
+    }
+    .step-card:hover .step-number {
+      background: #2563eb;
+      color: white;
+      transform: scale(1.1);
+    }
+    .step-number {
+      transition: all 0.4s ease;
+    }
+
+    .faq-item {
+      transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      border-color: #2563eb;
+      box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.15);
+    }
+
+    @keyframes blink-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .blink-dot {
+      animation: blink-dot 1.5s ease-in-out infinite;
+    }
+
+    /* ===== LOGO DUNIA ===== */
+    .logo-dunia {
+      height: 2rem;
+      width: auto;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .logo-dunia:hover {
+      transform: scale(1.05);
+    }
+    @media (min-width: 768px) {
+      .logo-dunia {
+        height: 2.5rem;
+      }
+    }
+
+    .logo-dunia-footer {
+      height: 2.25rem;
+      width: auto;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      transition: transform 0.3s ease;
+    }
+    .logo-dunia-footer:hover {
+      transform: scale(1.05);
+    }
+    @media (min-width: 768px) {
+      .logo-dunia-footer {
+        height: 2.5rem;
+      }
+    }
+
+    .brand-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+      line-height: 1;
+    }
+    .brand-name-footer {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      line-height: 1;
+    }
+    .brand-tagline {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .brand-tagline-footer {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    @media (min-width: 768px) {
+      .brand-name, .brand-name-footer {
+        font-size: 1.5rem;
+      }
+      .brand-tagline, .brand-tagline-footer {
+        font-size: 0.65rem;
+      }
+    }
+
+    /* ============================================ */
+    /* AMÉLIORATIONS MOBILE */
+    /* ============================================ */
+    @media (max-width: 767px) {
+      .mobile-hero-title {
+        font-size: 1.75rem !important;
+        line-height: 1.2 !important;
+      }
+      
+      .service-card .p-6 {
+        padding: 1.25rem;
+      }
+      
+      .mobile-section-title {
+        font-size: 1.5rem !important;
+      }
+
+      footer .grid {
+        gap: 2rem;
+      }
+    }
+
+    #mobileMenu::-webkit-scrollbar {
+      width: 4px;
+    }
+    #mobileMenu::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #mobileMenu::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-white">
+
+  <!-- ============================================================ -->
+  <!-- ÉCRAN DE CHARGEMENT -->
+  <!-- ============================================================ -->
+  <div id="loader">
+    <div class="loader-container">
+      <div class="spinner"></div>
+      <img src="images/logo-dunia.png" alt="Dunia" class="loader-logo">
+    </div>
+  </div>
+
+  <!-- BARRE SUPÉRIEURE -->
+  <div class="bg-brand-navy text-gray-300 text-xs py-2 px-4 md:px-16 flex justify-between items-center border-b border-slate-800">
+    <div class="flex items-center gap-4">
+      <span class="truncate"><i class="fa-solid fa-envelope text-blue-500 mr-1.5"></i> <span class="hidden xs:inline">Contact dunia.work</span><span class="xs:hidden">dunia.work</span></span>
+      <span class="hidden sm:inline"><i class="fa-solid fa-phone text-blue-500 mr-1.5"></i> +243 962 104 398</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-1 cursor-pointer">
+        <i class="fa-solid fa-globe text-blue-500"></i>
+        <span>FR</span>
+        <i class="fa-solid fa-chevron-down text-[9px]"></i>
+      </div>
+      <div class="flex items-center gap-2.5 sm:ml-2 sm:border-l sm:border-slate-700 sm:pl-3">
+        <a href="https://www.facebook.com/profile.php?id=61592556733317" class="hover:text-blue-500"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="hover:text-blue-500"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="hover:text-blue-500"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="https://wa.me/243962104398" class="hover:text-blue-500"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRE DE NAVIGATION -->
+  <header class="bg-white sticky top-0 z-50 shadow-sm">
+    <nav class="max-w-7xl mx-auto px-4 md:px-8 py-3 flex justify-between items-center">
+      <a href="#" class="flex items-center gap-3 group">
+        <img src="images/logo-dunia.png" alt="Dunia" class="logo-dunia">
+        <div class="flex flex-col leading-none">
+          <span class="brand-name">Dunia</span>
+        </div>
+      </a>
+
+      <ul class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-700">
+        <li><a href="#" class="text-blue-600 font-semibold">Accueil</a></li>
+        <li><a href="#about" class="hover:text-blue-600 transition">À propos</a></li>
+        <li><a href="formations.html" class="hover:text-blue-600 transition">Formations</a></li>
+        <li><a href="#contact" class="hover:text-blue-600 transition">Contact</a></li>
+      </ul>
+
+      <div class="flex items-center gap-3">
+        <a href="https://wa.me/243962104398" class="hidden sm:inline-flex bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-semibold px-4 md:px-6 py-2.5 rounded-lg shadow-md transition hover:scale-105">
+          Rejoindre la communauté <i class="fa-solid fa-arrow-right ml-2"></i>
+        </a>
+        
+        <!-- BOUTON HAMBURGER -->
+        <button id="hamburgerBtn" class="lg:hidden text-slate-700 p-2 focus:outline-none hamburger" aria-label="Menu" aria-expanded="false">
+          <div class="w-6 h-5 flex flex-col justify-between">
+            <span class="hamburger-line w-full h-0.5 bg-slate-700 rounded-full"></span>
+            <span class="hamburger-line w-full h-0.5 bg-slate-700 rounded-full"></span>
+            <span class="hamburger-line w-full h-0.5 bg-slate-700 rounded-full"></span>
+          </div>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- MENU MOBILE — SANS LIGNE BLEUE -->
+  <!-- ============================================================ -->
+  <div id="mobileOverlay"></div>
+  <div id="mobileMenu">
+    <div class="flex items-center justify-between p-5 border-b border-slate-100">
+      <div class="flex items-center gap-3">
+        <img src="images/logo-dunia.png" alt="Dunia" class="logo-dunia">
+        <span class="brand-name">Dunia</span>
+      </div>
+      <button id="closeMenuBtn" class="text-slate-500 hover:text-blue-600 p-2 transition" aria-label="Fermer">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+    </div>
+
+    <nav class="flex-1 p-5 space-y-1">
+      <a href="#" class="mobile-nav-link active">
+        <i class="fa-solid fa-house"></i>
+        Accueil
+      </a>
+      <a href="#about" class="mobile-nav-link">
+        <i class="fa-solid fa-circle-info"></i>
+        À propos
+      </a>
+      <a href="formations.html" class="mobile-nav-link">
+        <i class="fa-solid fa-graduation-cap"></i>
+        Formations
+      </a>
+      <a href="#contact" class="mobile-nav-link">
+        <i class="fa-solid fa-envelope"></i>
+        Contact
+      </a>
+    </nav>
+
+    <div class="p-5 border-t border-slate-100">
+      <a href="https://wa.me/243962104398" class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-md transition">
+        <i class="fa-brands fa-whatsapp text-lg"></i>
+        Rejoindre la communauté
+      </a>
+      <div class="flex items-center justify-center gap-4 mt-5 text-slate-500">
+        <a href="https://www.facebook.com/profile.php?id=61592556733317" class="w-10 h-10 bg-slate-50 hover:bg-blue-600 hover:text-white rounded-full flex items-center justify-center transition"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="w-10 h-10 bg-slate-50 hover:bg-blue-600 hover:text-white rounded-full flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="w-10 h-10 bg-slate-50 hover:bg-blue-600 hover:text-white rounded-full flex items-center justify-center transition"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="https://wa.me/243962104398" class="w-10 h-10 bg-slate-50 hover:bg-blue-600 hover:text-white rounded-full flex items-center justify-center transition"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION HERO — Image en FONDU (sans flou) -->
+  <!-- ============================================================ -->
+  <section class="relative text-white overflow-hidden py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-16 flex items-center justify-center min-h-[480px] sm:min-h-[550px]">
+    
+    <!-- IMAGE DE FOND (nette, sans blur) -->
+    <div class="hero-bg-img">
+      <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1920&q=80" 
+           alt="Apprentissage numérique">
+    </div>
+
+    <!-- OVERLAY EN FONDU -->
+    <div class="hero-overlay"></div>
+
+    <!-- CONTENU TEXTE -->
+    <div class="relative max-w-4xl mx-auto z-20 w-full text-center flex flex-col items-center">
+      <h1 class="mobile-hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-3 sm:mb-4 text-white drop-shadow-md max-w-3xl">
+        Découvrez les compétences qui construiront votre avenir.
+      </h1>
+      <p class="text-slate-200 text-sm sm:text-base md:text-lg mb-6 max-w-2xl leading-relaxed drop-shadow px-2">
+        Dunia est une plateforme dediée à la formation et à l'apprentissage dans le domaine de la technologie et bien plus encore : apprenez en ligne ou participez à nos formations en présentiel à Kinshasa.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+        <a href="https://wa.me/243962104398" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm sm:text-base px-6 py-3 rounded-xl shadow-lg transition hover:scale-105 text-center">
+          Rejoindre la communauté WhatsApp <i class="fa-brands fa-whatsapp ml-1.5"></i>
+        </a>
+        <a href="formations.html" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm sm:text-base px-6 py-3 rounded-xl backdrop-blur-md transition text-center">
+          Explorer les formations <i class="fa-solid fa-arrow-right ml-1.5"></i>
+        </a>
+      </div>
+      <p class="text-slate-300/80 text-[11px] sm:text-xs mt-5 max-w-lg">
+        Dunia est actuellement en développement. Rejoignez notre communauté pour suivre l'évolution du projet et découvrir nos prochaines formations.
+      </p>
+    </div>
+
+    <!-- VAGUE SVG EN BAS -->
+    <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-30">
+      <svg class="relative block w-full h-[40px] sm:h-[70px] md:h-[90px]" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M0,0 C150,90 350,-40 500,65 C650,150 900,10 1200,45 L1200,120 L0,120 Z" fill="#ffffff"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- SECTION 2: POURQUOI DUNIA -->
+  <section id="about" class="py-10 sm:py-14 md:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+      
+      <div class="relative p-2 sm:p-4 reveal-left">
+        <div class="relative z-10 grid grid-cols-2 gap-4 sm:gap-6 items-center">
+          <div class="cloud-shape-1 overflow-hidden shadow-xl border-4 border-blue-50 bg-blue-100">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" class="w-full h-40 sm:h-64 object-cover" alt="Apprentissage en groupe">
+          </div>
+          <div class="cloud-shape-2 overflow-hidden shadow-xl border-4 border-blue-50 bg-blue-100 mt-6 sm:mt-8">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80" class="w-full h-40 sm:h-64 object-cover" alt="Étudiants en technologie">
+          </div>
+        </div>
+
+        <div class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <a href="#" class="pointer-events-auto w-12 h-12 sm:w-16 sm:h-16 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition border-4 border-white pulse-ring">
+            <i class="fa-solid fa-play text-sm sm:text-xl ml-1"></i>
+          </a>
+        </div>
+
+        <div class="absolute -bottom-4 -right-2 sm:-bottom-6 sm:-right-2 bg-white p-3 sm:p-5 cloud-card shadow-xl border border-blue-100 z-20 flex items-center gap-3 animate-float">
+          <div class="w-9 h-9 sm:w-12 sm:h-12 bg-blue-50 rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-lg sm:text-2xl overflow-hidden p-1.5">
+            <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <div class="text-lg sm:text-2xl font-extrabold text-slate-900">Bientôt</div>
+            <div class="text-[10px] sm:text-xs text-slate-500 font-medium">Disponible</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:pl-6 text-center lg:text-left mt-4 lg:mt-0 reveal-right">
+        <span class="text-blue-600 font-semibold text-xs tracking-wider uppercase">   Pourquoi Dunia ?</span>
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-1 mb-4 leading-tight">
+          La technologie évolue. Vos compétences aussi.
+        </h2>
+        <p class="text-slate-600 text-xs sm:text-sm mb-5 leading-relaxed">
+          Les métiers et les outils numériques évoluent rapidement. Pourtant, accéder à une formation pratique, compréhensible et adaptée à son environnement reste parfois difficile. Dunia veut rapprocher les étudiants des compétences qui leur permettront de comprendre, créer et participer au monde numérique.
+        </p>
+
+        <ul class="space-y-2.5 text-xs sm:text-sm font-medium text-slate-700 mb-6 text-left inline-block lg:block">
+          <li class="flex items-center gap-2.5"><i class="fa-solid fa-circle-check text-blue-600 shrink-0"></i> Apprentissage pratique : vidéos, documents, exercices et projets</li>
+          <li class="flex items-center gap-2.5"><i class="fa-solid fa-circle-check text-blue-600 shrink-0"></i> Compétences actuelles : développement web, IA, design graphique</li>
+          <li class="flex items-center gap-2.5"><i class="fa-solid fa-circle-check text-blue-600 shrink-0"></i> En ligne et en présentiel à Kinshasa</li>
+        </ul>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+          <a href="https://wa.me/243962104398" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-6 py-3 rounded-lg shadow-md transition text-center hover:scale-105">En Savoir Plus <i class="fa-solid fa-arrow-right ml-2"></i></a>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-base"><i class="fa-solid fa-phone"></i></div>
+            <div class="text-left">
+              <p class="text-[10px] text-slate-400 uppercase font-semibold">Contactez-nous</p>
+              <p class="text-xs sm:text-sm font-bold text-slate-900">+243 962 104 398 </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- BANDEAU OUTILS -->
+  <!-- ============================================================ -->
+  <div class="border-y border-slate-100 py-5 sm:py-6 bg-slate-50/50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="tools-marquee">
+        <div class="tools-track">
+          <span class="tool-item"><i class="fa-brands fa-html5 text-orange-500"></i>HTML5</span>
+          <span class="tool-item"><i class="fa-brands fa-css3-alt text-blue-500"></i>CSS3</span>
+          <span class="tool-item text-blue-600"><i class="fa-brands fa-js text-yellow-500"></i>JavaScript</span>
+          <span class="tool-item"><i class="fa-brands fa-python text-blue-600"></i>Python</span>
+          <span class="tool-item"><i class="fa-brands fa-figma text-purple-500"></i>Figma</span>
+          <span class="tool-item"><span class="w-6 h-6 rounded flex items-center justify-center text-white font-bold text-xs" style="background: linear-gradient(135deg, #001E36 0%, #31A8FF 100%);">Ps</span>Photoshop</span>
+          <span class="tool-item"><i class="fa-solid fa-robot text-blue-500"></i>IA</span>
+          
+          <span class="tool-item"><i class="fa-brands fa-html5 text-orange-500"></i>HTML5</span>
+          <span class="tool-item"><i class="fa-brands fa-css3-alt text-blue-500"></i>CSS3</span>
+          <span class="tool-item text-blue-600"><i class="fa-brands fa-js text-yellow-500"></i>JavaScript</span>
+          <span class="tool-item"><i class="fa-brands fa-python text-blue-600"></i>Python</span>
+          <span class="tool-item"><i class="fa-brands fa-figma text-purple-500"></i>Figma</span>
+          <span class="tool-item"><span class="w-6 h-6 rounded flex items-center justify-center text-white font-bold text-xs" style="background: linear-gradient(135deg, #001E36 0%, #31A8FF 100%);">Ps</span>Photoshop</span>
+          <span class="tool-item"><i class="fa-solid fa-robot text-blue-500"></i>IA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION FORMATIONS -->
+  <section id="services" class="py-16 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+    
+    <div class="absolute top-20 right-0 w-72 h-72 bg-blue-100/40 rounded-full blur-3xl -z-10"></div>
+    <div class="absolute bottom-20 left-0 w-96 h-96 bg-blue-50/60 rounded-full blur-3xl -z-10"></div>
+
+    <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-12 gap-4 text-center sm:text-left reveal">
+      <div>
+        <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
+          <span class="w-8 h-[2px] bg-blue-600"></span>
+          Découvrir
+        </span>
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Apprenez une compétence. Construisez quelque chose.</h2>
+        <p class="text-slate-500 text-xs sm:text-sm mt-3 max-w-xl">Découvrez progressivement des formations conçues par Dunia et par des formateurs indépendants.</p>
+      </div>
+      <a href="formations.html" class="group inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-6 py-3 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/40 hover:scale-105 whitespace-nowrap">
+        Voir toutes les formations 
+        <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      
+      <!-- Formation 1 -->
+      <div class="service-card reveal bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group">
+        <div class="relative overflow-hidden">
+          <img src="images/creation de site web.jpeg" alt="Création de sites web" class="service-img h-48 w-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <span class="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
+            <i class="fa-solid fa-fire mr-1"></i>Populaire
+          </span>
+          <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-slate-700 text-[10px] font-bold px-3 py-1 rounded-full shadow">
+            Débutant
+          </span>
+        </div>
+        <div class="p-6 flex-1 flex flex-col justify-between relative z-10">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="bg-blue-50 text-blue-600 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
+                <i class="fa-solid fa-code mr-1"></i>Développement
+              </span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Création de sites web</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Découvrez les bases du développement web et apprenez à construire vos propres sites avec des technologies modernes.</p>
+            <div class="flex items-center gap-4 text-[11px] text-slate-400 mb-4">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-blue-500"></i> 6 semaines</span>
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-signal text-blue-500"></i> Débutant</span>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full overflow-hidden bg-white border border-slate-200 flex items-center justify-center p-0.5">
+                <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
+              </div>
+              <span class="text-[11px] text-slate-500 font-medium">Dunia</span>
+            </div>
+            <a href="formations.html" class="group/btn text-blue-600 text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all">
+              Voir la formation <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formation 2 -->
+      <div class="service-card reveal delay-100 bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group">
+        <div class="relative overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=500&q=80" alt="Intelligence artificielle" class="service-img h-48 w-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <span class="absolute top-4 left-4 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
+            <i class="fa-solid fa-star mr-1"></i>Nouveau
+          </span>
+          <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-slate-700 text-[10px] font-bold px-3 py-1 rounded-full shadow">
+            Débutant
+          </span>
+        </div>
+        <div class="p-6 flex-1 flex flex-col justify-between relative z-10">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
+                <i class="fa-solid fa-brain mr-1"></i>Technologie
+              </span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Intelligence artificielle</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Comprenez les outils d'intelligence artificielle et apprenez à les utiliser efficacement dans vos études, vos projets et votre travail.</p>
+            <div class="flex items-center gap-4 text-[11px] text-slate-400 mb-4">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-blue-500"></i> 4 semaines</span>
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-signal text-blue-500"></i> Débutant</span>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full overflow-hidden bg-white border border-slate-200 flex items-center justify-center p-0.5">
+                <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
+              </div>
+              <span class="text-[11px] text-slate-500 font-medium">Dunia</span>
+            </div>
+            <a href="formations.html" class="group/btn text-blue-600 text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all">
+              Voir la formation <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formation 3 -->
+      <div class="service-card reveal delay-200 bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group">
+        <div class="relative overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=500&q=80" alt="Design graphique avec Photoshop" class="service-img h-48 w-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <span class="absolute top-4 left-4 bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
+            <i class="fa-solid fa-palette mr-1"></i>Créatif
+          </span>
+          <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-slate-700 text-[10px] font-bold px-3 py-1 rounded-full shadow">
+            Débutant
+          </span>
+        </div>
+        <div class="p-6 flex-1 flex flex-col justify-between relative z-10">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="bg-purple-50 text-purple-600 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
+                <i class="fa-solid fa-pen-nib mr-1"></i>Design
+              </span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Design graphique avec Photoshop</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Découvrez les principes du design graphique et apprenez à créer des visuels professionnels avec Photoshop.</p>
+            <div class="flex items-center gap-4 text-[11px] text-slate-400 mb-4">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-blue-500"></i> 5 semaines</span>
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-signal text-blue-500"></i> Débutant</span>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full overflow-hidden bg-white border border-slate-200 flex items-center justify-center p-0.5">
+                <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
+              </div>
+              <span class="text-[11px] text-slate-500 font-medium">Dunia</span>
+            </div>
+            <a href="formations.html" class="group/btn text-blue-600 text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all">
+              Voir la formation <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bandeau d'information -->
+    <div class="mt-10 bg-blue-50 border border-blue-100 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 reveal">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-2 border border-blue-100 shrink-0">
+          <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <h4 class="font-bold text-sm text-slate-800">Formation bientôt disponible</h4>
+          <p class="text-xs text-slate-500">Certaines formations sont encore en préparation. Rejoignez la communauté pour être informé.</p>
+        </div>
+      </div>
+      <a href="https://wa.me/243962104398" class="w-full sm:w-auto justify-center inline-flex items-center gap-2 bg-brand-navy hover:bg-slate-800 text-white text-xs font-semibold px-5 py-2.5 rounded-lg transition whitespace-nowrap">
+        <i class="fa-brands fa-whatsapp"></i> Rejoindre WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- SECTION DEUX FAÇONS D'APPRENDRE -->
+  <section class="py-16 sm:py-20 px-4 sm:px-6 md:px-16 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+    <div class="absolute top-0 left-1/4 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
+    
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
+          <span class="w-8 h-[2px] bg-blue-600"></span>
+          Méthodes
+          <span class="w-8 h-[2px] bg-blue-600"></span>
+        </span>
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Deux façons d'apprendre</h2>
+        <p class="text-slate-500 text-sm mt-3 max-w-lg mx-auto">Apprenez comme vous le souhaitez, à votre rythme et selon vos disponibilités.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="reveal-left bg-white p-6 sm:p-10 rounded-3xl shadow-xl border border-slate-100 relative overflow-hidden group hover:shadow-2xl transition-shadow duration-500">
+          <div class="absolute top-0 right-0 w-40 h-40 bg-blue-50 rounded-full -mr-20 -mt-20 group-hover:scale-150 transition-transform duration-700"></div>
+          <div class="relative z-10">
+            <h3 class="font-extrabold text-xl text-slate-800 mb-3">En ligne</h3>
+            <p class="text-sm text-slate-500 mb-6 leading-relaxed">Apprenez à votre rythme grâce à des vidéos, des documents et des exercices accessibles depuis Dunia.</p>
+            <ul class="space-y-4 text-sm text-slate-600">
+              <li class="flex items-start gap-3">
+                <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-video"></i></span>
+                <div>
+                  <span class="font-semibold text-slate-800 text-xs block">Vidéo</span>
+                  <span class="text-xs text-slate-500">Suivez les explications étape par étape.</span>
+                </div>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-file-lines"></i></span>
+                <div>
+                  <span class="font-semibold text-slate-800 text-xs block">Documents</span>
+                  <span class="text-xs text-slate-500">Retrouvez les ressources nécessaires.</span>
+                </div>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-pen-to-square"></i></span>
+                <div>
+                  <span class="font-semibold text-slate-800 text-xs block">Exercices</span>
+                  <span class="text-xs text-slate-500">Mettez immédiatement en pratique.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="reveal-right bg-white p-6 sm:p-10 rounded-3xl shadow-xl border border-slate-100 relative overflow-hidden group hover:shadow-2xl transition-shadow duration-500">
+          <div class="absolute top-0 right-0 w-40 h-40 bg-emerald-50 rounded-full -mr-20 -mt-20 group-hover:scale-150 transition-transform duration-700"></div>
+          <div class="relative z-10">
+            <h3 class="font-extrabold text-xl text-slate-800 mb-3">En présentiel</h3>
+            <p class="text-sm text-slate-500 mb-6 leading-relaxed">Certaines formations Dunia sont également organisées physiquement à Kinshasa.</p>
+            <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 mb-6">
+              <p class="text-xs text-slate-600 leading-relaxed">
+                <i class="fa-solid fa-location-dot text-emerald-600 mr-1.5"></i>
+                Nos premières activités en présentiel se déroulent notamment à l'<strong>Université de Kinshasa</strong>, dans la Faculté des Sciences et Technologies, filière Mathématiques et Informatique.
+              </p>
+            </div>
+            <a href="formations.html" class="group/btn inline-flex items-center gap-2 text-emerald-600 text-xs font-bold hover:gap-3 transition-all">
+              Découvrir nos prochaines formations <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION POUR LES FORMATEURS -->
+  <section class="py-16 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+    <div class="absolute top-1/2 left-0 w-72 h-72 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
+      <div class="order-2 lg:order-1 reveal-left">
+        <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
+          <span class="w-8 h-[2px] bg-blue-600"></span>
+          Transmettre
+        </span>
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2 mb-4 leading-tight">Votre savoir peut aller plus loin.</h2>
+        <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+          Dunia n'est pas seulement destiné aux apprenants. Nous souhaitons également permettre aux formateurs, enseignants et professionnels de partager leurs connaissances avec une nouvelle génération d'apprenants.
+        </p>
+        <ul class="space-y-4 text-sm font-medium text-slate-700 mb-8">
+          <li class="flex items-start gap-3">
+            <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-share-nodes"></i></span>
+            <div>
+              <span class="font-semibold text-slate-800 text-xs block">Partagez votre expertise</span>
+              <span class="text-xs text-slate-500 font-normal">Transformez vos connaissances en contenu pédagogique accessible.</span>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-bullhorn"></i></span>
+            <div>
+              <span class="font-semibold text-slate-800 text-xs block">Faites découvrir vos formations</span>
+              <span class="text-xs text-slate-500 font-normal">Présentez vos formations à une communauté d'apprenants.</span>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-chart-line"></i></span>
+            <div>
+              <span class="font-semibold text-slate-800 text-xs block">Construisez votre audience</span>
+              <span class="text-xs text-slate-500 font-normal">Développez progressivement votre présence en tant que formateur.</span>
+            </div>
+          </li>
+        </ul>
+        <a href="https://wa.me/243962104398" class="group inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-7 py-3.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/40 hover:scale-105">
+          Je suis formateur <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </div>
+      <div class="order-1 lg:order-2 reveal-right relative">
+        <div class="relative">
+          <img src="https://i.pinimg.com/736x/ec/10/8a/ec108a80e6998be4bcc4b3894a84152b.jpg" alt="Formateur partageant son savoir" class="rounded-3xl shadow-2xl w-full h-64 sm:h-96 object-cover">
+          <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 animate-float hidden sm:block">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <div>
+                <div class="text-lg font-extrabold text-slate-900">+100</div>
+                <div class="text-[10px] text-slate-500 font-medium">Apprenants attendus</div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -top-4 -right-4 bg-blue-600 text-white p-4 rounded-2xl shadow-xl animate-float-slow hidden sm:block">
+            <i class="fa-solid fa-chalkboard-user text-2xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION COMMENT ÇA MARCHE -->
+  <section class="py-16 sm:py-20 px-4 sm:px-6 md:px-16 bg-brand-navy text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-10 left-10 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-10 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="text-center mb-14 reveal">
+        <span class="inline-flex items-center gap-2 text-blue-400 font-semibold text-xs tracking-wider uppercase">
+          <span class="w-8 h-[2px] bg-blue-400"></span>
+          Processus
+          <span class="w-8 h-[2px] bg-blue-400"></span>
+        </span>
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold mt-2">Comment ça marche ?</h2>
+        <p class="text-slate-400 text-sm mt-3 max-w-lg mx-auto">Commencer avec Dunia sera simple. Suivez le parcours en 4 étapes.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 relative">
+        
+        <div class="step-card reveal text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 relative z-10">
+          <div class="step-number w-14 h-14 bg-white/10 text-blue-400 rounded-2xl flex items-center justify-center text-xl font-extrabold mx-auto mb-5 border border-blue-500/30">
+            01
+          </div>
+          <h3 class="font-bold text-sm text-white mb-2">Trouvez une compétence</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">Explorez les formations disponibles et choisissez ce que vous souhaitez apprendre.</p>
+        </div>
+        <div class="step-card reveal delay-100 text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 relative z-10">
+          <div class="step-number w-14 h-14 bg-white/10 text-blue-400 rounded-2xl flex items-center justify-center text-xl font-extrabold mx-auto mb-5 border border-blue-500/30">
+            02
+          </div>
+          <h3 class="font-bold text-sm text-white mb-2">Apprenez</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">Suivez les vidéos, consultez les ressources et réalisez les exercices proposés par le formateur.</p>
+        </div>
+        <div class="step-card reveal delay-200 text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 relative z-10">
+          <div class="step-number w-14 h-14 bg-white/10 text-blue-400 rounded-2xl flex items-center justify-center text-xl font-extrabold mx-auto mb-5 border border-blue-500/30">
+            03
+          </div>
+          <h3 class="font-bold text-sm text-white mb-2">Pratiquez</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">Transformez vos nouvelles connaissances en compétences grâce à la pratique et aux projets.</p>
+        </div>
+        <div class="step-card reveal delay-300 text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 relative z-10">
+          <div class="step-number w-14 h-14 bg-white/10 text-blue-400 rounded-2xl flex items-center justify-center text-xl font-extrabold mx-auto mb-5 border border-blue-500/30">
+            04
+          </div>
+          <h3 class="font-bold text-sm text-white mb-2">Continuez à évoluer</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">Découvrez de nouvelles formations et développez progressivement vos compétences.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION TÉMOIGNAGES -->
+  <section class="py-16 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+    <div class="absolute top-20 left-0 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
+    
+    <div class="text-center mb-12 reveal">
+      <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
+        <span class="w-8 h-[2px] bg-blue-600"></span>
+        Témoignages
+        <span class="w-8 h-[2px] bg-blue-600"></span>
+      </span>
+      <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Une plateforme pensée pour les apprenants.</h2>
+    </div>
+
+    <div class="reveal bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-3xl p-6 sm:p-14 text-center max-w-3xl mx-auto relative overflow-hidden shadow-lg">
+      <div class="absolute top-0 left-0 w-32 h-32 bg-blue-100/50 rounded-full -ml-16 -mt-16"></div>
+      <div class="absolute bottom-0 right-0 w-40 h-40 bg-blue-100/30 rounded-full -mr-20 -mb-20"></div>
+      
+      <div class="relative z-10">
+        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-lg shadow-blue-600/10 animate-float p-2 border border-blue-100">
+          <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
+        </div>
+        <p class="text-slate-800 font-bold text-lg sm:text-xl mb-3">Bientôt, leurs expériences parleront pour nous.</p>
+        <p class="text-slate-500 text-sm leading-relaxed max-w-lg mx-auto mb-6">
+          Dunia est encore en développement. Cette section accueillera prochainement les expériences et témoignages des premiers apprenants ayant participé à nos formations.
+        </p>
+        <div class="flex items-center justify-center gap-2">
+          <span class="w-2 h-2 bg-blue-300 rounded-full"></span>
+          <span class="w-2 h-2 bg-blue-400 rounded-full"></span>
+          <span class="w-2 h-2 bg-blue-600 rounded-full blink-dot"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION APPLICATION -->
+  <section class="py-16 sm:py-20 px-4 sm:px-6 md:px-16 animated-gradient text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px); background-size: 40px 40px;"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+      <div class="reveal-left">
+        <span class="inline-flex items-center gap-2 text-blue-200 font-semibold text-xs tracking-wider uppercase">
+          <span class="w-8 h-[2px] bg-blue-200"></span>
+          Dunia App
+        </span>
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold mt-2 mb-5 leading-tight">Votre apprentissage, bientôt au même endroit.</h2>
+        <p class="text-blue-100 text-sm mb-6 leading-relaxed max-w-lg">
+          Nous construisons actuellement l'application web Dunia. Elle permettra de découvrir des formations, suivre des cours, consulter des ressources pédagogiques et progresser depuis une seule plateforme.
+        </p>
+        
+        <div class="flex items-center gap-3 mb-7">
+          <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md text-white text-xs font-semibold px-4 py-2 rounded-full border border-white/20">
+            <span class="w-2 h-2 bg-emerald-400 rounded-full blink-dot"></span>
+            Statut : En développement
+          </span>
+        </div>
+
+        <p class="text-blue-200 text-xs mb-6 max-w-lg">En attendant son lancement, rejoignez notre communauté WhatsApp pour recevoir les annonces concernant Dunia et nos prochaines formations.</p>
+        
+        <a href="https://wa.me/243962104398" class="group inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-sm px-7 py-3.5 rounded-xl shadow-2xl transition-all hover:scale-105 hover:shadow-white/20">
+          <i class="fa-brands fa-whatsapp text-lg"></i>
+          Rejoindre le groupe WhatsApp
+          <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+        </a>
+        <p class="text-blue-200/70 text-[10px] mt-4 flex flex-wrap items-center gap-3">
+          <span><i class="fa-solid fa-check mr-1"></i>Gratuit</span>
+          <span><i class="fa-solid fa-check mr-1"></i>Actualités Dunia</span>
+          <span><i class="fa-solid fa-check mr-1"></i>Nouvelles formations</span>
+        </p>
+      </div>
+
+      <div class="reveal-right hidden lg:flex justify-center">
+        <div class="relative">
+          <div class="w-72 h-[550px] bg-slate-900/40 backdrop-blur-md border border-white/20 rounded-[3rem] p-4 shadow-2xl animate-float">
+            <div class="w-full h-full bg-slate-800/60 rounded-[2.5rem] flex flex-col items-center justify-center text-blue-200 relative overflow-hidden">
+              <div class="absolute top-0 left-0 right-0 h-16 bg-blue-600/20 rounded-t-[2.5rem]"></div>
+              <div class="w-20 h-20 mb-5 rounded-2xl bg-white/10 p-3 border border-white/20">
+                <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain brightness-0 invert">
+              </div>
+              <p class="text-sm font-semibold text-white">Dunia App</p>
+              <p class="text-xs text-blue-200 mt-1">Bientôt disponible</p>
+              <div class="mt-6 flex gap-1.5">
+                <span class="w-2 h-2 bg-blue-400 rounded-full blink-dot"></span>
+                <span class="w-2 h-2 bg-blue-400/50 rounded-full"></span>
+                <span class="w-2 h-2 bg-blue-400/30 rounded-full"></span>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-2xl shadow-2xl border border-blue-100">
+            <div class="w-10 h-10 rounded-xl bg-white p-1">
+              <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION FAQ -->
+  <section id="faq" class="py-16 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+    <div class="absolute bottom-0 right-0 w-72 h-72 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
+    
+    <div class="text-center mb-12 reveal">
+      <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
+        <span class="w-8 h-[2px] bg-blue-600"></span>
+        FAQ
+        <span class="w-8 h-[2px] bg-blue-600"></span>
+      </span>
+      <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Vous avez des questions ?</h2>
+      <p class="text-slate-500 text-sm mt-3">Voici les réponses aux questions les plus fréquentes.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto">
+      <div class="faq-item reveal bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-start gap-3">
+          <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800 mb-2">Dunia est-il déjà disponible ?</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">L'application Dunia est actuellement en cours de développement. Certaines activités et formations peuvent cependant être proposées avant son lancement officiel.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item reveal delay-100 bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-start gap-3">
+          <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800 mb-2">Les formations sont-elles gratuites ?</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Dunia proposera des formations gratuites et payantes. Le prix dépendra de la formation et du formateur.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item reveal delay-200 bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-start gap-3">
+          <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800 mb-2">Les formations sont-elles uniquement en ligne ?</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Non. Dunia combine apprentissage numérique et formations en présentiel. Certaines de nos formations sont notamment organisées à Kinshasa.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item reveal delay-300 bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-start gap-3">
+          <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800 mb-2">Est-ce que je recevrai un certificat ?</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Cela dépend de la formation et du formateur. Lorsqu'une certification ou une attestation est disponible, cette information sera indiquée dans les détails de la formation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item reveal delay-400 bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm md:col-span-2">
+        <div class="flex items-start gap-3">
+          <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800 mb-2">Puis-je proposer une formation sur Dunia ?</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Dunia prévoit d'accueillir des formateurs externes souhaitant transmettre leurs compétences et faire connaître leurs formations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section id="contact" class="py-20 sm:py-24 px-4 sm:px-6 md:px-16 bg-brand-navy text-white text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-20">
+      <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+    </div>
+    
+    <div class="max-w-3xl mx-auto relative z-10 reveal">
+      <div class="w-20 flex items-center justify-center mx-auto mb-8 animate-float p-3">
+        <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain brightness-0 invert">
+      </div>
+      
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-6">
+        Le prochain savoir que vous apprendrez peut changer ce que vous êtes capable de créer.
+      </h2>
+      <p class="text-slate-300 text-sm sm:text-base mb-10 max-w-xl mx-auto leading-relaxed">
+        Dunia arrive bientôt. Rejoignez dès maintenant notre communauté et soyez parmi les premiers à découvrir les formations, événements et nouveautés de la plateforme.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://wa.me/243962104398" class="group w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base px-8 py-4 rounded-xl shadow-2xl shadow-blue-600/30 transition-all hover:scale-105">
+          <i class="fa-brands fa-whatsapp text-lg"></i>
+          Rejoindre la communauté WhatsApp
+          <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+        </a>
+        <a href="formations.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm sm:text-base px-8 py-4 rounded-xl backdrop-blur-md transition-all hover:scale-105">
+          Découvrir les formations <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+      
+      <p class="text-slate-500 text-[11px] mt-8">
+        <i class="fa-solid fa-lock mr-1"></i> Gratuit • Sans engagement • Rejoignez une communauté grandissante
+      </p>
+    </div>
+  </section>
+
+  <!-- PIED DE PAGE -->
+  <footer class="bg-brand-navy text-slate-400 pt-16 pb-8 border-t border-slate-800 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600 to-transparent"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+      <div class="reveal">
+        <a href="#" class="inline-flex items-center gap-3 mb-4 group">
+          <img src="images/logo-dunia.png" alt="Dunia" class="logo-dunia-footer">
+          <div class="flex flex-col leading-none">
+            <span class="brand-name-footer">Dunia</span>
+            <span class="brand-tagline-footer">Apprendre • Créer • Évoluer</span>
+          </div>
+        </a>
+        <p class="text-xs leading-relaxed mb-5 text-slate-400">
+          Une plateforme d'apprentissage dédiée aux compétences numériques et à la transmission des connaissances.
+        </p>
+        <div class="flex items-center gap-3 text-sm">
+          <a href="https://wa.me/243962104398" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all hover:scale-110"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61592556733317" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all hover:scale-110"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all hover:scale-110"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all hover:scale-110"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      
+      <div class="reveal delay-100">
+        <h4 class="text-white font-bold mb-4 text-sm flex items-center gap-2">
+          <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
+          Navigation
+        </h4>
+        <ul class="space-y-2.5 text-xs">
+          <li><a href="#" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Accueil</a></li>
+          <li><a href="formations.html" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Formations</a></li>
+          <li><a href="#about" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>À propos</a></li>
+          <li><a href="#contact" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="reveal delay-200">
+        <h4 class="text-white font-bold mb-4 text-sm flex items-center gap-2">
+          <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
+          Apprentissage
+        </h4>
+        <ul class="space-y-2.5 text-xs">
+          <li><a href="formations.html" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Développement web</a></li>
+          <li><a href="formations.html" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Intelligence artificielle</a></li>
+          <li><a href="formations.html" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Design graphique</a></li>
+          <li><a href="formations.html" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Toutes les formations</a></li>
+        </ul>
+      </div>
+      
+      <div class="reveal delay-300">
+        <h4 class="text-white font-bold mb-4 text-sm flex items-center gap-2">
+          <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
+          Dunia
+        </h4>
+        <ul class="space-y-2.5 text-xs">
+          <li><a href="#about" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Notre mission</a></li>
+          <li><a href="https://wa.me/243962104398" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Devenir formateur</a></li>
+          <li><a href="#faq" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>FAQ</a></li>
+          <li><a href="#contact" class="hover:text-blue-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Nous contacter</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 text-center sm:text-left">
+      <p>© 2026 Dunia. Tous droits réservés.</p>
+      <p class="flex items-center gap-1.5">
+        <i class="fa-solid fa-location-dot text-blue-500"></i>
+        Kinshasa, République démocratique du Congo.
+      </p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    // ========== ÉCRAN DE CHARGEMENT ==========
+    window.addEventListener('load', function() {
+      const loader = document.getElementById('loader');
+      setTimeout(function() {
+        loader.classList.add('hidden');
+      }, 900);
+    });
+
+    setTimeout(function() {
+      const loader = document.getElementById('loader');
+      if (loader) loader.classList.add('hidden');
+    }, 4000);
+
+    // ========== MENU MOBILE HAMBURGER ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const closeMenuBtn = document.getElementById('closeMenuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileOverlay = document.getElementById('mobileOverlay');
+      const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+      function openMenu() {
+        mobileMenu.classList.add('open');
+        mobileOverlay.classList.add('open');
+        hamburgerBtn.classList.add('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        mobileMenu.classList.remove('open');
+        mobileOverlay.classList.remove('open');
+        hamburgerBtn.classList.remove('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+
+      hamburgerBtn.addEventListener('click', function() {
+        if (mobileMenu.classList.contains('open')) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      closeMenuBtn.addEventListener('click', closeMenu);
+      mobileOverlay.addEventListener('click', closeMenu);
+
+      mobileNavLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+          setTimeout(closeMenu, 150);
+        });
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+          closeMenu();
+        }
+      });
+
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024 && mobileMenu.classList.contains('open')) {
+          closeMenu();
+        }
+      });
+    });
+
+    // ========== ANIMATIONS AU SCROLL ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+      
+      const revealOnScroll = function() {
+        const windowHeight = window.innerHeight;
+        const elementVisible = 100;
+        
+        reveals.forEach(function(reveal) {
+          const elementTop = reveal.getBoundingClientRect().top;
+          if (elementTop < windowHeight - elementVisible) {
+            reveal.classList.add('active');
+          }
+        });
+      };
+      
+      window.addEventListener('scroll', revealOnScroll);
+      revealOnScroll();
+    });
+  </script>
+
+</body>
+</html>
