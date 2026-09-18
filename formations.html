@@ -935,6 +935,95 @@
       from { transform: translateY(100px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+
+    /* ============================================ */
+    /* MODALES LÉGALES AMÉLIORÉES */
+    /* ============================================ */
+    #legalModal {
+      display: none;
+    }
+    #legalModal.active {
+      display: flex;
+    }
+    #legalContent {
+      scrollbar-width: thin;
+      scrollbar-color: #2563eb #f1f5f9;
+    }
+    #legalContent::-webkit-scrollbar {
+      width: 6px;
+    }
+    #legalContent::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+    #legalContent::-webkit-scrollbar-thumb {
+      background: #2563eb;
+      border-radius: 10px;
+    }
+    html.dark #legalContent {
+      scrollbar-color: #3b82f6 #1a1a1a;
+    }
+    html.dark #legalContent::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+    html.dark #legalContent::-webkit-scrollbar-thumb {
+      background: #3b82f6;
+    }
+    #legalContent p {
+      margin-bottom: 0.75rem;
+    }
+    #legalContent p strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+    html.dark #legalContent p strong {
+      color: #ffffff;
+    }
+    #legalContent ul {
+      margin-bottom: 0.75rem;
+      padding-left: 1.25rem;
+    }
+    #legalContent ul li {
+      margin-bottom: 0.25rem;
+      list-style: disc;
+    }
+    #legalModal.active {
+      animation: modalFadeIn 0.25s ease;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    #legalModal.active > div:last-child {
+      animation: modalSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ============================================ */
+    /* FOOTER ALIGNEMENT AMÉLIORÉ */
+    /* ============================================ */
+    .footer-col {
+      text-align: left;
+    }
+    .footer-col h4 {
+      text-align: left;
+    }
+    .footer-col ul {
+      text-align: left;
+    }
+    .footer-col ul li a,
+    .footer-col ul li button {
+      text-align: left;
+      justify-content: flex-start;
+    }
+    @media (max-width: 400px) {
+      .footer-col {
+        text-align: left;
+      }
+    }
   </style>
 </head>
 <body class="bg-white">
@@ -1495,7 +1584,7 @@
     <!-- ===== NEWSLETTER ===== -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
       <div class="bg-gradient-to-br from-blue-600/10 to-blue-500/5 border border-blue-500/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-5 reveal">
-        <div class="text-center md:text-left">
+        <div class="text-center md:text-left w-full md:w-auto">
           <h3 class="text-white font-extrabold text-lg sm:text-xl mb-1">
             <i class="fa-solid fa-envelope-open-text text-blue-500 mr-2"></i>
             Restez informé
@@ -1519,11 +1608,11 @@
       <p id="newsletterMsg" class="hidden text-center text-[11px] mt-3 text-emerald-400 font-semibold"></p>
     </div>
 
-    <!-- ===== COLONNES ===== -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 mb-10 sm:mb-12">
+    <!-- ===== COLONNES ALIGNÉES À GAUCHE ===== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12 text-left">
 
       <!-- Colonne 1 : Marque -->
-      <div class="reveal xs:col-span-2 lg:col-span-2">
+      <div class="footer-col reveal xs:col-span-2 lg:col-span-1">
         <a href="index.html" class="inline-flex items-center gap-2 sm:gap-3 mb-4 group">
           <img src="images/logo-dunia.png" alt="Dunia" class="logo-dunia-footer">
           <div class="flex flex-col leading-none">
@@ -1550,7 +1639,7 @@
           </p>
           <p class="flex items-center gap-2 text-slate-400">
             <i class="fa-solid fa-envelope text-blue-500 w-4"></i>
-            <a href="mailto:contact@dunia.work" class="hover:text-blue-400 transition">contact@dunia.work</a>
+            <a href="mailto:duniaelearningcongo@gmail.com" class="hover:text-blue-400 transition break-all">duniaelearningcongo@gmail.com</a>
           </p>
           <p class="flex items-center gap-2 text-slate-400">
             <i class="fa-solid fa-phone text-blue-500 w-4"></i>
@@ -1560,7 +1649,7 @@
       </div>
 
       <!-- Colonne 2 : Navigation -->
-      <div class="reveal delay-100">
+      <div class="footer-col reveal delay-100">
         <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
           <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
           Navigation
@@ -1575,7 +1664,7 @@
       </div>
 
       <!-- Colonne 3 : Apprentissage -->
-      <div class="reveal delay-200">
+      <div class="footer-col reveal delay-200">
         <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
           <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
           Apprentissage
@@ -1589,7 +1678,7 @@
       </div>
 
       <!-- Colonne 4 : Dunia & Légal -->
-      <div class="reveal delay-300">
+      <div class="footer-col reveal delay-300">
         <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
           <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
           Dunia
@@ -1597,10 +1686,10 @@
         <ul class="space-y-2 sm:space-y-2.5 text-[11px] sm:text-xs">
           <li><a href="index.html#about" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Notre mission</a></li>
           <li><a href="https://wa.me/243962104398" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Devenir formateur</a></li>
-          <li><a href="#" data-legal="mentions" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Mentions légales</a></li>
-          <li><a href="#" data-legal="confidentialite" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Confidentialité</a></li>
-          <li><a href="#" data-legal="cookies" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Cookies</a></li>
-          <li><a href="#" data-legal="cgu" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>CGU</a></li>
+          <li><button type="button" data-legal="mentions" class="hover:text-blue-400 transition flex items-center gap-2 py-1 w-full text-left"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Mentions légales</button></li>
+          <li><button type="button" data-legal="confidentialite" class="hover:text-blue-400 transition flex items-center gap-2 py-1 w-full text-left"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Confidentialité</button></li>
+          <li><button type="button" data-legal="cookies" class="hover:text-blue-400 transition flex items-center gap-2 py-1 w-full text-left"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Cookies</button></li>
+          <li><button type="button" data-legal="cgu" class="hover:text-blue-400 transition flex items-center gap-2 py-1 w-full text-left"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>CGU</button></li>
         </ul>
       </div>
     </div>
@@ -1640,13 +1729,13 @@
         </div>
 
         <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          <a href="#" data-legal="mentions" class="hover:text-blue-400 transition">Mentions légales</a>
+          <button type="button" data-legal="mentions" class="hover:text-blue-400 transition">Mentions légales</button>
           <span class="w-px h-3 bg-slate-800"></span>
-          <a href="#" data-legal="confidentialite" class="hover:text-blue-400 transition">Confidentialité</a>
+          <button type="button" data-legal="confidentialite" class="hover:text-blue-400 transition">Confidentialité</button>
           <span class="w-px h-3 bg-slate-800"></span>
-          <a href="#" data-legal="cookies" class="hover:text-blue-400 transition">Cookies</a>
+          <button type="button" data-legal="cookies" class="hover:text-blue-400 transition">Cookies</button>
           <span class="w-px h-3 bg-slate-800"></span>
-          <a href="#" data-legal="cgu" class="hover:text-blue-400 transition">CGU</a>
+          <button type="button" data-legal="cgu" class="hover:text-blue-400 transition">CGU</button>
         </div>
       </div>
 
@@ -1661,22 +1750,27 @@
     </button>
   </footer>
 
-  <!-- ===== MODALES LÉGALES ===== -->
-  <div id="legalModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+  <!-- ===== MODALES LÉGALES AMÉLIORÉES ===== -->
+  <div id="legalModal" class="fixed inset-0 z-[9999] items-center justify-center p-4">
     <div id="legalOverlay" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="relative bg-white dark:bg-[#0a0a0a] rounded-2xl sm:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
-      <div class="flex items-center justify-between p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800">
-        <h3 id="legalTitle" class="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white">Titre</h3>
-        <button id="legalClose" aria-label="Fermer" class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+      <div class="flex items-center justify-between p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#0f0f0f]">
+        <h3 id="legalTitle" class="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white pr-4">Titre</h3>
+        <button id="legalClose" aria-label="Fermer" class="w-9 h-9 rounded-lg bg-white dark:bg-[#1a1a1a] text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition shrink-0 border border-slate-200 dark:border-slate-800">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <div id="legalContent" class="p-4 sm:p-6 overflow-y-auto text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed space-y-4"></div>
+      <div id="legalContent" class="p-4 sm:p-6 overflow-y-auto text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed"></div>
+      <div class="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#0f0f0f] flex justify-end">
+        <button id="legalAccept" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-lg transition active:scale-95">
+          J'ai compris
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- ===== BANNIÈRE COOKIES ===== -->
-  <div id="cookieBanner" class="hidden fixed bottom-0 left-0 right-0 z-[9999] p-3 sm:p-4">
+  <div id="cookieBanner" class="hidden fixed bottom-0 left-0 right-0 z-[9998] p-3 sm:p-4">
     <div class="max-w-4xl mx-auto bg-white dark:bg-[#0a0a0a] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
       <div class="flex items-start gap-3 flex-1">
         <div class="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
@@ -1686,7 +1780,7 @@
           <p class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white mb-1">Nous utilisons des cookies</p>
           <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
             Dunia utilise des cookies pour améliorer votre expérience, mémoriser vos préférences et analyser le trafic. Vous pouvez accepter ou refuser.
-            <a href="#" data-legal="cookies" class="text-blue-600 dark:text-blue-400 underline hover:no-underline">En savoir plus</a>
+            <button type="button" data-legal="cookies" class="text-blue-600 dark:text-blue-400 underline hover:no-underline">En savoir plus</button>
           </p>
         </div>
       </div>
@@ -1702,7 +1796,7 @@
   </div>
 
   <!-- BANNIÈRE D'INSTALLATION PWA -->
-  <div id="pwaInstallBanner" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm bg-white rounded-2xl shadow-2xl border border-blue-100 p-4 z-[9998] items-center gap-3">
+  <div id="pwaInstallBanner" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm bg-white rounded-2xl shadow-2xl border border-blue-100 p-4 z-[9997] items-center gap-3">
     <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-1.5 border border-blue-100 shrink-0">
       <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
     </div>
@@ -2481,6 +2575,7 @@
       const modal = document.getElementById('legalModal');
       const overlay = document.getElementById('legalOverlay');
       const closeBtn = document.getElementById('legalClose');
+      const acceptBtn = document.getElementById('legalAccept');
       const titleEl = document.getElementById('legalTitle');
       const contentEl = document.getElementById('legalContent');
 
@@ -2490,8 +2585,8 @@
           html: `
             <p><strong>Éditeur du site :</strong> Dunia</p>
             <p><strong>Siège :</strong> Kinshasa, République démocratique du Congo</p>
-            <p><strong>Email :</strong> contact@dunia.work</p>
-            <p><strong>Téléphone :</strong> +243 962 104 398</p>
+            <p><strong>Email :</strong> <a href="mailto:duniaelearningcongo@gmail.com" class="text-blue-600 underline">duniaelearningcongo@gmail.com</a></p>
+            <p><strong>Téléphone :</strong> <a href="tel:+243962104398" class="text-blue-600 underline">+243 962 104 398</a></p>
             <p><strong>Responsable de publication :</strong> L'équipe Dunia</p>
             <p><strong>Hébergement :</strong> Les informations d'hébergement seront précisées au lancement officiel de la plateforme.</p>
             <p>Dunia est une plateforme d'apprentissage dédiée aux compétences numériques. Le site est actuellement en phase de développement.</p>
@@ -2513,7 +2608,7 @@
             <p><strong>3. Partage des données</strong></p>
             <p>Nous ne vendons ni ne partageons vos données personnelles avec des tiers sans votre consentement, sauf obligation légale.</p>
             <p><strong>4. Vos droits</strong></p>
-            <p>Conformément aux lois applicables, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à contact@dunia.work.</p>
+            <p>Conformément aux lois applicables, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à <a href="mailto:duniaelearningcongo@gmail.com" class="text-blue-600 underline">duniaelearningcongo@gmail.com</a>.</p>
             <p><strong>5. Sécurité</strong></p>
             <p>Nous mettons en œuvre des mesures techniques et organisationnelles pour protéger vos données contre tout accès non autorisé.</p>
           `
@@ -2531,7 +2626,7 @@
             </ul>
             <p><strong>Gestion des cookies</strong></p>
             <p>Vous pouvez à tout moment accepter ou refuser les cookies via la bannière dédiée ou les paramètres de votre navigateur. Le refus de certains cookies peut affecter votre expérience sur le site.</p>
-            <p>Pour plus d'informations, contactez-nous à contact@dunia.work.</p>
+            <p>Pour plus d'informations, contactez-nous à <a href="mailto:duniaelearningcongo@gmail.com" class="text-blue-600 underline">duniaelearningcongo@gmail.com</a>.</p>
           `
         },
         cgu: {
@@ -2549,6 +2644,7 @@
             <p>Dunia ne saurait être tenu responsable des dommages directs ou indirects résultant de l'utilisation du site ou de l'impossibilité d'y accéder.</p>
             <p><strong>6. Modification des CGU</strong></p>
             <p>Dunia se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés des changements importants.</p>
+            <p>Pour toute question, contactez-nous à <a href="mailto:duniaelearningcongo@gmail.com" class="text-blue-600 underline">duniaelearningcongo@gmail.com</a>.</p>
           `
         }
       };
@@ -2558,29 +2654,30 @@
         if (!data) return;
         titleEl.textContent = data.title;
         contentEl.innerHTML = data.html;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        contentEl.scrollTop = 0;
+        modal.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
 
       function closeModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        modal.classList.remove('active');
         document.body.style.overflow = '';
       }
 
       document.querySelectorAll('[data-legal]').forEach(function(link) {
         link.addEventListener('click', function(e) {
           e.preventDefault();
+          e.stopPropagation();
           openModal(this.getAttribute('data-legal'));
         });
       });
 
       if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (acceptBtn) acceptBtn.addEventListener('click', closeModal);
       if (overlay) overlay.addEventListener('click', closeModal);
 
       document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
           closeModal();
         }
       });
@@ -2588,21 +2685,21 @@
 
     // ========== BANNIÈRE COOKIES ==========
     document.addEventListener('DOMContentLoaded', function() {
-      const banner = document.getElementById('cookieBanner');
+      const cookieBanner = document.getElementById('cookieBanner');
       const acceptBtn = document.getElementById('cookieAccept');
       const refuseBtn = document.getElementById('cookieRefuse');
-      if (!banner) return;
+      if (!cookieBanner) return;
 
       const consent = localStorage.getItem('dunia-cookie-consent');
 
       if (!consent) {
         setTimeout(function() {
-          banner.classList.remove('hidden');
+          cookieBanner.classList.remove('hidden');
         }, 2000);
       }
 
       function hideBanner(value) {
-        banner.classList.add('hidden');
+        cookieBanner.classList.add('hidden');
         localStorage.setItem('dunia-cookie-consent', value);
         localStorage.setItem('dunia-cookie-date', new Date().toISOString());
       }
