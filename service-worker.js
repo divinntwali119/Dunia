@@ -1,20 +1,22 @@
 /* ============================================================
-   SERVICE WORKER — DUNIA PWA
+   SERVICE WORKER — DUNIA PWA (GitHub Pages /Dunia/)
    ============================================================ */
 
 const CACHE_NAME = 'dunia-v1.0.0';
 const RUNTIME_CACHE = 'dunia-runtime-v1.0.0';
 const IMAGE_CACHE = 'dunia-images-v1.0.0';
 
+const BASE = '/Dunia';
+
 const PRECACHE_URLS = [
-  '/',
-  '/index.html',
-  '/formations.html',
-  '/offline.html',
-  '/manifest.json',
-  '/images/logo-dunia.png',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/formations.html',
+  BASE + '/offline.html',
+  BASE + '/manifest.json',
+  BASE + '/images/logo-dunia.png',
+  BASE + '/icons/icon-192x192.png',
+  BASE + '/icons/icon-512x512.png'
 ];
 
 /* ============ INSTALLATION ============ */
@@ -101,7 +103,7 @@ self.addEventListener('fetch', (event) => {
               cache.put(request, networkResponse.clone());
             }
             return networkResponse;
-          }).catch(() => caches.match('/images/logo-dunia.png'));
+          }).catch(() => caches.match(BASE + '/images/logo-dunia.png'));
         });
       })
     );
@@ -123,7 +125,7 @@ self.addEventListener('fetch', (event) => {
         .catch(() => {
           return caches.match(request).then((cachedResponse) => {
             if (cachedResponse) return cachedResponse;
-            return caches.match('/offline.html');
+            return caches.match(BASE + '/offline.html');
           });
         })
     );
@@ -164,7 +166,7 @@ self.addEventListener('fetch', (event) => {
       });
     }).catch(() => {
       if (request.mode === 'navigate') {
-        return caches.match('/offline.html');
+        return caches.match(BASE + '/offline.html');
       }
     })
   );

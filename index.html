@@ -16,7 +16,7 @@
   <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144x144.png">
   
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/Dunia/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Dunia">
@@ -109,10 +109,7 @@
     }
 
     @media (min-width: 640px) {
-      #loader::before {
-        width: 600px;
-        height: 600px;
-      }
+      #loader::before { width: 600px; height: 600px; }
     }
 
     @keyframes haloPulse {
@@ -137,10 +134,7 @@
     }
 
     @media (min-width: 640px) {
-      .loader-container {
-        width: 260px;
-        height: 260px;
-      }
+      .loader-container { width: 260px; height: 260px; }
     }
 
     .spinner {
@@ -204,10 +198,7 @@
     }
 
     @media (min-width: 640px) {
-      .loader-logo {
-        width: 160px;
-        height: 160px;
-      }
+      .loader-logo { width: 160px; height: 160px; }
     }
 
     @keyframes logoPulse {
@@ -623,9 +614,7 @@
 </head>
 <body class="bg-white">
 
-  <!-- ============================================================ -->
   <!-- ÉCRAN DE CHARGEMENT -->
-  <!-- ============================================================ -->
   <div id="loader">
     <div class="loader-container">
       <div class="spinner"></div>
@@ -1472,9 +1461,7 @@
     </div>
   </footer>
 
-  <!-- ============================================================ -->
   <!-- BANNIÈRE D'INSTALLATION PWA -->
-  <!-- ============================================================ -->
   <div id="pwaInstallBanner" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm bg-white rounded-2xl shadow-2xl border border-blue-100 p-4 z-[9998] items-center gap-3">
     <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-1.5 border border-blue-100 shrink-0">
       <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
@@ -1567,7 +1554,6 @@
         }
       });
 
-      // Swipe pour fermer le menu
       let touchStartX = 0;
       let touchEndX = 0;
 
@@ -1623,7 +1609,7 @@
     // ========== PWA : SERVICE WORKER ==========
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js')
+        navigator.serviceWorker.register('/Dunia/service-worker.js')
           .then(function(reg) {
             console.log('[PWA] Service Worker enregistré:', reg.scope);
           })
