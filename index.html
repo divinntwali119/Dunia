@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0b0c26">
   <title>Dunia — Apprenez. Créez. Évoluez.</title>
 
-  <!-- Anti-FOUC -->
+  <!-- Anti-FOUC : applique le thème avant le rendu -->
   <script>
     (function() {
       try {
@@ -835,7 +835,8 @@
     .footer-col ul {
       text-align: left;
     }
-    .footer-col ul li a {
+    .footer-col ul li a,
+    .footer-col ul li button {
       text-align: left;
       justify-content: flex-start;
     }
@@ -1628,7 +1629,7 @@
   <footer class="bg-brand-navy text-slate-400 pt-12 sm:pt-16 pb-6 sm:pb-8 border-t border-slate-800 relative overflow-hidden">
     <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600 to-transparent"></div>
 
-    <!-- ===== NEWSLETTER ===== -->
+    <!-- ===== NEWSLETTER (FormSubmit : envoi automatique vers duniaelearningcongo@gmail.com) ===== -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
       <div class="bg-gradient-to-br from-blue-600/10 to-blue-500/5 border border-blue-500/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-5 reveal">
         <div class="text-center md:text-left w-full md:w-auto">
@@ -1638,14 +1639,23 @@
           </h3>
           <p class="text-slate-400 text-[11px] sm:text-xs">Recevez les nouvelles formations et actualités Dunia directement dans votre boîte mail.</p>
         </div>
-        <form id="newsletterForm" class="w-full md:w-auto flex flex-col xs:flex-row gap-2.5">
+        <form
+          id="newsletterForm"
+          action="https://formsubmit.co/duniaelearningcongo@gmail.com"
+          method="POST"
+          class="w-full md:w-auto flex flex-col xs:flex-row gap-2.5">
           <input
             type="email"
+            name="email"
             id="newsletterEmail"
             placeholder="Votre adresse email"
             required
             class="w-full xs:w-64 bg-white/5 border border-white/10 text-white text-xs placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
           >
+          <input type="hidden" name="_subject" value="Nouvelle inscription à la newsletter Dunia">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="https://votre-domaine.com/merci.html">
           <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
             <i class="fa-solid fa-paper-plane"></i>
             S'inscrire
@@ -2082,7 +2092,7 @@
       }
     });
 
-    // ========== VIDÉO AUTOPLAY ==========
+    // ========== VIDÉO AUTOPLAY (SÉCURITÉ) ==========
     document.addEventListener('DOMContentLoaded', function() {
       const video = document.getElementById('duniaVideo');
       if (!video) return;
@@ -2111,7 +2121,7 @@
       if (yearEl) yearEl.textContent = new Date().getFullYear();
     });
 
-    // ========== NEWSLETTER ==========
+    // ========== NEWSLETTER (FormSubmit - envoi automatique vers duniaelearningcongo@gmail.com) ==========
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('newsletterForm');
       const email = document.getElementById('newsletterEmail');
@@ -2119,31 +2129,29 @@
       if (!form) return;
 
       form.addEventListener('submit', function(e) {
-        e.preventDefault();
         const value = email.value.trim();
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+        // Validation email avant envoi
         if (!regex.test(value)) {
+          e.preventDefault();
           msg.textContent = '❌ Veuillez entrer une adresse email valide.';
           msg.className = 'text-center text-[11px] mt-3 text-red-400 font-semibold';
           msg.classList.remove('hidden');
           return;
         }
 
-        msg.textContent = '✅ Merci ! Vous êtes bien inscrit à la newsletter Dunia.';
-        msg.className = 'text-center text-[11px] mt-3 text-emerald-400 font-semibold';
+        // Message de confirmation avant envoi FormSubmit
+        msg.textContent = '⏳ Envoi en cours... Vous recevrez bientôt de nos nouvelles.';
+        msg.className = 'text-center text-[11px] mt-3 text-blue-400 font-semibold';
         msg.classList.remove('hidden');
-        form.reset();
 
+        // Sauvegarde locale (optionnelle)
         try {
           const subs = JSON.parse(localStorage.getItem('dunia-newsletter') || '[]');
           if (!subs.includes(value)) subs.push(value);
           localStorage.setItem('dunia-newsletter', JSON.stringify(subs));
         } catch (err) {}
-
-        setTimeout(function() {
-          msg.classList.add('hidden');
-        }, 5000);
       });
     });
 
