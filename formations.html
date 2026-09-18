@@ -429,7 +429,6 @@
       background: #000;
     }
 
-    /* Grand bouton play central */
     .big-play-btn {
       position: absolute;
       inset: 0;
@@ -469,7 +468,6 @@
       background: #2563eb;
     }
 
-    /* Contrôles */
     .video-controls {
       position: absolute;
       bottom: 0;
@@ -493,7 +491,6 @@
       .video-controls { opacity: 1; visibility: visible; }
     }
 
-    /* Barre de progression */
     .progress-container {
       position: relative;
       width: 100%;
@@ -546,7 +543,6 @@
       transform: translate(-50%, -50%) scale(1);
     }
 
-    /* Ligne de préchargement */
     .progress-buffered {
       position: absolute;
       top: 0;
@@ -558,7 +554,6 @@
       pointer-events: none;
     }
 
-    /* Boutons de contrôle */
     .ctrl-btn {
       background: transparent;
       border: none;
@@ -587,7 +582,6 @@
       user-select: none;
     }
 
-    /* Volume */
     .volume-container {
       display: flex;
       align-items: center;
@@ -634,7 +628,6 @@
       border: none;
     }
 
-    /* Menu vitesse */
     .speed-menu {
       position: absolute;
       bottom: 60px;
@@ -673,14 +666,12 @@
     .speed-option.active { background: #2563eb; font-weight: 600; }
     .speed-option i { font-size: 10px; }
 
-    /* Indicateur de vitesse sur le bouton */
     .speed-label {
       font-size: 11px;
       font-weight: 700;
       color: #ffffff;
     }
 
-    /* Overlay de chargement */
     .video-loading {
       position: absolute;
       inset: 0;
@@ -709,7 +700,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Flash au centre (play/pause/seek) */
     .video-flash {
       position: absolute;
       top: 50%;
@@ -736,7 +726,6 @@
       transform: translate(-50%, -50%) scale(1);
     }
 
-    /* Barre de titre au dessus de la vidéo */
     .video-top-bar {
       position: absolute;
       top: 0;
@@ -759,7 +748,6 @@
       .video-top-bar { opacity: 1; visibility: visible; }
     }
 
-    /* Bouton "plein écran" iOS fallback */
     .video-player-wrapper:fullscreen,
     .video-player-wrapper:-webkit-full-screen {
       border-radius: 0;
@@ -914,7 +902,6 @@
       #filterContainer::-webkit-scrollbar { display: none; }
       #filterContainer .filter-btn { flex-shrink: 0; }
 
-      /* Contrôles vidéo toujours visibles sur mobile */
       .video-controls { opacity: 1; visibility: visible; }
       .video-top-bar { opacity: 1; visibility: visible; }
 
@@ -1143,7 +1130,6 @@
   <!-- ============================================ -->
   <section class="pt-8 sm:pt-14 pb-4 sm:pb-6 px-4 sm:px-6 md:px-16 max-w-6xl mx-auto relative">
     <div class="text-center mb-6 sm:mb-8 reveal">
-      
       <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">
         Nos formations en vidéo
       </h2>
@@ -1155,7 +1141,6 @@
     <!-- LECTEUR VIDÉO -->
     <div class="reveal">
       <div class="video-player-wrapper" id="videoWrapper">
-        <!-- Barre du haut (titre) -->
         <div class="video-top-bar">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg overflow-hidden bg-white/10 p-0.5 border border-white/20 shrink-0">
@@ -1179,27 +1164,22 @@
             Votre navigateur ne supporte pas la lecture vidéo.
           </video>
 
-          <!-- Grand bouton Play -->
           <div class="big-play-btn" id="bigPlayBtn">
             <div class="big-play-icon">
               <i class="fa-solid fa-play"></i>
             </div>
           </div>
 
-          <!-- Indicateur de chargement -->
           <div class="video-loading" id="videoLoading">
             <div class="loading-spinner"></div>
           </div>
 
-          <!-- Flash central (play/pause/seek) -->
           <div class="video-flash" id="videoFlash">
             <i class="fa-solid fa-play" id="flashIcon"></i>
           </div>
         </div>
 
-        <!-- Contrôles -->
         <div class="video-controls" id="videoControls">
-          <!-- Barre de progression -->
           <div class="progress-container" id="progressContainer">
             <div class="progress-bar">
               <div class="progress-buffered" id="progressBuffered"></div>
@@ -1208,24 +1188,19 @@
             </div>
           </div>
 
-          <!-- Boutons -->
           <div class="flex items-center gap-1 sm:gap-2">
-            <!-- Play / Pause -->
             <button class="ctrl-btn" id="playPauseBtn" aria-label="Lecture/Pause">
               <i class="fa-solid fa-play" id="playPauseIcon"></i>
             </button>
 
-            <!-- Reculer 10s -->
             <button class="ctrl-btn hidden sm:inline-flex" id="rewindBtn" aria-label="Reculer 10 secondes">
               <i class="fa-solid fa-rotate-left"></i>
             </button>
 
-            <!-- Avancer 10s -->
             <button class="ctrl-btn hidden sm:inline-flex" id="forwardBtn" aria-label="Avancer 10 secondes">
               <i class="fa-solid fa-rotate-right"></i>
             </button>
 
-            <!-- Volume -->
             <div class="volume-container" id="volumeContainer">
               <button class="ctrl-btn" id="muteBtn" aria-label="Couper le son">
                 <i class="fa-solid fa-volume-high" id="volumeIcon"></i>
@@ -1235,7 +1210,6 @@
               </div>
             </div>
 
-            <!-- Temps -->
             <span class="time-display">
               <span id="currentTime">0:00</span>
               <span class="text-white/50 mx-1">/</span>
@@ -1244,12 +1218,10 @@
 
             <div class="flex-1"></div>
 
-            <!-- Vitesse -->
             <button class="ctrl-btn" id="speedBtn" aria-label="Vitesse de lecture">
               <span class="speed-label" id="speedLabel">1x</span>
             </button>
 
-            <!-- Menu vitesse -->
             <div class="speed-menu" id="speedMenu">
               <div class="speed-option" data-speed="0.5">0.5x</div>
               <div class="speed-option" data-speed="0.75">0.75x</div>
@@ -1259,7 +1231,6 @@
               <div class="speed-option" data-speed="2">2x</div>
             </div>
 
-            <!-- Plein écran -->
             <button class="ctrl-btn" id="fullscreenBtn" aria-label="Plein écran">
               <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
             </button>
@@ -1515,12 +1486,44 @@
     </div>
   </section>
 
-  <!-- PIED DE PAGE -->
+  <!-- ============================================ -->
+  <!-- PIED DE PAGE COMPLET -->
+  <!-- ============================================ -->
   <footer class="bg-brand-navy text-slate-400 pt-12 sm:pt-16 pb-6 sm:pb-8 border-t border-slate-800 relative overflow-hidden">
     <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600 to-transparent"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12">
-      <div class="reveal xs:col-span-2 lg:col-span-1">
+    <!-- ===== NEWSLETTER ===== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
+      <div class="bg-gradient-to-br from-blue-600/10 to-blue-500/5 border border-blue-500/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-5 reveal">
+        <div class="text-center md:text-left">
+          <h3 class="text-white font-extrabold text-lg sm:text-xl mb-1">
+            <i class="fa-solid fa-envelope-open-text text-blue-500 mr-2"></i>
+            Restez informé
+          </h3>
+          <p class="text-slate-400 text-[11px] sm:text-xs">Recevez les nouvelles formations et actualités Dunia directement dans votre boîte mail.</p>
+        </div>
+        <form id="newsletterForm" class="w-full md:w-auto flex flex-col xs:flex-row gap-2.5">
+          <input
+            type="email"
+            id="newsletterEmail"
+            placeholder="Votre adresse email"
+            required
+            class="w-full xs:w-64 bg-white/5 border border-white/10 text-white text-xs placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
+          >
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            S'inscrire
+          </button>
+        </form>
+      </div>
+      <p id="newsletterMsg" class="hidden text-center text-[11px] mt-3 text-emerald-400 font-semibold"></p>
+    </div>
+
+    <!-- ===== COLONNES ===== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 mb-10 sm:mb-12">
+
+      <!-- Colonne 1 : Marque -->
+      <div class="reveal xs:col-span-2 lg:col-span-2">
         <a href="index.html" class="inline-flex items-center gap-2 sm:gap-3 mb-4 group">
           <img src="images/logo-dunia.png" alt="Dunia" class="logo-dunia-footer">
           <div class="flex flex-col leading-none">
@@ -1528,17 +1531,35 @@
             <span class="brand-tagline-footer">Apprendre • Créer • Évoluer</span>
           </div>
         </a>
-        <p class="text-[11px] sm:text-xs leading-relaxed mb-4 sm:mb-5 text-slate-400">
-          Une plateforme d'apprentissage dédiée aux compétences numériques et à la transmission des connaissances.
+        <p class="text-[11px] sm:text-xs leading-relaxed mb-4 sm:mb-5 text-slate-400 max-w-sm">
+          Une plateforme d'apprentissage dédiée aux compétences numériques et à la transmission des connaissances. Apprenez en ligne ou en présentiel à Kinshasa.
         </p>
-        <div class="flex items-center gap-2 sm:gap-3 text-sm">
-          <a href="https://wa.me/243962104398" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-whatsapp"></i></a>
-          <a href="https://www.facebook.com/profile.php?id=61592556733317" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-linkedin-in"></i></a>
+        <div class="flex items-center gap-2 sm:gap-3 text-sm mb-5 flex-wrap">
+          <a href="https://wa.me/243962104398" aria-label="WhatsApp" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61592556733317" aria-label="Facebook" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="Instagram" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="LinkedIn" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="TikTok" class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+
+        <div class="space-y-2 text-[11px] sm:text-xs">
+          <p class="flex items-center gap-2 text-slate-400">
+            <i class="fa-solid fa-location-dot text-blue-500 w-4"></i>
+            Kinshasa, République démocratique du Congo
+          </p>
+          <p class="flex items-center gap-2 text-slate-400">
+            <i class="fa-solid fa-envelope text-blue-500 w-4"></i>
+            <a href="mailto:contact@dunia.work" class="hover:text-blue-400 transition">contact@dunia.work</a>
+          </p>
+          <p class="flex items-center gap-2 text-slate-400">
+            <i class="fa-solid fa-phone text-blue-500 w-4"></i>
+            <a href="tel:+243962104398" class="hover:text-blue-400 transition">+243 962 104 398</a>
+          </p>
         </div>
       </div>
 
+      <!-- Colonne 2 : Navigation -->
       <div class="reveal delay-100">
         <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
           <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
@@ -1548,10 +1569,12 @@
           <li><a href="index.html" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Accueil</a></li>
           <li><a href="formations.html" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Formations</a></li>
           <li><a href="index.html#about" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>À propos</a></li>
+          <li><a href="index.html#faq" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>FAQ</a></li>
           <li><a href="index.html#contact" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Contact</a></li>
         </ul>
       </div>
 
+      <!-- Colonne 3 : Apprentissage -->
       <div class="reveal delay-200">
         <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
           <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
@@ -1565,6 +1588,7 @@
         </ul>
       </div>
 
+      <!-- Colonne 4 : Dunia & Légal -->
       <div class="reveal delay-300">
         <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
           <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
@@ -1573,20 +1597,109 @@
         <ul class="space-y-2 sm:space-y-2.5 text-[11px] sm:text-xs">
           <li><a href="index.html#about" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Notre mission</a></li>
           <li><a href="https://wa.me/243962104398" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Devenir formateur</a></li>
-          <li><a href="index.html#faq" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>FAQ</a></li>
-          <li><a href="index.html#contact" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Nous contacter</a></li>
+          <li><a href="#" data-legal="mentions" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Mentions légales</a></li>
+          <li><a href="#" data-legal="confidentialite" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Confidentialité</a></li>
+          <li><a href="#" data-legal="cookies" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Cookies</a></li>
+          <li><a href="#" data-legal="cgu" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>CGU</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-slate-500 text-center sm:text-left">
-      <p>© 2026 Dunia. Tous droits réservés.</p>
-      <p class="flex items-center gap-1.5">
-        <i class="fa-solid fa-location-dot text-blue-500"></i>
-        Kinshasa, République démocratique du Congo.
+    <!-- ===== BADGES DE CONFIANCE ===== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-8 sm:mb-10">
+      <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 py-4 border-y border-slate-800/60">
+        <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
+          <i class="fa-solid fa-shield-halved text-blue-500"></i> Paiement sécurisé
+        </span>
+        <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
+        <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
+          <i class="fa-solid fa-lock text-blue-500"></i> Données protégées
+        </span>
+        <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
+        <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
+          <i class="fa-solid fa-certificate text-blue-500"></i> Formateurs vérifiés
+        </span>
+        <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
+        <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
+          <i class="fa-solid fa-headset text-blue-500"></i> Support 7j/7
+        </span>
+      </div>
+    </div>
+
+    <!-- ===== BAS DE PAGE ===== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 border-t border-slate-800">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-4 text-[10px] sm:text-[11px] text-slate-500">
+
+        <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
+          <p>© <span id="currentYear">2026</span> Dunia. Tous droits réservés.</p>
+          <span class="hidden sm:inline w-px h-3 bg-slate-800"></span>
+          <p class="flex items-center gap-1.5">
+            <i class="fa-solid fa-location-dot text-blue-500"></i>
+            Kinshasa, RDC
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+          <a href="#" data-legal="mentions" class="hover:text-blue-400 transition">Mentions légales</a>
+          <span class="w-px h-3 bg-slate-800"></span>
+          <a href="#" data-legal="confidentialite" class="hover:text-blue-400 transition">Confidentialité</a>
+          <span class="w-px h-3 bg-slate-800"></span>
+          <a href="#" data-legal="cookies" class="hover:text-blue-400 transition">Cookies</a>
+          <span class="w-px h-3 bg-slate-800"></span>
+          <a href="#" data-legal="cgu" class="hover:text-blue-400 transition">CGU</a>
+        </div>
+      </div>
+
+      <p class="text-center text-[9px] sm:text-[10px] text-slate-600 mt-4">
+        Dunia est actuellement en développement. Certaines fonctionnalités et formations seront disponibles prochainement.
       </p>
     </div>
+
+    <!-- Bouton retour en haut -->
+    <button id="backToTop" aria-label="Retour en haut" class="fixed bottom-24 right-4 sm:right-6 w-11 h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl shadow-blue-600/40 flex items-center justify-center transition-all duration-300 opacity-0 invisible translate-y-4 z-[9997] active:scale-90">
+      <i class="fa-solid fa-arrow-up text-sm"></i>
+    </button>
   </footer>
+
+  <!-- ===== MODALES LÉGALES ===== -->
+  <div id="legalModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+    <div id="legalOverlay" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+    <div class="relative bg-white dark:bg-[#0a0a0a] rounded-2xl sm:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800">
+        <h3 id="legalTitle" class="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white">Titre</h3>
+        <button id="legalClose" aria-label="Fermer" class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="legalContent" class="p-4 sm:p-6 overflow-y-auto text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- ===== BANNIÈRE COOKIES ===== -->
+  <div id="cookieBanner" class="hidden fixed bottom-0 left-0 right-0 z-[9999] p-3 sm:p-4">
+    <div class="max-w-4xl mx-auto bg-white dark:bg-[#0a0a0a] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <div class="flex items-start gap-3 flex-1">
+        <div class="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-cookie-bite"></i>
+        </div>
+        <div>
+          <p class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white mb-1">Nous utilisons des cookies</p>
+          <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            Dunia utilise des cookies pour améliorer votre expérience, mémoriser vos préférences et analyser le trafic. Vous pouvez accepter ou refuser.
+            <a href="#" data-legal="cookies" class="text-blue-600 dark:text-blue-400 underline hover:no-underline">En savoir plus</a>
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+        <button id="cookieRefuse" class="flex-1 sm:flex-none text-[10px] sm:text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-4 py-2.5 rounded-lg transition">
+          Refuser
+        </button>
+        <button id="cookieAccept" class="flex-1 sm:flex-none text-[10px] sm:text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded-lg transition active:scale-95">
+          Accepter
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- BANNIÈRE D'INSTALLATION PWA -->
   <div id="pwaInstallBanner" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm bg-white rounded-2xl shadow-2xl border border-blue-100 p-4 z-[9998] items-center gap-3">
@@ -2017,7 +2130,6 @@
       let controlsTimeout;
       let lastVolume = 1;
 
-      // ===== FORMATAGE DU TEMPS =====
       function formatTime(seconds) {
         if (isNaN(seconds)) return '0:00';
         const h = Math.floor(seconds / 3600);
@@ -2029,7 +2141,6 @@
         return m + ':' + String(s).padStart(2, '0');
       }
 
-      // ===== PLAY / PAUSE =====
       function togglePlay() {
         if (video.paused) {
           video.play().catch(function() {});
@@ -2066,7 +2177,6 @@
 
       video.addEventListener('click', togglePlay);
 
-      // ===== RECULER / AVANCER =====
       rewindBtn.addEventListener('click', function() {
         video.currentTime = Math.max(0, video.currentTime - 10);
         showFlash('fa-rotate-left');
@@ -2077,7 +2187,6 @@
         showFlash('fa-rotate-right');
       });
 
-      // ===== VOLUME =====
       function updateVolumeIcon() {
         if (video.muted || video.volume === 0) {
           volumeIcon.className = 'fa-solid fa-volume-xmark';
@@ -2111,7 +2220,6 @@
         updateVolumeIcon();
       });
 
-      // ===== PROGRESSION =====
       function updateProgress() {
         if (video.duration) {
           const percent = (video.currentTime / video.duration) * 100;
@@ -2136,7 +2244,6 @@
         }
       });
 
-      // ===== SEEK (CLIC + DRAG) =====
       function seekFromEvent(e) {
         const rect = progressContainer.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -2179,7 +2286,6 @@
         progressContainer.classList.remove('dragging');
       });
 
-      // ===== VITESSE =====
       speedBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         speedMenu.classList.toggle('open');
@@ -2213,7 +2319,6 @@
         }
       });
 
-      // ===== PLEIN ÉCRAN =====
       function toggleFullscreen() {
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
           if (wrapper.requestFullscreen) {
@@ -2246,7 +2351,6 @@
         }
       }
 
-      // ===== CHARGEMENT =====
       video.addEventListener('waiting', function() {
         videoLoading.classList.add('visible');
       });
@@ -2257,7 +2361,6 @@
         videoLoading.classList.remove('visible');
       });
 
-      // ===== FLASH CENTRAL =====
       function showFlash(iconClass) {
         flashIcon.className = 'fa-solid ' + iconClass;
         videoFlash.classList.add('show');
@@ -2267,7 +2370,6 @@
         }, 600);
       }
 
-      // ===== MASQUER LES CONTRÔLES (desktop) =====
       function showControlsTemporarily() {
         wrapper.classList.add('controls-visible');
         clearTimeout(controlsTimeout);
@@ -2283,7 +2385,6 @@
         if (!video.paused) wrapper.classList.remove('controls-visible');
       });
 
-      // ===== RACCOURCIS CLAVIER =====
       document.addEventListener('keydown', function(e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (!isElementInViewport(wrapper)) return;
@@ -2318,7 +2419,6 @@
         return rect.top < window.innerHeight && rect.bottom > 0;
       }
 
-      // ===== AUTOPLAY AU SCROLL =====
       const videoObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
@@ -2330,9 +2430,214 @@
 
       videoObserver.observe(video);
 
-      // Mise à jour initiale
       updatePlayIcon();
       updateVolumeIcon();
+    });
+
+    // ========== FOOTER : ANNÉE DYNAMIQUE ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const yearEl = document.getElementById('currentYear');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+    });
+
+    // ========== NEWSLETTER ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('newsletterForm');
+      const email = document.getElementById('newsletterEmail');
+      const msg = document.getElementById('newsletterMsg');
+      if (!form) return;
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const value = email.value.trim();
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!regex.test(value)) {
+          msg.textContent = '❌ Veuillez entrer une adresse email valide.';
+          msg.className = 'text-center text-[11px] mt-3 text-red-400 font-semibold';
+          msg.classList.remove('hidden');
+          return;
+        }
+
+        msg.textContent = '✅ Merci ! Vous êtes bien inscrit à la newsletter Dunia.';
+        msg.className = 'text-center text-[11px] mt-3 text-emerald-400 font-semibold';
+        msg.classList.remove('hidden');
+        form.reset();
+
+        try {
+          const subs = JSON.parse(localStorage.getItem('dunia-newsletter') || '[]');
+          if (!subs.includes(value)) subs.push(value);
+          localStorage.setItem('dunia-newsletter', JSON.stringify(subs));
+        } catch (err) {}
+
+        setTimeout(function() {
+          msg.classList.add('hidden');
+        }, 5000);
+      });
+    });
+
+    // ========== MODALES LÉGALES ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('legalModal');
+      const overlay = document.getElementById('legalOverlay');
+      const closeBtn = document.getElementById('legalClose');
+      const titleEl = document.getElementById('legalTitle');
+      const contentEl = document.getElementById('legalContent');
+
+      const legalContent = {
+        mentions: {
+          title: 'Mentions légales',
+          html: `
+            <p><strong>Éditeur du site :</strong> Dunia</p>
+            <p><strong>Siège :</strong> Kinshasa, République démocratique du Congo</p>
+            <p><strong>Email :</strong> contact@dunia.work</p>
+            <p><strong>Téléphone :</strong> +243 962 104 398</p>
+            <p><strong>Responsable de publication :</strong> L'équipe Dunia</p>
+            <p><strong>Hébergement :</strong> Les informations d'hébergement seront précisées au lancement officiel de la plateforme.</p>
+            <p>Dunia est une plateforme d'apprentissage dédiée aux compétences numériques. Le site est actuellement en phase de développement.</p>
+            <p>Toute reproduction, totale ou partielle, du contenu de ce site sans autorisation écrite préalable est interdite.</p>
+          `
+        },
+        confidentialite: {
+          title: 'Politique de confidentialité',
+          html: `
+            <p><strong>1. Collecte des données</strong></p>
+            <p>Dunia collecte uniquement les données que vous nous fournissez volontairement (nom, email, numéro de téléphone) via nos formulaires de contact, d'inscription ou de newsletter.</p>
+            <p><strong>2. Utilisation des données</strong></p>
+            <p>Vos données sont utilisées pour :</p>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Vous informer des nouveautés et formations Dunia</li>
+              <li>Répondre à vos demandes de contact</li>
+              <li>Améliorer nos services</li>
+            </ul>
+            <p><strong>3. Partage des données</strong></p>
+            <p>Nous ne vendons ni ne partageons vos données personnelles avec des tiers sans votre consentement, sauf obligation légale.</p>
+            <p><strong>4. Vos droits</strong></p>
+            <p>Conformément aux lois applicables, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à contact@dunia.work.</p>
+            <p><strong>5. Sécurité</strong></p>
+            <p>Nous mettons en œuvre des mesures techniques et organisationnelles pour protéger vos données contre tout accès non autorisé.</p>
+          `
+        },
+        cookies: {
+          title: 'Politique de cookies',
+          html: `
+            <p><strong>Qu'est-ce qu'un cookie ?</strong></p>
+            <p>Un cookie est un petit fichier texte stocké sur votre appareil lors de votre visite sur un site web. Il permet de mémoriser vos préférences et d'améliorer votre expérience.</p>
+            <p><strong>Cookies utilisés par Dunia :</strong></p>
+            <ul class="list-disc pl-5 space-y-1">
+              <li><strong>Cookies essentiels :</strong> nécessaires au fonctionnement du site (thème clair/sombre, préférences).</li>
+              <li><strong>Cookies analytiques :</strong> permettent de comprendre comment les visiteurs utilisent le site.</li>
+              <li><strong>Cookies de préférences :</strong> mémorisent vos choix (langue, thème).</li>
+            </ul>
+            <p><strong>Gestion des cookies</strong></p>
+            <p>Vous pouvez à tout moment accepter ou refuser les cookies via la bannière dédiée ou les paramètres de votre navigateur. Le refus de certains cookies peut affecter votre expérience sur le site.</p>
+            <p>Pour plus d'informations, contactez-nous à contact@dunia.work.</p>
+          `
+        },
+        cgu: {
+          title: "Conditions générales d'utilisation",
+          html: `
+            <p><strong>1. Objet</strong></p>
+            <p>Les présentes CGU régissent l'utilisation du site Dunia et de ses services. En accédant au site, vous acceptez sans réserve ces conditions.</p>
+            <p><strong>2. Accès au service</strong></p>
+            <p>Dunia est actuellement en développement. L'accès à certaines fonctionnalités peut être limité ou modifié sans préavis.</p>
+            <p><strong>3. Compte utilisateur</strong></p>
+            <p>L'utilisateur s'engage à fournir des informations exactes et à ne pas usurper l'identité d'un tiers. Il est responsable de la confidentialité de ses identifiants.</p>
+            <p><strong>4. Contenu</strong></p>
+            <p>Les contenus pédagogiques proposés sur Dunia sont protégés par le droit d'auteur. Toute reproduction non autorisée est interdite.</p>
+            <p><strong>5. Responsabilité</strong></p>
+            <p>Dunia ne saurait être tenu responsable des dommages directs ou indirects résultant de l'utilisation du site ou de l'impossibilité d'y accéder.</p>
+            <p><strong>6. Modification des CGU</strong></p>
+            <p>Dunia se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés des changements importants.</p>
+          `
+        }
+      };
+
+      function openModal(key) {
+        const data = legalContent[key];
+        if (!data) return;
+        titleEl.textContent = data.title;
+        contentEl.innerHTML = data.html;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+
+      document.querySelectorAll('[data-legal]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          openModal(this.getAttribute('data-legal'));
+        });
+      });
+
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (overlay) overlay.addEventListener('click', closeModal);
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+          closeModal();
+        }
+      });
+    });
+
+    // ========== BANNIÈRE COOKIES ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const banner = document.getElementById('cookieBanner');
+      const acceptBtn = document.getElementById('cookieAccept');
+      const refuseBtn = document.getElementById('cookieRefuse');
+      if (!banner) return;
+
+      const consent = localStorage.getItem('dunia-cookie-consent');
+
+      if (!consent) {
+        setTimeout(function() {
+          banner.classList.remove('hidden');
+        }, 2000);
+      }
+
+      function hideBanner(value) {
+        banner.classList.add('hidden');
+        localStorage.setItem('dunia-cookie-consent', value);
+        localStorage.setItem('dunia-cookie-date', new Date().toISOString());
+      }
+
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', function() {
+          hideBanner('accepted');
+        });
+      }
+
+      if (refuseBtn) {
+        refuseBtn.addEventListener('click', function() {
+          hideBanner('refused');
+        });
+      }
+    });
+
+    // ========== BOUTON RETOUR EN HAUT ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
+
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 400) {
+          btn.classList.remove('opacity-0', 'invisible', 'translate-y-4');
+          btn.classList.add('opacity-100', 'visible', 'translate-y-0');
+        } else {
+          btn.classList.add('opacity-0', 'invisible', 'translate-y-4');
+          btn.classList.remove('opacity-100', 'visible', 'translate-y-0');
+        }
+      }, { passive: true });
+
+      btn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     });
   </script>
 
