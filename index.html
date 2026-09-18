@@ -46,6 +46,9 @@
           },
           fontFamily: {
             sans: ['Poppins', 'sans-serif'],
+          },
+          screens: {
+            'xs': '400px',
           }
         }
       }
@@ -62,6 +65,7 @@
       scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
+      background-color: #0b0c26;
     }
 
     body {
@@ -83,7 +87,7 @@
     }
 
     /* ============================================ */
-    /* ÉCRAN DE CHARGEMENT (LOADER) */
+    /* ÉCRAN DE CHARGEMENT */
     /* ============================================ */
     #loader {
       position: fixed;
@@ -125,8 +129,8 @@
 
     .loader-container {
       position: relative;
-      width: 180px;
-      height: 180px;
+      width: 160px;
+      height: 160px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -150,8 +154,8 @@
         rgba(59, 130, 246, 0.6) 70%,
         rgba(96, 165, 250, 1) 100%
       );
-      mask: radial-gradient(farthest-side, transparent calc(100% - 30px), #000 calc(100% - 29px));
-      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 30px), #000 calc(100% - 29px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 26px), #000 calc(100% - 25px));
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 26px), #000 calc(100% - 25px));
       animation: spin 1.2s linear infinite;
       filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
     }
@@ -167,9 +171,9 @@
       content: '';
       position: absolute;
       top: 0;
-      left: calc(50% - 15px);
-      width: 30px;
-      height: 30px;
+      left: calc(50% - 13px);
+      width: 26px;
+      height: 26px;
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       border-radius: 50%;
       box-shadow: 0 0 20px rgba(59, 130, 246, 0.9), 0 0 40px rgba(37, 99, 235, 0.6);
@@ -189,8 +193,8 @@
     }
 
     .loader-logo {
-      width: 110px;
-      height: 110px;
+      width: 90px;
+      height: 90px;
       object-fit: contain;
       z-index: 10;
       animation: logoPulse 1.8s ease-in-out infinite;
@@ -610,6 +614,10 @@
       from { transform: translateY(100px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+
+    @media (max-width: 640px) {
+      body, html { max-width: 100vw; overflow-x: hidden; }
+    }
   </style>
 </head>
 <body class="bg-white">
@@ -739,13 +747,13 @@
     <div class="hero-overlay"></div>
 
     <div class="relative max-w-4xl mx-auto z-20 w-full text-center flex flex-col items-center">
-      <h1 class="mobile-hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-3 sm:mb-4 text-white drop-shadow-md max-w-3xl">
+      <h1 class="mobile-hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-3 sm:mb-4 text-white drop-shadow-md max-w-3xl px-1">
         Découvrez les compétences qui construiront votre avenir.
       </h1>
       <p class="text-slate-200 text-xs xs:text-sm sm:text-base md:text-lg mb-6 max-w-2xl leading-relaxed drop-shadow px-2">
         Dunia est une plateforme dédiée à la formation et à l'apprentissage dans le domaine de la technologie et bien plus encore : apprenez en ligne ou participez à nos formations en présentiel à Kinshasa.
       </p>
-      <div class="flex flex-col xs:flex-row items-center justify-center gap-3 w-full xs:w-auto">
+      <div class="flex flex-col xs:flex-row items-center justify-center gap-3 w-full xs:w-auto px-2">
         <a href="https://wa.me/243962104398" class="w-full xs:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl shadow-lg transition active:scale-95 text-center">
           Rejoindre la communauté WhatsApp <i class="fa-brands fa-whatsapp ml-1.5"></i>
         </a>
@@ -1476,8 +1484,7 @@
       </button>
       <button id="pwaInstallBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition flex items-center gap-1">
         <i class="fa-solid fa-download"></i>
-        Installer
-      </button>
+        Installer      </button>
     </div>
   </div>
 
