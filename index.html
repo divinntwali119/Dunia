@@ -12,7 +12,7 @@
       try {
         const saved = localStorage.getItem('dunia-theme');
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (saved === 'dark' || (!saved && systemDark)) {
+        if (saved === 'light' || (!saved && systemDark)) {
           document.documentElement.classList.add('dark');
         }
       } catch (e) {}
