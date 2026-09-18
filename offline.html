@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0b0c26">
+  <title>Hors ligne — Dunia</title>
+
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+  <link rel="manifest" href="manifest.json">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0b0c26 0%, #1b1b50 100%);
+      color: white;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      margin: 0;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .float-icon { animation: float 3s ease-in-out infinite; }
+    @keyframes pulse-ring {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+    .pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+  <div class="text-center max-w-md mx-auto">
+    <div class="relative inline-block mb-6">
+      <div class="absolute inset-0 bg-blue-500/30 rounded-full blur-3xl pulse-ring"></div>
+      <div class="relative w-24 h-24 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center border border-white/20 float-icon mx-auto">
+        <i class="fa-solid fa-wifi text-4xl text-blue-400"></i>
+      </div>
+    </div>
+
+    <img src="images/logo-dunia.png" alt="Dunia" class="h-12 mx-auto mb-6 opacity-90">
+
+    <h1 class="text-2xl sm:text-3xl font-extrabold mb-3">Vous êtes hors ligne</h1>
+    <p class="text-slate-300 text-sm mb-8 leading-relaxed">
+      Il semble que vous n'ayez pas de connexion Internet. Vérifiez votre connexion et réessayez.
+    </p>
+
+    <button onclick="window.location.reload()"
+            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-6 py-3.5 rounded-xl shadow-2xl transition active:scale-95">
+      <i class="fa-solid fa-rotate-right"></i>
+      Réessayer
+    </button>
+
+    <p class="text-slate-500 text-[10px] mt-8">
+      <i class="fa-solid fa-circle-info mr-1"></i>
+      Les pages déjà visitées restent accessibles hors ligne.
+    </p>
+  </div>
+</body>
+</html>
