@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0b0c26">
   <title>Hors ligne — Dunia</title>
 
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Dunia/icons/icon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Dunia/icons/icon-180x180.png">
   <link rel="manifest" href="/Dunia/manifest.json">
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <img src="images/logo-dunia.png" alt="Dunia" class="h-12 mx-auto mb-6 opacity-90">
+    <img src="/Dunia/images/logo-dunia.png" alt="Dunia" class="h-12 mx-auto mb-6 opacity-90">
 
     <h1 class="text-2xl sm:text-3xl font-extrabold mb-3">Vous êtes hors ligne</h1>
     <p class="text-slate-300 text-sm mb-8 leading-relaxed">
@@ -66,5 +66,19 @@
       Les pages déjà visitées restent accessibles hors ligne.
     </p>
   </div>
+
+  <script>
+    /* Recharger automatiquement quand la connexion revient */
+    window.addEventListener('online', function() {
+      window.location.reload();
+    });
+
+    /* Vérifier la connexion toutes les 5 secondes */
+    setInterval(function() {
+      if (navigator.onLine) {
+        window.location.reload();
+      }
+    }, 5000);
+  </script>
 </body>
 </html>
