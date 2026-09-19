@@ -2,9 +2,9 @@
    SERVICE WORKER — DUNIA PWA (GitHub Pages /Dunia/)
    ============================================================ */
 
-const CACHE_NAME = 'dunia-v1.0.0';
-const RUNTIME_CACHE = 'dunia-runtime-v1.0.0';
-const IMAGE_CACHE = 'dunia-images-v1.0.0';
+const CACHE_NAME = 'dunia-v1.1.0';
+const RUNTIME_CACHE = 'dunia-runtime-v1.1.0';
+const IMAGE_CACHE = 'dunia-images-v1.1.0';
 
 const BASE = '/Dunia';
 
@@ -15,8 +15,17 @@ const PRECACHE_URLS = [
   BASE + '/offline.html',
   BASE + '/manifest.json',
   BASE + '/images/logo-dunia.png',
+  BASE + '/icons/icon-32x32.png',
+  BASE + '/icons/icon-96x96.png',
+  BASE + '/icons/icon-128x128.png',
+  BASE + '/icons/icon-144x144.png',
+  BASE + '/icons/icon-152x152.png',
+  BASE + '/icons/icon-180x180.png',
   BASE + '/icons/icon-192x192.png',
-  BASE + '/icons/icon-512x512.png'
+  BASE + '/icons/icon-384x384.png',
+  BASE + '/icons/icon-512x512.png',
+  BASE + '/icons/icon-192x192-maskable.png',
+  BASE + '/icons/icon-512x512-maskable.png'
 ];
 
 /* ============ INSTALLATION ============ */

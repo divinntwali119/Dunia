@@ -23,10 +23,15 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png">
   <link rel="icon" type="image/png" sizes="48x48" href="icons/icon-48x48.png">
-  <link rel="shortcut icon" href="favicon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="icons/icon-64x64.png">
+  <link rel="shortcut icon" href="icons/icon-32x32.png">
+
+  <!-- Apple Touch Icons (iOS) -->
+  <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120x120.png">
   <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167x167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+  <link rel="apple-touch-icon" sizes="1024x1024" href="icons/icon-1024x1024.png">
 
   <!-- PWA -->
   <link rel="manifest" href="/Dunia/manifest.json">
@@ -127,7 +132,6 @@
         top: 0;
       }
 
-      /* Ajuster la barre supérieure (topbar) pour qu'elle reste au-dessus de la navbar fixe */
       .topbar-fixed {
         position: relative;
         z-index: 51;
@@ -177,8 +181,8 @@
 
     .loader-container {
       position: relative;
-      width: 160px;
-      height: 160px;
+      width: 120px;
+      height: 120px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -186,7 +190,7 @@
     }
 
     @media (min-width: 640px) {
-      .loader-container { width: 260px; height: 260px; }
+      .loader-container { width: 180px; height: 180px; }
     }
 
     .spinner {
@@ -241,16 +245,19 @@
     }
 
     .loader-logo {
-      width: 90px;
-      height: 90px;
-      object-fit: contain;
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 50%;
       z-index: 10;
       animation: logoPulse 1.8s ease-in-out infinite;
       filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
+      background: #ffffff;
+      padding: 4px;
     }
 
     @media (min-width: 640px) {
-      .loader-logo { width: 160px; height: 160px; }
+      .loader-logo { width: 96px; height: 96px; padding: 6px; }
     }
 
     @keyframes logoPulse {
