@@ -7,31 +7,41 @@ const CACHE_NAME = 'dunia-v1.2.0';
 const RUNTIME_CACHE = 'dunia-runtime-v1.2.0';
 const IMAGE_CACHE = 'dunia-images-v1.2.0';
 
-const BASE = '/Dunia';
+/* Détecte dynamiquement la base du site selon l'emplacement du service worker */
+const swPath = (typeof self !== 'undefined' && self.location && self.location.pathname) ? self.location.pathname : '/';
+let BASE = swPath.replace(/\/service-worker\.js$/, '');
+if (!BASE) BASE = '/';
+
+function joinPath(p) {
+  if (!p) return BASE;
+  const cleanBase = BASE === '/' ? '/' : BASE.replace(/\/+$/, '');
+  const cleanP = p.replace(/^\/+/, '');
+  return cleanBase === '/' ? '/' + cleanP : cleanBase + '/' + cleanP;
+}
 
 /* Fichiers essentiels — leur absence ne bloque PAS l'installation */
 const PRECACHE_URLS = [
-  BASE + '/',
-  BASE + '/index.html',
-  BASE + '/formations.html',
-  BASE + '/offline.html',
-  BASE + '/manifest.json',
-  BASE + '/images/logo-dunia.png'
+  joinPath(''),
+  joinPath('index.html'),
+  joinPath('formations.html'),
+  joinPath('offline.html'),
+  joinPath('manifest.json'),
+  joinPath('images/logo-dunia.png')
 ];
 
 /* Fichiers optionnels — ignorés silencieusement si manquants */
 const OPTIONAL_URLS = [
-  BASE + '/icons/icon-32x32.png',
-  BASE + '/icons/icon-96x96.png',
-  BASE + '/icons/icon-128x128.png',
-  BASE + '/icons/icon-144x144.png',
-  BASE + '/icons/icon-152x152.png',
-  BASE + '/icons/icon-180x180.png',
-  BASE + '/icons/icon-192x192.png',
-  BASE + '/icons/icon-384x384.png',
-  BASE + '/icons/icon-512x512.png',
-  BASE + '/icons/icon-192x192-maskable.png',
-  BASE + '/icons/icon-512x512-maskable.png'
+  joinPath('icons/icon-32x32.png'),
+  joinPath('icons/icon-96x96.png'),
+  joinPath('icons/icon-128x128.png'),
+  joinPath('icons/icon-144x144.png'),
+  joinPath('icons/icon-152x152.png'),
+  joinPath('icons/icon-180x180.png'),
+  joinPath('icons/icon-192x192.png'),
+  joinPath('icons/icon-384x384.png'),
+  joinPath('icons/icon-512x512.png'),
+  joinPath('icons/icon-192x192-maskable.png'),
+  joinPath('icons/icon-512x512-maskable.png')
 ];
 
 /* ============ INSTALLATION ============ */

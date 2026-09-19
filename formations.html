@@ -34,7 +34,7 @@
   <link rel="apple-touch-icon" sizes="1024x1024" href="icons/icon-1024x1024.png">
 
   <!-- PWA -->
-  <link rel="manifest" href="/Dunia/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Dunia">
@@ -2161,7 +2161,9 @@
     // ============================================
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/Dunia/service-worker.js', { scope: '/Dunia/' })
+        const basePath = location.pathname.replace(/\/[^/]*$/, '') || '/';
+        const swUrl = basePath + '/service-worker.js';
+        navigator.serviceWorker.register(swUrl, { scope: basePath })
           .then(function(reg) {
             console.log('[PWA] Service Worker enregistré. Scope:', reg.scope);
 
