@@ -101,6 +101,40 @@
     }
 
     /* ============================================ */
+    /* NAVBAR FIXE SUR MOBILE */
+    /* ============================================ */
+    #mainHeader {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    @media (max-width: 1023px) {
+      #mainHeader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+      }
+
+      body {
+        padding-top: 56px;
+      }
+
+      #mobileMenu {
+        top: 0;
+      }
+
+      /* Ajuster la barre supérieure (topbar) pour qu'elle reste au-dessus de la navbar fixe */
+      .topbar-fixed {
+        position: relative;
+        z-index: 51;
+      }
+    }
+
+    /* ============================================ */
     /* ÉCRAN DE CHARGEMENT */
     /* ============================================ */
     #loader {
@@ -858,7 +892,7 @@
   </div>
 
   <!-- BARRE SUPÉRIEURE -->
-  <div class="bg-brand-navy text-gray-300 text-[10px] sm:text-xs py-2 px-3 sm:px-4 md:px-16 flex justify-between items-center border-b border-slate-800">
+  <div class="topbar-fixed bg-brand-navy text-gray-300 text-[10px] sm:text-xs py-2 px-3 sm:px-4 md:px-16 flex justify-between items-center border-b border-slate-800">
     <div class="flex items-center gap-3 sm:gap-4">
       <span class="truncate max-w-[100px] sm:max-w-none">
         <i class="fa-solid fa-envelope text-blue-500 mr-1"></i>
@@ -885,7 +919,7 @@
   </div>
 
   <!-- BARRE DE NAVIGATION -->
-  <header class="bg-white sticky top-0 z-50 shadow-sm">
+  <header id="mainHeader" class="bg-white sticky top-0 z-50 shadow-sm">
     <nav class="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 py-2.5 sm:py-3 flex justify-between items-center">
       <a href="#" class="flex items-center gap-2 sm:gap-3 group">
         <img src="images/logo-dunia.png" alt="Dunia" class="logo-dunia">
@@ -1629,7 +1663,7 @@
   <footer class="bg-brand-navy text-slate-400 pt-12 sm:pt-16 pb-6 sm:pb-8 border-t border-slate-800 relative overflow-hidden">
     <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600 to-transparent"></div>
 
-    <!-- ===== NEWSLETTER (FormSubmit : envoi automatique vers duniaelearningcongo@gmail.com) ===== -->
+    <!-- ===== NEWSLETTER (mailto) ===== -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
       <div class="bg-gradient-to-br from-blue-600/10 to-blue-500/5 border border-blue-500/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-5 reveal">
         <div class="text-center md:text-left w-full md:w-auto">
@@ -1639,11 +1673,7 @@
           </h3>
           <p class="text-slate-400 text-[11px] sm:text-xs">Recevez les nouvelles formations et actualités Dunia directement dans votre boîte mail.</p>
         </div>
-        <form
-          id="newsletterForm"
-          action="https://formsubmit.co/duniaelearningcongo@gmail.com"
-          method="POST"
-          class="w-full md:w-auto flex flex-col xs:flex-row gap-2.5">
+        <form id="newsletterForm" class="w-full md:w-auto flex flex-col xs:flex-row gap-2.5">
           <input
             type="email"
             name="email"
@@ -1652,10 +1682,6 @@
             required
             class="w-full xs:w-64 bg-white/5 border border-white/10 text-white text-xs placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
           >
-          <input type="hidden" name="_subject" value="Nouvelle inscription à la newsletter Dunia">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_next" value="https://votre-domaine.com/merci.html">
           <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
             <i class="fa-solid fa-paper-plane"></i>
             S'inscrire
@@ -2121,7 +2147,7 @@
       if (yearEl) yearEl.textContent = new Date().getFullYear();
     });
 
-    // ========== NEWSLETTER (FormSubmit - envoi automatique vers duniaelearningcongo@gmail.com) ==========
+    // ========== NEWSLETTER (mailto) ==========
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('newsletterForm');
       const email = document.getElementById('newsletterEmail');
@@ -2129,29 +2155,39 @@
       if (!form) return;
 
       form.addEventListener('submit', function(e) {
+        e.preventDefault();
         const value = email.value.trim();
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        // Validation email avant envoi
         if (!regex.test(value)) {
-          e.preventDefault();
           msg.textContent = '❌ Veuillez entrer une adresse email valide.';
           msg.className = 'text-center text-[11px] mt-3 text-red-400 font-semibold';
           msg.classList.remove('hidden');
           return;
         }
 
-        // Message de confirmation avant envoi FormSubmit
-        msg.textContent = '⏳ Envoi en cours... Vous recevrez bientôt de nos nouvelles.';
-        msg.className = 'text-center text-[11px] mt-3 text-blue-400 font-semibold';
+        const destinataire = 'duniaelearningcongo@gmail.com';
+        const sujet = encodeURIComponent('Nouvelle inscription à la newsletter Dunia');
+        const corps = encodeURIComponent(
+          'Bonjour Dunia,\n\n' +
+          'Je souhaite m\'inscrire à votre newsletter.\n\n' +
+          'Mon adresse email : ' + value + '\n\n' +
+          'Merci !'
+        );
+
+        window.location.href = 'mailto:' + destinataire + '?subject=' + sujet + '&body=' + corps;
+
+        msg.textContent = '✅ Votre client mail va s\'ouvrir pour envoyer votre inscription.';
+        msg.className = 'text-center text-[11px] mt-3 text-emerald-400 font-semibold';
         msg.classList.remove('hidden');
 
-        // Sauvegarde locale (optionnelle)
         try {
           const subs = JSON.parse(localStorage.getItem('dunia-newsletter') || '[]');
           if (!subs.includes(value)) subs.push(value);
           localStorage.setItem('dunia-newsletter', JSON.stringify(subs));
         } catch (err) {}
+
+        setTimeout(function() { email.value = ''; }, 3000);
       });
     });
 
