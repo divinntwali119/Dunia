@@ -2,7 +2,7 @@
   "name": "Dunia — Apprenez. Créez. Évoluez.",
   "short_name": "Dunia",
   "description": "Plateforme d'apprentissage dédiée aux compétences numériques : développement web, IA, design et plus encore.",
-  "start_url": "/Dunia/",
+  "start_url": "/Dunia/index.html",
   "scope": "/Dunia/",
   "display": "standalone",
   "orientation": "portrait",
@@ -38,4 +38,4 @@
       "url": "https://wa.me/243962104398"
     }
   ]
-}
+} 
