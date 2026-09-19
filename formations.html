@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="theme-color" content="#0b0c26">
-  <title>Dunia — Apprenez. Créez. Évoluez.</title>
+  <title>Formations — Dunia | Apprenez. Créez. Évoluez.</title>
 
-  <!-- Anti-FOUC : applique le thème avant le rendu -->
+  <!-- Anti-FOUC -->
   <script>
     (function() {
       try {
@@ -65,9 +65,6 @@
           },
           fontFamily: {
             sans: ['Poppins', 'sans-serif'],
-          },
-          screens: {
-            'xs': '400px',
           }
         }
       }
@@ -84,7 +81,6 @@
       scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
-      background-color: #0b0c26;
     }
 
     body {
@@ -105,7 +101,9 @@
       display: block;
     }
 
+    /* ============================================ */
     /* NAVBAR FIXE SUR MOBILE */
+    /* ============================================ */
     #mainHeader {
       position: -webkit-sticky;
       position: sticky;
@@ -136,132 +134,9 @@
       }
     }
 
-    /* ÉCRAN DE CHARGEMENT */
-    #loader {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background-color: #0b0c26;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 0.6s ease, visibility 0.6s ease;
-      overflow: hidden;
-    }
-
-    #loader::before {
-      content: '';
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, transparent 70%);
-      border-radius: 50%;
-      animation: haloPulse 3s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @media (min-width: 640px) {
-      #loader::before { width: 600px; height: 600px; }
-    }
-
-    @keyframes haloPulse {
-      0%, 100% { transform: scale(1); opacity: 0.6; }
-      50% { transform: scale(1.15); opacity: 1; }
-    }
-
-    #loader.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .loader-container {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 2;
-    }
-
-    @media (min-width: 640px) {
-      .loader-container { width: 180px; height: 180px; }
-    }
-
-    .spinner {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: conic-gradient(
-        from 0deg,
-        rgba(37, 99, 235, 0) 0%,
-        rgba(37, 99, 235, 0.15) 20%,
-        rgba(59, 130, 246, 0.6) 70%,
-        rgba(96, 165, 250, 1) 100%
-      );
-      mask: radial-gradient(farthest-side, transparent calc(100% - 26px), #000 calc(100% - 25px));
-      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 26px), #000 calc(100% - 25px));
-      animation: spin 1.2s linear infinite;
-      filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
-    }
-
-    @media (min-width: 640px) {
-      .spinner {
-        mask: radial-gradient(farthest-side, transparent calc(100% - 44px), #000 calc(100% - 43px));
-        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 44px), #000 calc(100% - 43px));
-      }
-    }
-
-    .spinner::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: calc(50% - 13px);
-      width: 26px;
-      height: 26px;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      border-radius: 50%;
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.9), 0 0 40px rgba(37, 99, 235, 0.6);
-    }
-
-    @media (min-width: 640px) {
-      .spinner::after {
-        left: calc(50% - 22px);
-        width: 44px;
-        height: 44px;
-      }
-    }
-
-    @keyframes spin {
-      0%   { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .loader-logo {
-      width: 64px;
-      height: 64px;
-      object-fit: cover;
-      border-radius: 50%;
-      z-index: 10;
-      animation: logoPulse 1.8s ease-in-out infinite;
-      filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
-      background: #ffffff;
-      padding: 4px;
-    }
-
-    @media (min-width: 640px) {
-      .loader-logo { width: 96px; height: 96px; padding: 6px; }
-    }
-
-    @keyframes logoPulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.08); opacity: 0.92; }
-    }
-
+    /* ============================================ */
     /* MENU MOBILE */
+    /* ============================================ */
     #mobileMenu {
       position: fixed;
       top: 0;
@@ -349,7 +224,9 @@
       transform: rotate(-45deg) translate(6px, -6px);
     }
 
+    /* ============================================ */
     /* HERO */
+    /* ============================================ */
     .hero-bg-img {
       position: absolute;
       inset: 0;
@@ -376,67 +253,9 @@
       );
     }
 
-    /* BANDEAU OUTILS */
-    .tools-marquee {
-      overflow: hidden;
-      white-space: nowrap;
-      position: relative;
-      width: 100%;
-      -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
-      mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
-    }
-
-    .tools-track {
-      display: inline-flex;
-      align-items: center;
-      gap: 32px;
-      animation: toolsScroll 30s linear infinite;
-      padding-left: 24px;
-    }
-
-    .tools-track:active { animation-play-state: paused; }
-
-    @keyframes toolsScroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    .tool-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: #94a3b8;
-      transition: color 0.3s ease;
-      flex-shrink: 0;
-    }
-
-    @media (min-width: 640px) {
-      .tool-item { font-size: 1rem; }
-      .tools-track { gap: 40px; padding-left: 40px; }
-    }
-
-    @media (min-width: 1024px) {
-      .tools-marquee {
-        -webkit-mask-image: none;
-        mask-image: none;
-      }
-      .tools-track {
-        animation: none;
-        justify-content: space-between;
-        width: 100%;
-        padding-left: 0;
-        gap: 20px;
-      }
-      .tools-track .tool-item:nth-child(n+8) { display: none; }
-    }
-
+    /* ============================================ */
     /* AUTRES STYLES */
-    .cloud-shape-1 { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
-    .cloud-shape-2 { border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%; }
-    .cloud-card { border-radius: 30px 60px 30px 60px; }
-
+    /* ============================================ */
     .service-card {
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease, border-color 0.3s ease;
       position: relative;
@@ -470,6 +289,8 @@
       .service-card:hover .service-img { transform: scale(1.1); }
     }
 
+    .card-hidden { display: none !important; }
+
     .reveal {
       opacity: 0;
       transform: translateY(30px);
@@ -501,13 +322,6 @@
     .animate-float { animation: float 4s ease-in-out infinite; }
     .animate-float-slow { animation: float 6s ease-in-out infinite; }
 
-    @keyframes pulse-ring {
-      0% { transform: scale(0.95); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.5; }
-      100% { transform: scale(0.95); opacity: 1; }
-    }
-    .pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
-
     @keyframes gradient-shift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -518,34 +332,6 @@
       background-size: 400% 400%;
       animation: gradient-shift 8s ease infinite;
     }
-
-    .step-card {
-      transition: all 0.3s ease;
-      position: relative;
-    }
-    .step-card:active {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.15);
-    }
-    .step-card:active .step-number {
-      background: #2563eb;
-      color: white;
-      transform: scale(1.1);
-    }
-
-    @media (hover: hover) {
-      .step-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.15);
-      }
-      .step-card:hover .step-number {
-        background: #2563eb;
-        color: white;
-        transform: scale(1.1);
-      }
-    }
-
-    .step-number { transition: all 0.4s ease; }
 
     .faq-item { transition: all 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; }
     .faq-item:active {
@@ -559,7 +345,7 @@
     }
     .blink-dot { animation: blink-dot 1.5s ease-in-out infinite; }
 
-    /* LOGO DUNIA */
+    /* ===== LOGO DUNIA ===== */
     .logo-dunia {
       height: 1.75rem;
       width: auto;
@@ -619,7 +405,400 @@
       .brand-tagline, .brand-tagline-footer { font-size: 0.65rem; }
     }
 
+    /* ===== FILTRES ===== */
+    .filter-btn {
+      transition: all 0.3s ease;
+      min-height: 42px;
+    }
+    .filter-btn.active {
+      background-color: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+    }
+    .filter-btn:active { transform: scale(0.96); }
+
+    /* ===== RECHERCHE ===== */
+    .search-input:focus {
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+    .search-btn { transition: all 0.3s ease; }
+    .search-btn:active { transform: scale(0.98); }
+
+    #noResults { display: none; }
+    #noResults.visible { display: block; }
+
+    mark.highlight {
+      background-color: #fef08a;
+      color: #1e293b;
+      padding: 0 2px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    /* ============================================ */
+    /* LECTEUR VIDÉO STYLE YOUTUBE */
+    /* ============================================ */
+    .video-player-wrapper {
+      position: relative;
+      width: 100%;
+      background: #000;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(37, 99, 235, 0.35);
+    }
+
+    @media (min-width: 768px) {
+      .video-player-wrapper { border-radius: 1.5rem; }
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
+
+    .big-play-btn {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 5;
+    }
+    .big-play-btn.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .big-play-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 26px;
+      padding-left: 5px;
+      box-shadow: 0 15px 40px rgba(37, 99, 235, 0.5);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    @media (min-width: 640px) {
+      .big-play-icon { width: 90px; height: 90px; font-size: 34px; padding-left: 6px; }
+    }
+    .big-play-btn:hover .big-play-icon {
+      transform: scale(1.1);
+      background: #2563eb;
+    }
+
+    .video-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 30px 12px 10px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.5) 50%, transparent);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 10;
+    }
+
+    .video-player-wrapper:hover .video-controls,
+    .video-player-wrapper.controls-visible .video-controls {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (hover: none) {
+      .video-controls { opacity: 1; visibility: visible; }
+    }
+
+    .progress-container {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar {
+      position: relative;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 4px;
+      overflow: visible;
+      transition: height 0.15s ease;
+    }
+
+    .progress-container:hover .progress-bar { height: 6px; }
+
+    .progress-filled {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: #2563eb;
+      border-radius: 4px;
+      width: 0%;
+      pointer-events: none;
+    }
+
+    .progress-thumb {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #2563eb;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.15s ease;
+      pointer-events: none;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+    }
+
+    .progress-container:hover .progress-thumb,
+    .progress-container.dragging .progress-thumb {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .progress-buffered {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 4px;
+      width: 0%;
+      pointer-events: none;
+    }
+
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .ctrl-btn:hover { background: rgba(255, 255, 255, 0.15); }
+    .ctrl-btn:active { transform: scale(0.92); }
+
+    .time-display {
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      margin: 0 6px;
+      user-select: none;
+    }
+
+    .volume-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .volume-slider-wrapper {
+      width: 0;
+      overflow: hidden;
+      transition: width 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+    .volume-container:hover .volume-slider-wrapper,
+    .volume-container.active .volume-slider-wrapper {
+      width: 70px;
+    }
+
+    .volume-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 70px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+    }
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+    }
+    .volume-slider::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+      border: none;
+    }
+
+    .speed-menu {
+      position: absolute;
+      bottom: 60px;
+      right: 12px;
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 6px;
+      min-width: 130px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.25s ease;
+      z-index: 20;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+    .speed-menu.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .speed-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      color: #ffffff;
+      font-size: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .speed-option:hover { background: rgba(37, 99, 235, 0.3); }
+    .speed-option.active { background: #2563eb; font-weight: 600; }
+    .speed-option i { font-size: 10px; }
+
+    .speed-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .video-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 4;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .video-loading.visible { opacity: 1; visibility: visible; }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .video-flash {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 30px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 15;
+      transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
+    }
+    .video-flash.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .video-top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 14px 16px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
+      color: white;
+      z-index: 9;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .video-player-wrapper:hover .video-top-bar,
+    .video-player-wrapper.controls-visible .video-top-bar {
+      opacity: 1;
+      visibility: visible;
+    }
+    @media (hover: none) {
+      .video-top-bar { opacity: 1; visibility: visible; }
+    }
+
+    .video-player-wrapper:fullscreen,
+    .video-player-wrapper:-webkit-full-screen {
+      border-radius: 0;
+    }
+    .video-player-wrapper:fullscreen .video-container,
+    .video-player-wrapper:-webkit-full-screen .video-container {
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    /* ============================================ */
     /* MODE SOMBRE / CLAIR */
+    /* ============================================ */
     html.dark body {
       background-color: #000000;
       color: #d4d4d4;
@@ -658,6 +837,9 @@
     html.dark .bg-gradient-to-br.from-blue-50.to-white {
       background: linear-gradient(to bottom right, #0a0a0a, #000000) !important;
     }
+    html.dark .bg-gradient-to-br.from-slate-50.to-white {
+      background: linear-gradient(to bottom right, #0a0a0a, #000000) !important;
+    }
 
     html.dark header.bg-white {
       background-color: #000000 !important;
@@ -665,6 +847,10 @@
     }
 
     html.dark nav .text-slate-700 { color: #d4d4d4 !important; }
+
+    html.dark #searchForm { background-color: #1a1a1a !important; }
+    html.dark #searchInput { color: #ffffff !important; }
+    html.dark #searchInput::placeholder { color: #666666 !important; }
 
     html.dark .blur-3xl,
     html.dark [class*="blur-3xl"] {
@@ -706,13 +892,14 @@
     html.dark .theme-toggle .icon-sun { display: block; }
     html.dark .theme-toggle .icon-moon { display: none; }
 
+    /* ============================================ */
     /* AMÉLIORATIONS MOBILE */
+    /* ============================================ */
     @media (max-width: 767px) {
       .mobile-hero-title {
         font-size: 1.55rem !important;
         line-height: 1.25 !important;
       }
-      .service-card .p-6 { padding: 1.25rem; }
       .mobile-section-title {
         font-size: 1.4rem !important;
         line-height: 1.3 !important;
@@ -731,6 +918,32 @@
       }
       .rounded-3xl { border-radius: 1.25rem; }
       .text-xs { font-size: 0.7rem; }
+
+      #searchInput {
+        font-size: 0.9rem;
+        padding-top: 0.9rem;
+        padding-bottom: 0.9rem;
+      }
+
+      #filterContainer {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        padding-bottom: 8px;
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        scrollbar-width: none;
+      }
+      #filterContainer::-webkit-scrollbar { display: none; }
+      #filterContainer .filter-btn { flex-shrink: 0; }
+
+      .video-controls { opacity: 1; visibility: visible; }
+      .video-top-bar { opacity: 1; visibility: visible; }
+
+      .big-play-icon { width: 70px; height: 70px; font-size: 26px; padding-left: 5px; }
     }
 
     @media (max-width: 360px) {
@@ -749,7 +962,9 @@
     .safe-top { padding-top: env(safe-area-inset-top); }
     .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
+    /* ============================================ */
     /* PWA INSTALL BANNER */
+    /* ============================================ */
     #pwaInstallBanner {
       animation: slideUp 0.4s ease;
     }
@@ -759,26 +974,9 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
-    @media (max-width: 640px) {
-      body, html { max-width: 100vw; overflow-x: hidden; }
-    }
-
-    /* VIDEO NUAGE */
-    .video-cloud-wrapper {
-      position: relative;
-      border-radius: 55% 45% 60% 40% / 50% 55% 45% 50%;
-      overflow: hidden;
-      box-shadow: 0 30px 60px -20px rgba(37, 99, 235, 0.35);
-      border: 6px solid #eff6ff;
-      background: #dbeafe;
-    }
-    html.dark .video-cloud-wrapper {
-      border-color: #1a1a1a;
-      background: #0a0a0a;
-      box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
-    }
-
-    /* MODALES LÉGALES */
+    /* ============================================ */
+    /* MODALES LÉGALES AMÉLIORÉES */
+    /* ============================================ */
     #legalModal {
       display: none;
     }
@@ -842,7 +1040,9 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* FOOTER ALIGNEMENT */
+    /* ============================================ */
+    /* FOOTER ALIGNEMENT AMÉLIORÉ */
+    /* ============================================ */
     .footer-col {
       text-align: left;
     }
@@ -866,21 +1066,12 @@
 </head>
 <body class="bg-white">
 
-  <!-- ÉCRAN DE CHARGEMENT -->
-  <div id="loader">
-    <div class="loader-container">
-      <div class="spinner"></div>
-      <img src="images/logo-dunia.png" alt="Dunia" class="loader-logo">
-    </div>
-  </div>
-
   <!-- BARRE SUPÉRIEURE -->
   <div class="topbar-fixed bg-brand-navy text-gray-300 text-[10px] sm:text-xs py-2 px-3 sm:px-4 md:px-16 flex justify-between items-center border-b border-slate-800">
     <div class="flex items-center gap-3 sm:gap-4">
       <span class="truncate max-w-[100px] sm:max-w-none">
         <i class="fa-solid fa-envelope text-blue-500 mr-1"></i>
-        <span class="hidden xs:inline">dunia.work</span>
-        <span class="xs:hidden">dunia.work</span>
+        <span>dunia.work</span>
       </span>
       <span class="hidden sm:inline">
         <i class="fa-solid fa-phone text-blue-500 mr-1"></i> +243 962 104 398
@@ -904,7 +1095,7 @@
   <!-- BARRE DE NAVIGATION -->
   <header id="mainHeader" class="bg-white sticky top-0 z-50 shadow-sm">
     <nav class="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 py-2.5 sm:py-3 flex justify-between items-center">
-      <a href="#" class="flex items-center gap-2 sm:gap-3 group">
+      <a href="index.html" class="flex items-center gap-2 sm:gap-3 group">
         <img src="images/logo-dunia.png" alt="Dunia" class="logo-dunia">
         <div class="flex flex-col leading-none">
           <span class="brand-name">Dunia</span>
@@ -912,10 +1103,10 @@
       </a>
 
       <ul class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-700">
-        <li><a href="#" class="text-blue-600 font-semibold">Accueil</a></li>
-        <li><a href="#about" class="hover:text-blue-600 transition">À propos</a></li>
-        <li><a href="formations.html" class="hover:text-blue-600 transition">Formations</a></li>
-        <li><a href="#contact" class="hover:text-blue-600 transition">Contact</a></li>
+        <li><a href="index.html" class="hover:text-blue-600 transition">Accueil</a></li>
+        <li><a href="index.html#about" class="hover:text-blue-600 transition">À propos</a></li>
+        <li><a href="formations.html" class="text-blue-600 font-semibold">Formations</a></li>
+        <li><a href="index.html#contact" class="hover:text-blue-600 transition">Contact</a></li>
       </ul>
 
       <div class="flex items-center gap-2 sm:gap-3">
@@ -967,19 +1158,19 @@
     </div>
 
     <nav class="flex-1 p-4 sm:p-5 space-y-1">
-      <a href="#" class="mobile-nav-link active">
+      <a href="index.html" class="mobile-nav-link">
         <i class="fa-solid fa-house"></i>
         Accueil
       </a>
-      <a href="#about" class="mobile-nav-link">
+      <a href="index.html#about" class="mobile-nav-link">
         <i class="fa-solid fa-circle-info"></i>
         À propos
       </a>
-      <a href="formations.html" class="mobile-nav-link">
+      <a href="formations.html" class="mobile-nav-link active">
         <i class="fa-solid fa-graduation-cap"></i>
         Formations
       </a>
-      <a href="#contact" class="mobile-nav-link">
+      <a href="index.html#contact" class="mobile-nav-link">
         <i class="fa-solid fa-envelope"></i>
         Contact
       </a>
@@ -999,34 +1190,59 @@
     </div>
   </div>
 
-  <!-- SECTION HERO -->
-  <section class="relative text-white overflow-hidden py-10 sm:py-16 md:py-24 px-4 sm:px-6 md:px-16 flex items-center justify-center min-h-[420px] sm:min-h-[550px]">
+  <!-- HERO FORMATIONS -->
+  <section class="relative text-white overflow-hidden py-12 sm:py-20 md:py-24 px-4 sm:px-6 md:px-16 flex items-center justify-center min-h-[380px] sm:min-h-[480px]">
 
     <div class="hero-bg-img">
       <img src="https://i.pinimg.com/1200x/63/9e/97/639e972db337148fecce4910e0a7b5e1.jpg"
-           alt="Apprentissage numérique" loading="eager">
+           alt="Formations Dunia" loading="eager">
     </div>
 
     <div class="hero-overlay"></div>
 
     <div class="relative max-w-4xl mx-auto z-20 w-full text-center flex flex-col items-center">
-      <h1 class="mobile-hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-3 sm:mb-4 text-white drop-shadow-md max-w-3xl px-1">
-        Découvrez les compétences qui construiront votre avenir.
+      <h1 class="mobile-hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-3 sm:mb-4 text-white drop-shadow-md max-w-3xl">
+        Une compétence commence par une première leçon.
       </h1>
-      <p class="text-slate-200 text-xs xs:text-sm sm:text-base md:text-lg mb-6 max-w-2xl leading-relaxed drop-shadow px-2">
-        Dunia est une plateforme dédiée à la formation et à l'apprentissage dans le domaine de la technologie et bien plus encore : apprenez en ligne ou participez à nos formations en présentiel à Kinshasa.
+      <p class="text-slate-200 text-xs xs:text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl leading-relaxed drop-shadow px-2">
+        Explorez les formations proposées sur Dunia et trouvez celles qui correspondent à ce que vous souhaitez apprendre.
       </p>
-      <div class="flex flex-col xs:flex-row items-center justify-center gap-3 w-full xs:w-auto px-2">
-        <a href="https://wa.me/243962104398" class="w-full xs:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl shadow-lg transition active:scale-95 text-center">
-          Rejoindre la communauté WhatsApp <i class="fa-brands fa-whatsapp ml-1.5"></i>
-        </a>
-        <a href="formations.html" class="w-full xs:w-auto bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl backdrop-blur-md transition active:scale-95 text-center">
-          Explorer les formations <i class="fa-solid fa-arrow-right ml-1.5"></i>
-        </a>
+
+      <!-- Barre de recherche -->
+      <div class="w-full max-w-2xl reveal">
+        <form id="searchForm" class="relative flex items-center bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-transparent focus-within:border-blue-500 transition-all duration-300">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 sm:left-5 text-slate-400 text-sm pointer-events-none"></i>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Rechercher une formation..."
+            autocomplete="off"
+            class="search-input w-full bg-transparent text-slate-700 placeholder-slate-400 text-sm pl-10 sm:pl-12 pr-14 sm:pr-32 py-3.5 sm:py-4 focus:outline-none">
+
+          <button
+            type="button"
+            id="clearBtn"
+            class="hidden absolute right-14 sm:right-28 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition p-1.5"
+            aria-label="Effacer la recherche">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+
+          <button
+            type="submit"
+            id="searchBtn"
+            class="search-btn absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 sm:px-5 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="hidden sm:inline">Rechercher</span>
+          </button>
+        </form>
+
+        <p class="text-slate-300/70 text-[10px] sm:text-[11px] mt-3 text-center px-2">
+          <i class="fa-solid fa-lightbulb text-blue-400 mr-1"></i>
+          Essayez : <button type="button" class="suggestion-btn underline hover:text-blue-400 transition" data-search="web">web</button>,
+          <button type="button" class="suggestion-btn underline hover:text-blue-400 transition" data-search="intelligence">IA</button>,
+          <button type="button" class="suggestion-btn underline hover:text-blue-400 transition" data-search="design">design</button>
+        </p>
       </div>
-      <p class="text-slate-300/80 text-[10px] sm:text-xs mt-5 max-w-lg px-2">
-        Dunia est actuellement en développement. Rejoignez notre communauté pour suivre l'évolution du projet et découvrir nos prochaines formations.
-      </p>
     </div>
 
     <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-30">
@@ -1036,167 +1252,171 @@
     </div>
   </section>
 
-  <!-- SECTION 2: POURQUOI DUNIA -->
-  <section id="about" class="py-10 sm:py-14 md:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
-
-      <div class="relative p-2 sm:p-4 reveal-left">
-        <div class="relative z-10 grid grid-cols-2 gap-3 sm:gap-6 items-center">
-          <div class="cloud-shape-1 overflow-hidden shadow-xl border-4 border-blue-50 bg-blue-100">
-            <img src="https://i.pinimg.com/736x/74/b5/6c/74b56c964d47c047d296b659cb9b49c2.jpg" class="w-full h-36 sm:h-64 object-cover" alt="Apprentissage en groupe" loading="lazy">
-          </div>
-          <div class="cloud-shape-2 overflow-hidden shadow-xl border-4 border-blue-50 bg-blue-100 mt-6 sm:mt-8">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80" class="w-full h-36 sm:h-64 object-cover" alt="Étudiants en technologie" loading="lazy">
-          </div>
-        </div>
-
-        <div class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-          <a href="#" class="pointer-events-auto w-12 h-12 sm:w-16 sm:h-16 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition border-4 border-white pulse-ring active:scale-95">
-            <i class="fa-solid fa-play text-sm sm:text-xl ml-1"></i>
-          </a>
-        </div>
-
-        <div class="absolute -bottom-3 -right-1 sm:-bottom-6 sm:-right-2 bg-white p-3 sm:p-5 cloud-card shadow-xl border border-blue-100 z-20 flex items-center gap-2 sm:gap-3 animate-float">
-          <div class="w-8 h-8 sm:w-12 sm:h-12 bg-blue-50 rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-lg sm:text-2xl overflow-hidden p-1 sm:p-1.5">
-            <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
-          </div>
-          <div>
-            <div class="text-base sm:text-2xl font-extrabold text-slate-900">Bientôt</div>
-            <div class="text-[9px] sm:text-xs text-slate-500 font-medium">Disponible</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="lg:pl-6 text-center lg:text-left mt-4 lg:mt-0 reveal-right">
-        <span class="text-blue-600 font-semibold text-xs tracking-wider uppercase">Pourquoi Dunia ?</span>
-        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-1 mb-4 leading-tight">
-          La technologie évolue. Vos compétences aussi.
-        </h2>
-        <p class="text-slate-600 text-xs sm:text-sm mb-5 leading-relaxed">
-          Les métiers et les outils numériques évoluent rapidement. Pourtant, accéder à une formation pratique, compréhensible et adaptée à son environnement reste parfois difficile. Dunia veut rapprocher les étudiants des compétences qui leur permettront de comprendre, créer et participer au monde numérique.
-        </p>
-
-        <ul class="space-y-2.5 text-xs sm:text-sm font-medium text-slate-700 mb-6 text-left inline-block lg:block">
-          <li class="flex items-center gap-2.5"><i class="fa-solid fa-circle-check text-blue-600 shrink-0"></i> Apprentissage pratique : vidéos, documents, exercices et projets</li>
-          <li class="flex items-center gap-2.5"><i class="fa-solid fa-circle-check text-blue-600 shrink-0"></i> Compétences actuelles : développement web, IA, design graphique</li>
-          <li class="flex items-center gap-2.5"><i class="fa-solid fa-circle-check text-blue-600 shrink-0"></i> En ligne et en présentiel à Kinshasa</li>
-        </ul>
-
-        <div class="flex flex-col xs:flex-row items-center justify-center lg:justify-start gap-4">
-          <a href="https://wa.me/243962104398" class="w-full xs:w-auto bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-6 py-3.5 rounded-lg shadow-md transition text-center active:scale-95">En Savoir Plus <i class="fa-solid fa-arrow-right ml-2"></i></a>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0"><i class="fa-solid fa-phone"></i></div>
-            <div class="text-left">
-              <p class="text-[10px] text-slate-400 uppercase font-semibold">Contactez-nous</p>
-              <p class="text-xs sm:text-sm font-bold text-slate-900">+243 962 104 398</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION VIDÉO FORMATIONS PASSÉES -->
-  <section id="video-formations" class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative overflow-hidden">
-    <div class="absolute top-10 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-100/40 rounded-full blur-3xl -z-10"></div>
-    <div class="absolute bottom-10 right-0 w-56 h-56 sm:w-80 sm:h-80 bg-blue-50/60 rounded-full blur-3xl -z-10"></div>
-
-    <div class="text-center mb-8 sm:mb-12 reveal">
+  <!-- SECTION VIDÉO DE PRÉSENTATION (STYLE YOUTUBE) -->
+  <section class="pt-8 sm:pt-14 pb-4 sm:pb-6 px-4 sm:px-6 md:px-16 max-w-6xl mx-auto relative">
+    <div class="text-center mb-6 sm:mb-8 reveal">
       <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">
-        Revivez nos formations passées
+        Nos formations en vidéo
       </h2>
       <p class="text-slate-500 text-xs sm:text-sm mt-3 max-w-xl mx-auto">
-        Découvrez l'ambiance et l'énergie de nos sessions. Plongez dans l'expérience Dunia.
+        Regardez la présentation de nos formations passées et plongez dans l'expérience Dunia.
       </p>
     </div>
 
-    <div class="reveal relative flex justify-center items-center">
-      <div class="relative w-full max-w-3xl">
-        <div class="video-cloud-wrapper">
+    <!-- LECTEUR VIDÉO -->
+    <div class="reveal">
+      <div class="video-player-wrapper" id="videoWrapper">
+        <div class="video-top-bar">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg overflow-hidden bg-white/10 p-0.5 border border-white/20 shrink-0">
+              <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain brightness-0 invert">
+            </div>
+            <div class="min-w-0">
+              <p class="text-white text-xs sm:text-sm font-bold truncate">Comment utiliser Claude en RDC</p>
+              <p class="text-white/70 text-[10px] sm:text-xs">Dunia • Formations passées</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="video-container" id="videoContainer">
+
           <video
             id="duniaVideo"
-            class="w-full h-56 sm:h-80 md:h-96 object-cover"
-            autoplay
-            muted
-            loop
-            playsinline
             preload="metadata"
+            playsinline
             poster="images/logo-dunia.png">
             <source src="videos/formation claude.mp4" type="video/mp4">
             Votre navigateur ne supporte pas la lecture vidéo.
           </video>
+
+          <div class="big-play-btn" id="bigPlayBtn">
+            <div class="big-play-icon">
+              <i class="fa-solid fa-play"></i>
+            </div>
+          </div>
+
+          <div class="video-loading" id="videoLoading">
+            <div class="loading-spinner"></div>
+          </div>
+
+          <div class="video-flash" id="videoFlash">
+            <i class="fa-solid fa-play" id="flashIcon"></i>
+          </div>
+        </div>
+
+        <div class="video-controls" id="videoControls">
+          <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+              <div class="progress-buffered" id="progressBuffered"></div>
+              <div class="progress-filled" id="progressFilled"></div>
+              <div class="progress-thumb" id="progressThumb"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1 sm:gap-2">
+            <button class="ctrl-btn" id="playPauseBtn" aria-label="Lecture/Pause">
+              <i class="fa-solid fa-play" id="playPauseIcon"></i>
+            </button>
+
+            <button class="ctrl-btn hidden sm:inline-flex" id="rewindBtn" aria-label="Reculer 10 secondes">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+
+            <button class="ctrl-btn hidden sm:inline-flex" id="forwardBtn" aria-label="Avancer 10 secondes">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+
+            <div class="volume-container" id="volumeContainer">
+              <button class="ctrl-btn" id="muteBtn" aria-label="Couper le son">
+                <i class="fa-solid fa-volume-high" id="volumeIcon"></i>
+              </button>
+              <div class="volume-slider-wrapper">
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="1" aria-label="Volume">
+              </div>
+            </div>
+
+            <span class="time-display">
+              <span id="currentTime">0:00</span>
+              <span class="text-white/50 mx-1">/</span>
+              <span id="duration">0:00</span>
+            </span>
+
+            <div class="flex-1"></div>
+
+            <button class="ctrl-btn" id="speedBtn" aria-label="Vitesse de lecture">
+              <span class="speed-label" id="speedLabel">1x</span>
+            </button>
+
+            <div class="speed-menu" id="speedMenu">
+              <div class="speed-option" data-speed="0.5">0.5x</div>
+              <div class="speed-option" data-speed="0.75">0.75x</div>
+              <div class="speed-option active" data-speed="1">Normale <i class="fa-solid fa-check"></i></div>
+              <div class="speed-option" data-speed="1.25">1.25x</div>
+              <div class="speed-option" data-speed="1.5">1.5x</div>
+              <div class="speed-option" data-speed="2">2x</div>
+            </div>
+
+            <button class="ctrl-btn" id="fullscreenBtn" aria-label="Plein écran">
+              <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="text-center mt-8 sm:mt-12 reveal delay-200">
-      <a href="formations.html"
-         class="group inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-6 sm:px-8 py-3.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/40 hover:scale-105 active:scale-95">
-        Voir toutes nos formations en ligne
-        <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-      </a>
     </div>
   </section>
 
-  <!-- BANDEAU OUTILS -->
-  <div class="border-y border-slate-100 py-4 sm:py-6 bg-slate-50/50">
-    <div class="max-w-7xl mx-auto px-3 sm:px-4">
-      <div class="tools-marquee">
-        <div class="tools-track">
-          <span class="tool-item"><i class="fa-brands fa-html5 text-orange-500"></i>HTML5</span>
-          <span class="tool-item"><i class="fa-brands fa-css3-alt text-blue-500"></i>CSS3</span>
-          <span class="tool-item text-blue-600"><i class="fa-brands fa-js text-yellow-500"></i>JavaScript</span>
-          <span class="tool-item"><i class="fa-brands fa-python text-blue-600"></i>Python</span>
-          <span class="tool-item"><i class="fa-brands fa-figma text-purple-500"></i>Figma</span>
-          <span class="tool-item"><span class="w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center text-white font-bold text-[10px] sm:text-xs" style="background: linear-gradient(135deg, #001E36 0%, #31A8FF 100%);">Ps</span>Photoshop</span>
-          <span class="tool-item"><i class="fa-solid fa-robot text-blue-500"></i>IA</span>
-
-          <span class="tool-item"><i class="fa-brands fa-html5 text-orange-500"></i>HTML5</span>
-          <span class="tool-item"><i class="fa-brands fa-css3-alt text-blue-500"></i>CSS3</span>
-          <span class="tool-item text-blue-600"><i class="fa-brands fa-js text-yellow-500"></i>JavaScript</span>
-          <span class="tool-item"><i class="fa-brands fa-python text-blue-600"></i>Python</span>
-          <span class="tool-item"><i class="fa-brands fa-figma text-purple-500"></i>Figma</span>
-          <span class="tool-item"><span class="w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center text-white font-bold text-[10px] sm:text-xs" style="background: linear-gradient(135deg, #001E36 0%, #31A8FF 100%);">Ps</span>Photoshop</span>
-          <span class="tool-item"><i class="fa-solid fa-robot text-blue-500"></i>IA</span>
-        </div>
-      </div>
+  <!-- FILTRES PAR CATÉGORIE -->
+  <section class="pt-8 sm:pt-14 pb-4 sm:pb-6 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+    <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 reveal" id="filterContainer">
+      <button class="filter-btn active bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all" data-category="all">
+        <i class="fa-solid fa-layer-group mr-1.5"></i>Toutes
+      </button>
+      <button class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all" data-category="developpement">
+        <i class="fa-solid fa-code mr-1.5"></i>Développement
+      </button>
+      <button class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all" data-category="ia">
+        <i class="fa-solid fa-brain mr-1.5"></i>IA
+      </button>
+      <button class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all" data-category="design">
+        <i class="fa-solid fa-pen-nib mr-1.5"></i>Design
+      </button>
+      <button class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all" data-category="autres">
+        <i class="fa-solid fa-ellipsis mr-1.5"></i>Autres
+      </button>
     </div>
-  </div>
 
-  <!-- SECTION FORMATIONS -->
-  <section id="services" class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+    <div class="text-center mt-5 sm:mt-6 reveal">
+      <p class="text-[11px] sm:text-xs text-slate-500">
+        <span id="resultCount" class="font-bold text-blue-600">2</span>
+        <span id="resultLabel">formations disponibles</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- CATALOGUE DE FORMATIONS -->
+  <section class="pb-12 sm:pb-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
 
     <div class="absolute top-20 right-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-100/40 rounded-full blur-3xl -z-10"></div>
     <div class="absolute bottom-20 left-0 w-64 h-64 sm:w-96 sm:h-96 bg-blue-50/60 rounded-full blur-3xl -z-10"></div>
 
-    <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-8 sm:mb-12 gap-4 text-center sm:text-left reveal">
-      <div>
-        <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
-          <span class="w-6 sm:w-8 h-[2px] bg-blue-600"></span>
-          Découvrir
-        </span>
-        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Apprenez une compétence. Construisez quelque chose.</h2>
-        <p class="text-slate-500 text-xs sm:text-sm mt-3 max-w-xl">Découvrez progressivement des formations conçues par Dunia et par des formateurs indépendants.</p>
-      </div>
-      <a href="formations.html" class="group inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/40 active:scale-95 whitespace-nowrap">
-        Voir toutes les formations
-        <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-      </a>
-    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8" id="formationsGrid">
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
-
-      <div class="service-card reveal delay-200 bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group sm:col-span-2 lg:col-span-1">
+      <!-- Formation : Design graphique -->
+      <div class="service-card reveal delay-200 bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group formation-card"
+           data-category="design"
+           data-title="Design graphique"
+           data-description="Apprenez les principes du design et maîtrisez les outils comme Figma et Photoshop pour créer des visuels professionnels."
+           data-keywords="design graphique figma photoshop création visuelle ui ux">
         <div class="relative overflow-hidden">
           <img src="https://scontent.fnbo19-1.fna.fbcdn.net/v/t39.30808-6/771309462_122334706256034821_1386533657152361275_n.jpg?stp=dst-jpg_tt6&cstp=mx1240x1754&ctp=s1240x1754&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGfVzFu-_U_nBKu7usm-m0lMoEp5pjiXcAygSnmmOJdwHa38A3pWbNcLAIBBDXXRj9BtrjVr4yKg3BSXhdkbyrP&_nc_ohc=A9kj3ITV7j4Q7kNvwG_AOsj&_nc_oc=AdrU2AbGqMTkFsiUzSpzYj7gXX1mHMEI_sCmKoYN2CX-BAb4oRhEhlznRT9xctJzYXc&_nc_zt=23&_nc_ht=scontent.fnbo19-1.fna&_nc_gid=VW4V0q1Z4QoK868wha46bw&_nc_ss=7b2a8&oh=00_AQLJuVqeBBNavuFItPCL_sWcxmp9IGVDY_dJwxAiw1C5Mg&oe=6AB31A9F" alt="Design graphique" class="service-img h-44 sm:h-48 w-full object-cover" loading="lazy">
           <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between relative z-10">
           <div>
-            <h3 class="font-bold text-base sm:text-lg text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Design graphique</h3>
-            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Apprenez les principes du design et maîtrisez les outils comme Figma et Photoshop pour créer des visuels professionnels.</p>
-            <div class="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-slate-400 mb-4">
-              <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-blue-500"></i> 4 jours</span>
+            <h3 class="font-bold text-base sm:text-lg text-slate-800 mb-2 group-hover:text-blue-600 transition-colors formation-title">Design graphique</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed formation-description">Apprenez les principes du design et maîtrisez les outils comme Figma et Photoshop pour créer des visuels professionnels.</p>
+            <div class="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-slate-400 mb-3 sm:mb-4">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-blue-500"></i>4 jours</span>
               <span class="flex items-center gap-1.5"><i class="fa-solid fa-signal text-blue-500"></i> Débutant</span>
             </div>
           </div>
@@ -1207,8 +1427,44 @@
               </div>
               <span class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Dunia</span>
             </div>
-            <a href="formations.html" class="group/btn text-blue-600 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all active:gap-3">
-              Voir la formation <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
+            <a href="https://wa.me/243962104398?text=Bonjour%20Dunia%20%F0%9F%91%8B%2C%20je%20souhaite%20avoir%20plus%20d%27informations%20sur%20la%20formation%20%22Design%20graphique%22.%20Merci%20!" target="_blank" rel="noopener" class="group/btn text-blue-600 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all active:gap-3">
+              Découvrir <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formation : Bientôt disponible -->
+      <div class="service-card reveal delay-300 bg-gradient-to-br from-slate-50 to-white rounded-2xl overflow-hidden shadow-lg border-2 border-dashed border-slate-200 flex flex-col group formation-card"
+           data-category="autres"
+           data-title="Nouvelle formation en préparation"
+           data-description="D'autres formations sont actuellement en cours de développement. Rejoignez la communauté pour être informé de leur sortie."
+           data-keywords="nouvelle formation préparation autres à venir bientôt">
+        <div class="relative overflow-hidden bg-slate-100 h-44 sm:h-48 flex items-center justify-center">
+          <div class="text-center">
+            <i class="fa-solid fa-hourglass-half text-4xl sm:text-5xl text-slate-300 mb-2"></i>
+            <p class="text-xs text-slate-400 font-semibold">Bientôt disponible</p>
+          </div>
+        </div>
+        <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between relative z-10">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="bg-slate-100 text-slate-500 text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
+                <i class="fa-solid fa-ellipsis mr-1"></i>Autres
+              </span>
+            </div>
+            <h3 class="font-bold text-base sm:text-lg text-slate-400 mb-2 formation-title">Nouvelle formation en préparation</h3>
+            <p class="text-xs text-slate-400 mb-4 leading-relaxed formation-description">D'autres formations sont actuellement en cours de développement. Rejoignez la communauté pour être informé de leur sortie.</p>
+          </div>
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden bg-white border border-slate-200 flex items-center justify-center p-0.5">
+                <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain opacity-50">
+              </div>
+              <span class="text-[10px] sm:text-[11px] text-slate-400 font-medium">Dunia</span>
+            </div>
+            <a href="https://whatsapp.com/channel/0029VbDCfTdGU3BG3SIHmz21" class="group/btn text-blue-600 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all active:gap-3">
+              Être informé <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
             </a>
           </div>
         </div>
@@ -1216,333 +1472,71 @@
 
     </div>
 
-    <div class="mt-8 sm:mt-10 bg-blue-50 border border-blue-100 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 reveal">
+    <!-- Message AUCUN RÉSULTAT -->
+    <div id="noResults" class="text-center py-12 sm:py-16 reveal">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-5">
+        <i class="fa-solid fa-magnifying-glass text-2xl sm:text-3xl text-blue-400"></i>
+      </div>
+      <h3 class="text-lg sm:text-xl font-bold text-slate-800 mb-2">Aucune formation trouvée</h3>
+      <p class="text-xs sm:text-sm text-slate-500 mb-6 max-w-md mx-auto px-4">
+        Aucun résultat ne correspond à votre recherche. Essayez d'autres mots-clés ou explorez toutes les formations.
+      </p>
+      <button type="button" id="resetSearchBtn" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-6 py-3 rounded-xl shadow-md transition active:scale-95">
+        <i class="fa-solid fa-rotate-left"></i>
+        Réinitialiser la recherche
+      </button>
+    </div>
+
+    <!-- Bandeau d'information -->
+    <div class="mt-10 sm:mt-12 bg-blue-50 border border-blue-100 rounded-2xl p-5 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5 reveal">
       <div class="flex items-center gap-3 sm:gap-4">
-        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-2 border border-blue-100 shrink-0">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl flex items-center justify-center shadow-lg p-2 border border-blue-100 shrink-0">
           <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
         </div>
         <div>
-          <h4 class="font-bold text-xs sm:text-sm text-slate-800">Formation bientôt disponible</h4>
-          <p class="text-[10px] sm:text-xs text-slate-500">Certaines formations sont encore en préparation. Rejoignez la communauté pour être informé.</p>
+          <h4 class="font-bold text-xs sm:text-base text-slate-800">D'autres formations arrivent bientôt</h4>
+          <p class="text-[10px] sm:text-xs text-slate-500">Certaines formations sont encore en préparation. Rejoignez la communauté pour être informé en premier.</p>
         </div>
       </div>
-      <a href="https://whatsapp.com/channel/0029VbDCfTdGU3BG3SIHmz21" class="w-full sm:w-auto justify-center inline-flex items-center gap-2 bg-brand-navy hover:bg-slate-800 text-white text-xs font-semibold px-5 py-3 rounded-lg transition active:scale-95 whitespace-nowrap">
+      <a href="https://whatsapp.com/channel/0029VbDCfTdGU3BG3SIHmz21" class="w-full sm:w-auto justify-center inline-flex items-center gap-2 bg-brand-navy hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-6 py-3 rounded-lg transition active:scale-95 whitespace-nowrap">
         <i class="fa-brands fa-whatsapp"></i> Rejoindre WhatsApp
       </a>
     </div>
   </section>
 
-  <!-- SECTION DEUX FAÇONS D'APPRENDRE -->
-  <section class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-    <div class="absolute top-0 left-1/4 w-48 h-48 sm:w-64 sm:h-64 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
-
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-10 sm:mb-14 reveal">
-        <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
-          <span class="w-6 sm:w-8 h-[2px] bg-blue-600"></span>
-          Méthodes
-          <span class="w-6 sm:w-8 h-[2px] bg-blue-600"></span>
-        </span>
-        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Deux façons d'apprendre</h2>
-        <p class="text-slate-500 text-xs sm:text-sm mt-3 max-w-lg mx-auto">Apprenez comme vous le souhaitez, à votre rythme et selon vos disponibilités.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
-        <div class="reveal-left bg-white p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 relative overflow-hidden group hover:shadow-2xl transition-shadow duration-500">
-          <div class="absolute top-0 right-0 w-32 h-32 sm:w-40 sm:h-40 bg-blue-50 rounded-full -mr-16 sm:-mr-20 -mt-16 sm:-mt-20 group-hover:scale-150 transition-transform duration-700"></div>
-          <div class="relative z-10">
-            <h3 class="font-extrabold text-lg sm:text-xl text-slate-800 mb-3">En ligne</h3>
-            <p class="text-xs sm:text-sm text-slate-500 mb-5 sm:mb-6 leading-relaxed">Apprenez à votre rythme grâce à des vidéos, des documents et des exercices accessibles depuis Dunia.</p>
-            <ul class="space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-600">
-              <li class="flex items-start gap-3">
-                <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-video"></i></span>
-                <div>
-                  <span class="font-semibold text-slate-800 text-[11px] sm:text-xs block">Vidéo</span>
-                  <span class="text-[10px] sm:text-xs text-slate-500">Suivez les explications étape par étape.</span>
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-file-lines"></i></span>
-                <div>
-                  <span class="font-semibold text-slate-800 text-[11px] sm:text-xs block">Documents</span>
-                  <span class="text-[10px] sm:text-xs text-slate-500">Retrouvez les ressources nécessaires.</span>
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-pen-to-square"></i></span>
-                <div>
-                  <span class="font-semibold text-slate-800 text-[11px] sm:text-xs block">Exercices</span>
-                  <span class="text-[10px] sm:text-xs text-slate-500">Mettez immédiatement en pratique.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="reveal-right bg-white p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 relative overflow-hidden group hover:shadow-2xl transition-shadow duration-500">
-          <div class="absolute top-0 right-0 w-32 h-32 sm:w-40 sm:h-40 bg-emerald-50 rounded-full -mr-16 sm:-mr-20 -mt-16 sm:-mt-20 group-hover:scale-150 transition-transform duration-700"></div>
-          <div class="relative z-10">
-            <h3 class="font-extrabold text-lg sm:text-xl text-slate-800 mb-3">En présentiel</h3>
-            <p class="text-xs sm:text-sm text-slate-500 mb-5 sm:mb-6 leading-relaxed">Certaines formations Dunia sont également organisées physiquement à Kinshasa.</p>
-            <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 sm:p-4 mb-5 sm:mb-6">
-              <p class="text-[10px] sm:text-xs text-slate-600 leading-relaxed">
-                <i class="fa-solid fa-location-dot text-emerald-600 mr-1.5"></i>
-                Nos premières activités en présentiel se déroulent notamment à l'<strong>Université de Kinshasa</strong>, dans la Faculté des Sciences et Technologies, filière Mathématiques et Informatique.
-              </p>
-            </div>
-            <a href="formations.html" class="group/btn inline-flex items-center gap-2 text-emerald-600 text-[11px] sm:text-xs font-bold hover:gap-3 transition-all active:gap-3">
-              Découvrir nos prochaines formations <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-1"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION POUR LES FORMATEURS -->
-  <section class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
-    <div class="absolute top-1/2 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
-      <div class="order-2 lg:order-1 reveal-left">
-        <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
-          <span class="w-6 sm:w-8 h-[2px] bg-blue-600"></span>
-          Transmettre
-        </span>
-        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2 mb-4 leading-tight">Votre savoir peut aller plus loin.</h2>
-        <p class="text-slate-600 text-xs sm:text-sm mb-5 sm:mb-6 leading-relaxed">
-          Dunia n'est pas seulement destiné aux apprenants. Nous souhaitons également permettre aux formateurs, enseignants et professionnels de partager leurs connaissances avec une nouvelle génération d'apprenants.
-        </p>
-        <ul class="space-y-3 sm:space-y-4 text-xs sm:text-sm font-medium text-slate-700 mb-6 sm:mb-8">
-          <li class="flex items-start gap-3">
-            <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-share-nodes"></i></span>
-            <div>
-              <span class="font-semibold text-slate-800 text-[11px] sm:text-xs block">Partagez votre expertise</span>
-              <span class="text-[10px] sm:text-xs text-slate-500 font-normal">Transformez vos connaissances en contenu pédagogique accessible.</span>
-            </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-bullhorn"></i></span>
-            <div>
-              <span class="font-semibold text-slate-800 text-[11px] sm:text-xs block">Faites découvrir vos formations</span>
-              <span class="text-[10px] sm:text-xs text-slate-500 font-normal">Présentez vos formations à une communauté d'apprenants.</span>
-            </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5"><i class="fa-solid fa-chart-line"></i></span>
-            <div>
-              <span class="font-semibold text-slate-800 text-[11px] sm:text-xs block">Construisez votre audience</span>
-              <span class="text-[10px] sm:text-xs text-slate-500 font-normal">Développez progressivement votre présence en tant que formateur.</span>
-            </div>
-          </li>
-        </ul>
-        <a href="https://wa.me/243962104398" class="group inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 sm:px-7 py-3.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/40 active:scale-95">
-          Je suis formateur <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-        </a>
-      </div>
-      <div class="order-1 lg:order-2 reveal-right relative">
-        <div class="relative">
-          <img src="https://i.pinimg.com/736x/ec/10/8a/ec108a80e6998be4bcc4b3894a84152b.jpg" alt="Formateur partageant son savoir" class="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-56 sm:h-96 object-cover" loading="lazy">
-          <div class="absolute -bottom-4 -left-3 sm:-bottom-6 sm:-left-6 bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-xl border border-slate-100 animate-float hidden xs:block">
-            <div class="flex items-center gap-2 sm:gap-3">
-              <div class="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-50 text-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center text-sm sm:text-lg">
-                <i class="fa-solid fa-users"></i>
-              </div>
-              <div>
-                <div class="text-base sm:text-lg font-extrabold text-slate-900">+100</div>
-                <div class="text-[9px] sm:text-[10px] text-slate-500 font-medium">Apprenants attendus</div>
-              </div>
-            </div>
-          </div>
-          <div class="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 bg-blue-600 text-white p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-xl animate-float-slow hidden xs:block">
-            <i class="fa-solid fa-chalkboard-user text-lg sm:text-2xl"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION COMMENT ÇA MARCHE -->
-  <section class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 bg-black text-white relative overflow-hidden">
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
-
-    <div class="max-w-7xl mx-auto relative z-10">
-      <div class="text-center mb-10 sm:mb-16 reveal">
-        <span class="inline-flex items-center gap-2 text-blue-400 font-semibold text-xs tracking-[0.2em] uppercase">
-          <span class="w-8 h-[2px] bg-gradient-to-r from-transparent to-blue-500"></span>
-          Processus
-          <span class="w-8 h-[2px] bg-gradient-to-l from-transparent to-blue-500"></span>
-        </span>
-        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold mt-3 bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">Comment ça marche ?</h2>
-        <p class="text-slate-400 text-xs sm:text-sm mt-3 max-w-lg mx-auto">Commencer avec Dunia sera simple. Suivez le parcours en 4 étapes.</p>
-      </div>
-
-      <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 relative">
-
-        <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent -translate-y-1/2 z-0"></div>
-
-        <div class="step-card reveal group relative p-6 sm:p-8 bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/10 hover:border-blue-500/40 transition-all duration-500 z-10">
-          <div class="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative z-10">
-            <div class="flex items-center justify-between mb-5 sm:mb-6">
-              <span class="text-3xl sm:text-4xl font-black text-white/10 group-hover:text-blue-500/20 transition-colors duration-500">01</span>
-            </div>
-            <h3 class="font-bold text-sm sm:text-base text-white mb-2">Trouvez une compétence</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed">Explorez les formations disponibles et choisissez ce que vous souhaitez apprendre.</p>
-          </div>
-          <div class="absolute bottom-0 left-6 right-6 h-[2px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        </div>
-
-        <div class="step-card reveal delay-100 group relative p-6 sm:p-8 bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/10 hover:border-blue-500/40 transition-all duration-500 z-10">
-          <div class="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative z-10">
-            <div class="flex items-center justify-between mb-5 sm:mb-6">
-              <span class="text-3xl sm:text-4xl font-black text-white/10 group-hover:text-indigo-500/20 transition-colors duration-500">02</span>
-            </div>
-            <h3 class="font-bold text-sm sm:text-base text-white mb-2">Apprenez</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed">Suivez les vidéos, consultez les ressources et réalisez les exercices proposés.</p>
-          </div>
-          <div class="absolute bottom-0 left-6 right-6 h-[2px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        </div>
-
-        <div class="step-card reveal delay-200 group relative p-6 sm:p-8 bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/10 hover:border-blue-500/40 transition-all duration-500 z-10">
-          <div class="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative z-10">
-            <div class="flex items-center justify-between mb-5 sm:mb-6">
-              <span class="text-3xl sm:text-4xl font-black text-white/10 group-hover:text-violet-500/20 transition-colors duration-500">03</span>
-            </div>
-            <h3 class="font-bold text-sm sm:text-base text-white mb-2">Pratiquez</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed">Transformez vos nouvelles connaissances en compétences grâce à la pratique.</p>
-          </div>
-          <div class="absolute bottom-0 left-6 right-6 h-[2px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        </div>
-
-        <div class="step-card reveal delay-300 group relative p-6 sm:p-8 bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/10 hover:border-blue-500/40 transition-all duration-500 z-10">
-          <div class="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative z-10">
-            <div class="flex items-center justify-between mb-5 sm:mb-6">
-              <span class="text-3xl sm:text-4xl font-black text-white/10 group-hover:text-cyan-500/20 transition-colors duration-500">04</span>
-            </div>
-            <h3 class="font-bold text-sm sm:text-base text-white mb-2">Continuez à évoluer</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed">Découvrez de nouvelles formations et développez progressivement vos compétences.</p>
-          </div>
-          <div class="absolute bottom-0 left-6 right-6 h-[2px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        </div>
-      </div>
-
-      <div class="mt-8 sm:mt-12 flex items-center justify-center gap-2 reveal delay-400">
-        <span class="w-8 h-1 rounded-full bg-blue-500"></span>
-        <span class="w-2 h-1 rounded-full bg-white/20"></span>
-        <span class="w-2 h-1 rounded-full bg-white/20"></span>
-        <span class="w-2 h-1 rounded-full bg-white/20"></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION TÉMOIGNAGES -->
-  <section class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
-    <div class="absolute top-20 left-0 w-48 h-48 sm:w-64 sm:h-64 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
-
-    <div class="text-center mb-8 sm:mb-12 reveal">
-      <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
-        <span class="w-6 sm:w-8 h-[2px] bg-blue-600"></span>
-        Témoignages
-        <span class="w-6 sm:w-8 h-[2px] bg-blue-600"></span>
-      </span>
-      <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Une plateforme pensée pour les apprenants.</h2>
-    </div>
-
-    <div class="reveal bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-2xl sm:rounded-3xl p-5 sm:p-14 text-center max-w-3xl mx-auto relative overflow-hidden shadow-lg">
-      <div class="absolute top-0 left-0 w-24 h-24 sm:w-32 sm:h-32 bg-blue-100/50 rounded-full -ml-12 sm:-ml-16 -mt-12 sm:-mt-16"></div>
-      <div class="absolute bottom-0 right-0 w-32 h-32 sm:w-40 sm:h-40 bg-blue-100/30 rounded-full -mr-16 sm:-mr-20 -mb-16 sm:-mb-20"></div>
-
-      <div class="relative z-10">
-        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-xl sm:rounded-2xl flex items-center justify-center text-3xl mx-auto mb-5 sm:mb-6 shadow-lg shadow-blue-600/10 animate-float p-2 border border-blue-100">
-          <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
-        </div>
-        <p class="text-slate-800 font-bold text-base sm:text-xl mb-3">Bientôt, leurs expériences parleront pour nous.</p>
-        <p class="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto mb-5 sm:mb-6">
-          Dunia est encore en développement. Cette section accueillera prochainement les expériences et témoignages des premiers apprenants ayant participé à nos formations.
-        </p>
-        <div class="flex items-center justify-center gap-2">
-          <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-300 rounded-full"></span>
-          <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full"></span>
-          <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full blink-dot"></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION APPLICATION -->
+  <!-- SECTION DEVENIR FORMATEUR -->
   <section class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 animated-gradient text-white relative overflow-hidden">
     <div class="absolute inset-0 opacity-10">
       <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px); background-size: 40px 40px;"></div>
     </div>
 
-    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 items-center relative z-10">
-      <div class="reveal-left">
-        <span class="inline-flex items-center gap-2 text-blue-200 font-semibold text-xs tracking-wider uppercase">
-          <span class="w-6 sm:w-8 h-[2px] bg-blue-200"></span>
-          Dunia App
-        </span>
-        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold mt-2 mb-4 sm:mb-5 leading-tight">Votre apprentissage, bientôt au même endroit.</h2>
-        <p class="text-blue-100 text-xs sm:text-sm mb-5 sm:mb-6 leading-relaxed max-w-lg">
-          Nous construisons actuellement l'application web Dunia. Elle permettra de découvrir des formations, suivre des cours, consulter des ressources pédagogiques et progresser depuis une seule plateforme.
-        </p>
+    <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
 
-        <p class="text-blue-200 text-[10px] sm:text-xs mb-5 sm:mb-6 max-w-lg">En attendant son lancement, rejoignez notre communauté WhatsApp pour recevoir les annonces concernant Dunia et nos prochaines formations.</p>
-
-        <a href="https://wa.me/243962104398" class="group inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-xs sm:text-sm px-6 sm:px-7 py-3.5 rounded-xl shadow-2xl transition-all hover:scale-105 active:scale-95 hover:shadow-white/20">
-          <i class="fa-brands fa-whatsapp text-lg"></i>
-          Rejoindre le groupe WhatsApp
-          <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-        </a>
-        <p class="text-blue-200/70 text-[9px] sm:text-[10px] mt-4 flex flex-wrap items-center gap-3">
-          <span><i class="fa-solid fa-check mr-1"></i>Gratuit</span>
-          <span><i class="fa-solid fa-check mr-1"></i>Actualités Dunia</span>
-          <span><i class="fa-solid fa-check mr-1"></i>Nouvelles formations</span>
-        </p>
-      </div>
-
-      <div class="reveal-right hidden lg:flex justify-center">
-        <div class="relative">
-          <div class="w-72 h-[550px] bg-slate-900/40 backdrop-blur-md border border-white/20 rounded-[3rem] p-4 shadow-2xl animate-float">
-            <div class="w-full h-full bg-slate-800/60 rounded-[2.5rem] flex flex-col items-center justify-center text-blue-200 relative overflow-hidden">
-              <div class="absolute top-0 left-0 right-0 h-16 bg-blue-600/20 rounded-t-[2.5rem]"></div>
-              <div class="w-20 h-20 mb-5 rounded-2xl bg-white/10 p-3 border border-white/20">
-                <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain brightness-0 invert">
-              </div>
-              <p class="text-sm font-semibold text-white">Dunia App</p>
-              <p class="text-xs text-blue-200 mt-1">Bientôt disponible</p>
-              <div class="mt-6 flex gap-1.5">
-                <span class="w-2 h-2 bg-blue-400 rounded-full blink-dot"></span>
-                <span class="w-2 h-2 bg-blue-400/50 rounded-full"></span>
-                <span class="w-2 h-2 bg-blue-400/30 rounded-full"></span>
-              </div>
-            </div>
-          </div>
-          <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-2xl shadow-2xl border border-blue-100">
-            <div class="w-10 h-10 rounded-xl bg-white p-1">
-              <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain">
-            </div>
-          </div>
-        </div>
-      </div>
+      <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 sm:mb-5 leading-tight">
+        Vous souhaitez proposer une formation sur Dunia ?
+      </h2>
+      <p class="text-blue-100 text-xs sm:text-base mb-6 sm:mb-8 max-w-xl mx-auto leading-relaxed">
+        Partagez votre expertise avec une communauté grandissante d'apprenants. Nous accueillons les formateurs, enseignants et professionnels qui souhaitent transmettre leurs connaissances.
+      </p>
+      <a href="https://wa.me/243962104398" class="group inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-xs sm:text-sm px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-2xl transition-all hover:scale-105 active:scale-95">
+        <i class="fa-solid fa-handshake text-lg"></i>
+        Devenir formateur
+        <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+      </a>
     </div>
   </section>
 
-  <!-- SECTION FAQ -->
-  <section id="faq" class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+  <!-- SECTION FAQ RAPIDE -->
+  <section class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
     <div class="absolute bottom-0 right-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
 
     <div class="text-center mb-8 sm:mb-12 reveal">
       <span class="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
         <span class="w-6 sm:w-8 h-[2px] bg-blue-600"></span>
-        FAQ
+        Questions fréquentes
         <span class="w-6 sm:w-8 h-[2px] bg-blue-600"></span>
       </span>
-      <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Vous avez des questions ?</h2>
-      <p class="text-slate-500 text-xs sm:text-sm mt-3">Voici les réponses aux questions les plus fréquentes.</p>
+      <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Vous hésitez encore ?</h2>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 max-w-4xl mx-auto">
@@ -1550,8 +1544,8 @@
         <div class="flex items-start gap-3">
           <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
           <div>
-            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Dunia est-il déjà disponible ?</h3>
-            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">L'application Dunia est actuellement en cours de développement. Certaines activités et formations peuvent cependant être proposées avant son lancement officiel.</p>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Comment choisir ma formation ?</h3>
+            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Explorez notre catalogue et utilisez les filtres par catégorie. Chaque formation indique son niveau, sa durée et son format pour vous aider à choisir.</p>
           </div>
         </div>
       </div>
@@ -1559,8 +1553,8 @@
         <div class="flex items-start gap-3">
           <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
           <div>
-            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Les formations sont-elles gratuites ?</h3>
-            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Dunia proposera des formations gratuites et payantes. Le prix dépendra de la formation et du formateur.</p>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Puis-je suivre plusieurs formations ?</h3>
+            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Oui, vous pouvez suivre autant de formations que vous le souhaitez. Nous vous recommandons de commencer par celles de niveau Débutant.</p>
           </div>
         </div>
       </div>
@@ -1568,8 +1562,8 @@
         <div class="flex items-start gap-3">
           <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
           <div>
-            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Les formations sont-elles uniquement en ligne ?</h3>
-            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Non. Dunia combine apprentissage numérique et formations en présentiel. Certaines de nos formations sont notamment organisées à Kinshasa.</p>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Les formations sont-elles certifiantes ?</h3>
+            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Cela dépend de la formation et du formateur. Lorsqu'une certification ou une attestation est disponible, l'information est indiquée dans les détails de la formation.</p>
           </div>
         </div>
       </div>
@@ -1577,17 +1571,8 @@
         <div class="flex items-start gap-3">
           <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
           <div>
-            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Est-ce que je recevrai un certificat ?</h3>
-            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Cela dépend de la formation et du formateur. Lorsqu'une certification ou une attestation est disponible, cette information sera indiquée dans les détails de la formation.</p>
-          </div>
-        </div>
-      </div>
-      <div class="faq-item reveal delay-400 bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm md:col-span-2">
-        <div class="flex items-start gap-3">
-          <span class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
-          <div>
-            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Puis-je proposer une formation sur Dunia ?</h3>
-            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Dunia prévoit d'accueillir des formateurs externes souhaitant transmettre leurs compétences et faire connaître leurs formations.</p>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Quand de nouvelles formations sortiront-elles ?</h3>
+            <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Nous ajoutons régulièrement de nouvelles formations. Rejoignez notre communauté WhatsApp pour être informé en priorité.</p>
           </div>
         </div>
       </div>
@@ -1595,7 +1580,7 @@
   </section>
 
   <!-- CTA FINAL -->
-  <section id="contact" class="py-16 sm:py-24 px-4 sm:px-6 md:px-16 bg-brand-navy text-white text-center relative overflow-hidden">
+  <section class="py-14 sm:py-20 px-4 sm:px-6 md:px-16 bg-brand-navy text-white text-center relative overflow-hidden">
     <div class="absolute inset-0 opacity-20">
       <div class="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-600 rounded-full blur-3xl"></div>
       <div class="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-500 rounded-full blur-3xl"></div>
@@ -1606,11 +1591,11 @@
         <img src="images/logo-dunia.png" alt="Dunia" class="w-full h-full object-contain brightness-0 invert">
       </div>
 
-      <h2 class="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-5 sm:mb-6">
-        Le prochain savoir que vous apprendrez peut changer ce que vous êtes capable de créer.
+      <h2 class="mobile-section-title text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-5 sm:mb-6">
+        Prêt à commencer votre première formation ?
       </h2>
       <p class="text-slate-300 text-xs sm:text-base mb-8 sm:mb-10 max-w-xl mx-auto leading-relaxed">
-        Dunia arrive bientôt. Rejoignez dès maintenant notre communauté et soyez parmi les premiers à découvrir les formations, événements et nouveautés de la plateforme.
+        Rejoignez notre communauté et soyez parmi les premiers à découvrir les nouvelles formations, événements et nouveautés de Dunia.
       </p>
 
       <div class="flex flex-col xs:flex-row items-center justify-center gap-3 sm:gap-4">
@@ -1619,21 +1604,20 @@
           Rejoindre la communauté WhatsApp
           <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
         </a>
-        <a href="formations.html" class="w-full xs:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-4 rounded-xl backdrop-blur-md transition-all hover:scale-105 active:scale-95">
-          Découvrir les formations <i class="fa-solid fa-arrow-right"></i>
+        <a href="index.html" class="w-full xs:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-4 rounded-xl backdrop-blur-md transition-all hover:scale-105 active:scale-95">
+          Retour à l'accueil <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
-
-      <p class="text-slate-500 text-[10px] sm:text-[11px] mt-6 sm:mt-8">
-        <i class="fa-solid fa-lock mr-1"></i> Gratuit • Sans engagement • Rejoignez une communauté grandissante
-      </p>
     </div>
   </section>
 
+  <!-- ============================================ -->
   <!-- PIED DE PAGE COMPLET -->
+  <!-- ============================================ -->
   <footer class="bg-brand-navy text-slate-400 pt-12 sm:pt-16 pb-6 sm:pb-8 border-t border-slate-800 relative overflow-hidden">
     <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600 to-transparent"></div>
 
+    <!-- NEWSLETTER -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
       <div class="bg-gradient-to-br from-blue-600/10 to-blue-500/5 border border-blue-500/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-5 reveal">
         <div class="text-center md:text-left w-full md:w-auto">
@@ -1661,6 +1645,7 @@
       <p id="newsletterMsg" class="hidden text-center text-[11px] mt-3 text-emerald-400 font-semibold"></p>
     </div>
 
+    <!-- COLONNES -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12 text-left">
 
       <div class="footer-col reveal xs:col-span-2 lg:col-span-1">
@@ -1742,6 +1727,7 @@
       </div>
     </div>
 
+    <!-- BADGES DE CONFIANCE -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-8 sm:mb-10">
       <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 py-4 border-y border-slate-800/60">
         <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
@@ -1753,7 +1739,7 @@
         </span>
         <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
         <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
-          <i class="fa-solid fa-certificate text-blue-500"></i> Formateurs vérifiés
+          <i class="fa-solid fa-certificate text-blue-500"></i> Formations certifiantes
         </span>
         <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
         <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
@@ -1762,6 +1748,7 @@
       </div>
     </div>
 
+    <!-- BAS DE PAGE -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 border-t border-slate-800">
       <div class="flex flex-col lg:flex-row items-center justify-between gap-4 text-[10px] sm:text-[11px] text-slate-500">
 
@@ -1862,20 +1849,7 @@
 
   <!-- SCRIPT -->
   <script>
-    // ========== ÉCRAN DE CHARGEMENT ==========
-    window.addEventListener('load', function() {
-      const loader = document.getElementById('loader');
-      setTimeout(function() {
-        loader.classList.add('hidden');
-      }, 700);
-    });
-
-    setTimeout(function() {
-      const loader = document.getElementById('loader');
-      if (loader) loader.classList.add('hidden');
-    }, 4000);
-
-    // ========== MENU MOBILE HAMBURGER ==========
+    // ========== MENU MOBILE ==========
     document.addEventListener('DOMContentLoaded', function() {
       const hamburgerBtn = document.getElementById('hamburgerBtn');
       const closeMenuBtn = document.getElementById('closeMenuBtn');
@@ -1968,16 +1942,181 @@
       themeToggles.forEach(function(btn) {
         btn.addEventListener('click', toggleTheme);
       });
+    });
 
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-        if (!localStorage.getItem('dunia-theme')) {
-          if (e.matches) {
-            html.classList.add('dark');
+    // ========== RECHERCHE + FILTRES ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchForm = document.getElementById('searchForm');
+      const searchInput = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('clearBtn');
+      const resetSearchBtn = document.getElementById('resetSearchBtn');
+      const noResults = document.getElementById('noResults');
+      const formationsGrid = document.getElementById('formationsGrid');
+      const formationCards = document.querySelectorAll('.formation-card');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const resultCount = document.getElementById('resultCount');
+      const resultLabel = document.getElementById('resultLabel');
+      const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+
+      let currentCategory = 'all';
+      let currentSearch = '';
+
+      function escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      }
+
+      function filterFormations() {
+        let visibleCount = 0;
+
+        formationCards.forEach(function(card) {
+          const cardCategory = card.getAttribute('data-category') || '';
+          const cardTitle = (card.getAttribute('data-title') || '').toLowerCase();
+          const cardDescription = (card.getAttribute('data-description') || '').toLowerCase();
+          const cardKeywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+
+          const fullText = cardTitle + ' ' + cardDescription + ' ' + cardKeywords + ' ' + cardCategory;
+
+          const matchesCategory = (currentCategory === 'all') || (cardCategory === currentCategory);
+          const matchesSearch = (currentSearch === '') || fullText.includes(currentSearch.toLowerCase());
+
+          if (matchesCategory && matchesSearch) {
+            card.classList.remove('card-hidden');
+            visibleCount++;
+
+            const titleEl = card.querySelector('.formation-title');
+            if (titleEl) {
+              const originalText = card.getAttribute('data-title');
+              titleEl.innerHTML = originalText;
+
+              if (currentSearch !== '') {
+                const regex = new RegExp('(' + escapeRegex(currentSearch) + ')', 'gi');
+                titleEl.innerHTML = originalText.replace(regex, '<mark class="highlight">$1</mark>');
+              }
+            }
           } else {
-            html.classList.remove('dark');
+            card.classList.add('card-hidden');
+          }
+        });
+
+        if (resultCount) resultCount.textContent = visibleCount;
+        if (resultLabel) {
+          if (visibleCount === 0 || visibleCount === 1) {
+            resultLabel.textContent = 'formation trouvée';
+          } else {
+            resultLabel.textContent = 'formations disponibles';
           }
         }
+
+        if (visibleCount === 0) {
+          noResults.classList.add('visible');
+          formationsGrid.style.display = 'none';
+        } else {
+          noResults.classList.remove('visible');
+          formationsGrid.style.display = 'grid';
+        }
+
+        if (currentSearch !== '') {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      }
+
+      searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        currentSearch = searchInput.value.trim();
+        filterFormations();
+
+        const filterContainer = document.getElementById('filterContainer');
+        if (filterContainer) {
+          filterContainer.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
       });
+
+      let searchTimeout;
+      searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+          currentSearch = e.target.value.trim();
+          filterFormations();
+        }, 300);
+      });
+
+      clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        currentSearch = '';
+        filterFormations();
+        searchInput.focus();
+      });
+
+      resetSearchBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        currentSearch = '';
+        currentCategory = 'all';
+
+        filterBtns.forEach(function(b) {
+          b.classList.remove('active');
+        });
+        const allBtn = document.querySelector('.filter-btn[data-category="all"]');
+        if (allBtn) allBtn.classList.add('active');
+
+        filterFormations();
+
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(function() {
+          searchInput.focus();
+        }, 500);
+      });
+
+      filterBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          filterBtns.forEach(function(b) {
+            b.classList.remove('active');
+          });
+          btn.classList.add('active');
+
+          currentCategory = btn.getAttribute('data-category');
+          filterFormations();
+        });
+      });
+
+      suggestionBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const searchTerm = btn.getAttribute('data-search');
+          searchInput.value = searchTerm;
+          currentSearch = searchTerm;
+          filterFormations();
+
+          const filterContainer = document.getElementById('filterContainer');
+          if (filterContainer) {
+            filterContainer.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          currentSearch = '';
+          filterFormations();
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          searchInput.focus();
+          searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+
+      filterFormations();
     });
 
     // ========== ANIMATIONS AU SCROLL ==========
@@ -2000,7 +2139,7 @@
       revealOnScroll();
     });
 
-    // ========== SMOOTH SCROLL POUR LES ANCRES ==========
+    // ========== SMOOTH SCROLL ==========
     document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
       anchor.addEventListener('click', function(e) {
         const targetId = this.getAttribute('href');
@@ -2115,27 +2254,345 @@
       }
     });
 
-    // ========== VIDÉO AUTOPLAY ==========
+    // ============================================
+    // LECTEUR VIDÉO STYLE YOUTUBE
+    // ============================================
     document.addEventListener('DOMContentLoaded', function() {
       const video = document.getElementById('duniaVideo');
+      const wrapper = document.getElementById('videoWrapper');
+      const container = document.getElementById('videoContainer');
+      const bigPlayBtn = document.getElementById('bigPlayBtn');
+      const playPauseBtn = document.getElementById('playPauseBtn');
+      const playPauseIcon = document.getElementById('playPauseIcon');
+      const rewindBtn = document.getElementById('rewindBtn');
+      const forwardBtn = document.getElementById('forwardBtn');
+      const muteBtn = document.getElementById('muteBtn');
+      const volumeIcon = document.getElementById('volumeIcon');
+      const volumeSlider = document.getElementById('volumeSlider');
+      const progressContainer = document.getElementById('progressContainer');
+      const progressFilled = document.getElementById('progressFilled');
+      const progressBuffered = document.getElementById('progressBuffered');
+      const progressThumb = document.getElementById('progressThumb');
+      const currentTimeEl = document.getElementById('currentTime');
+      const durationEl = document.getElementById('duration');
+      const speedBtn = document.getElementById('speedBtn');
+      const speedMenu = document.getElementById('speedMenu');
+      const speedLabel = document.getElementById('speedLabel');
+      const speedOptions = document.querySelectorAll('.speed-option');
+      const fullscreenBtn = document.getElementById('fullscreenBtn');
+      const fullscreenIcon = document.getElementById('fullscreenIcon');
+      const videoLoading = document.getElementById('videoLoading');
+      const videoFlash = document.getElementById('videoFlash');
+      const flashIcon = document.getElementById('flashIcon');
+
       if (!video) return;
 
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(function() {
-          console.log('[Vidéo] Autoplay bloqué par le navigateur.');
-        });
+      let isDragging = false;
+      let controlsTimeout;
+      let lastVolume = 1;
+
+      function formatTime(seconds) {
+        if (isNaN(seconds)) return '0:00';
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = Math.floor(seconds % 60);
+        if (h > 0) {
+          return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+        return m + ':' + String(s).padStart(2, '0');
       }
 
-      const observer = new IntersectionObserver(function(entries) {
+      function togglePlay() {
+        if (video.paused) {
+          video.play().catch(function() {});
+        } else {
+          video.pause();
+        }
+      }
+
+      function updatePlayIcon() {
+        if (video.paused) {
+          playPauseIcon.className = 'fa-solid fa-play';
+        } else {
+          playPauseIcon.className = 'fa-solid fa-pause';
+        }
+      }
+
+      bigPlayBtn.addEventListener('click', function() {
+        togglePlay();
+        bigPlayBtn.classList.add('hidden');
+      });
+
+      playPauseBtn.addEventListener('click', togglePlay);
+
+      video.addEventListener('play', function() {
+        updatePlayIcon();
+        bigPlayBtn.classList.add('hidden');
+        showFlash('fa-play');
+      });
+
+      video.addEventListener('pause', function() {
+        updatePlayIcon();
+        showFlash('fa-pause');
+      });
+
+      video.addEventListener('click', togglePlay);
+
+      rewindBtn.addEventListener('click', function() {
+        video.currentTime = Math.max(0, video.currentTime - 10);
+        showFlash('fa-rotate-left');
+      });
+
+      forwardBtn.addEventListener('click', function() {
+        video.currentTime = Math.min(video.duration || 0, video.currentTime + 10);
+        showFlash('fa-rotate-right');
+      });
+
+      function updateVolumeIcon() {
+        if (video.muted || video.volume === 0) {
+          volumeIcon.className = 'fa-solid fa-volume-xmark';
+        } else if (video.volume < 0.5) {
+          volumeIcon.className = 'fa-solid fa-volume-low';
+        } else {
+          volumeIcon.className = 'fa-solid fa-volume-high';
+        }
+      }
+
+      muteBtn.addEventListener('click', function() {
+        if (video.muted || video.volume === 0) {
+          video.muted = false;
+          video.volume = lastVolume || 1;
+          volumeSlider.value = video.volume;
+        } else {
+          lastVolume = video.volume;
+          video.muted = true;
+        }
+        updateVolumeIcon();
+      });
+
+      volumeSlider.addEventListener('input', function() {
+        video.volume = parseFloat(volumeSlider.value);
+        video.muted = video.volume === 0;
+        updateVolumeIcon();
+      });
+
+      video.addEventListener('volumechange', function() {
+        volumeSlider.value = video.muted ? 0 : video.volume;
+        updateVolumeIcon();
+      });
+
+      function updateProgress() {
+        if (video.duration) {
+          const percent = (video.currentTime / video.duration) * 100;
+          progressFilled.style.width = percent + '%';
+          progressThumb.style.left = percent + '%';
+          currentTimeEl.textContent = formatTime(video.currentTime);
+        }
+      }
+
+      video.addEventListener('timeupdate', updateProgress);
+
+      video.addEventListener('loadedmetadata', function() {
+        durationEl.textContent = formatTime(video.duration);
+        updateProgress();
+      });
+
+      video.addEventListener('progress', function() {
+        if (video.buffered.length > 0 && video.duration) {
+          const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+          const percent = (bufferedEnd / video.duration) * 100;
+          progressBuffered.style.width = percent + '%';
+        }
+      });
+
+      function seekFromEvent(e) {
+        const rect = progressContainer.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let percent = (clientX - rect.left) / rect.width;
+        percent = Math.max(0, Math.min(1, percent));
+        if (video.duration) {
+          video.currentTime = percent * video.duration;
+        }
+      }
+
+      progressContainer.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        progressContainer.classList.add('dragging');
+        seekFromEvent(e);
+      });
+
+      document.addEventListener('mousemove', function(e) {
+        if (isDragging) seekFromEvent(e);
+      });
+
+      document.addEventListener('mouseup', function() {
+        if (isDragging) {
+          isDragging = false;
+          progressContainer.classList.remove('dragging');
+        }
+      });
+
+      progressContainer.addEventListener('touchstart', function(e) {
+        isDragging = true;
+        progressContainer.classList.add('dragging');
+        seekFromEvent(e);
+      }, { passive: true });
+
+      progressContainer.addEventListener('touchmove', function(e) {
+        if (isDragging) seekFromEvent(e);
+      }, { passive: true });
+
+      progressContainer.addEventListener('touchend', function() {
+        isDragging = false;
+        progressContainer.classList.remove('dragging');
+      });
+
+      speedBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        speedMenu.classList.toggle('open');
+      });
+
+      speedOptions.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          const speed = parseFloat(opt.getAttribute('data-speed'));
+          video.playbackRate = speed;
+          speedLabel.textContent = speed + 'x';
+
+          speedOptions.forEach(function(o) {
+            o.classList.remove('active');
+            const check = o.querySelector('i');
+            if (check) check.remove();
+          });
+          opt.classList.add('active');
+          if (!opt.querySelector('i')) {
+            const icon = document.createElement('i');
+            icon.className = 'fa-solid fa-check';
+            opt.appendChild(icon);
+          }
+
+          speedMenu.classList.remove('open');
+        });
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!speedMenu.contains(e.target) && !speedBtn.contains(e.target)) {
+          speedMenu.classList.remove('open');
+        }
+      });
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          if (wrapper.requestFullscreen) {
+            wrapper.requestFullscreen();
+          } else if (wrapper.webkitRequestFullscreen) {
+            wrapper.webkitRequestFullscreen();
+          } else if (video.webkitEnterFullscreen) {
+            video.webkitEnterFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        }
+      }
+
+      fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+      document.addEventListener('fullscreenchange', updateFullscreenIcon);
+      document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+      function updateFullscreenIcon() {
+        const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        if (isFull) {
+          fullscreenIcon.className = 'fa-solid fa-compress';
+        } else {
+          fullscreenIcon.className = 'fa-solid fa-expand';
+        }
+      }
+
+      video.addEventListener('waiting', function() {
+        videoLoading.classList.add('visible');
+      });
+      video.addEventListener('canplay', function() {
+        videoLoading.classList.remove('visible');
+      });
+      video.addEventListener('playing', function() {
+        videoLoading.classList.remove('visible');
+      });
+
+      function showFlash(iconClass) {
+        flashIcon.className = 'fa-solid ' + iconClass;
+        videoFlash.classList.add('show');
+        clearTimeout(videoFlash._timeout);
+        videoFlash._timeout = setTimeout(function() {
+          videoFlash.classList.remove('show');
+        }, 600);
+      }
+
+      function showControlsTemporarily() {
+        wrapper.classList.add('controls-visible');
+        clearTimeout(controlsTimeout);
+        controlsTimeout = setTimeout(function() {
+          if (!video.paused) {
+            wrapper.classList.remove('controls-visible');
+          }
+        }, 2500);
+      }
+
+      wrapper.addEventListener('mousemove', showControlsTemporarily);
+      wrapper.addEventListener('mouseleave', function() {
+        if (!video.paused) wrapper.classList.remove('controls-visible');
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (!isElementInViewport(wrapper)) return;
+
+        switch (e.key) {
+          case ' ':
+          case 'k':
+            e.preventDefault();
+            togglePlay();
+            break;
+          case 'ArrowLeft':
+            e.preventDefault();
+            video.currentTime = Math.max(0, video.currentTime - 5);
+            showFlash('fa-rotate-left');
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            video.currentTime = Math.min(video.duration || 0, video.currentTime + 5);
+            showFlash('fa-rotate-right');
+            break;
+          case 'm':
+            muteBtn.click();
+            break;
+          case 'f':
+            toggleFullscreen();
+            break;
+        }
+      });
+
+      function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        return rect.top < window.innerHeight && rect.bottom > 0;
+      }
+
+      const videoObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
+            video.muted = true;
             video.play().catch(function() {});
           }
         });
-      }, { threshold: 0.25 });
+      }, { threshold: 0.5 });
 
-      observer.observe(video);
+      videoObserver.observe(video);
+
+      updatePlayIcon();
+      updateVolumeIcon();
     });
 
     // ========== FOOTER : ANNÉE DYNAMIQUE ==========
