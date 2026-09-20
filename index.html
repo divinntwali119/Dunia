@@ -894,6 +894,13 @@
       position: relative;
       width: 100%;
       overflow: hidden;
+      border-radius: 1.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .news-slider {
+        border-radius: 2rem;
+      }
     }
 
     .news-slider-track {
@@ -1098,79 +1105,6 @@
       display: flex;
       justify-content: center;
       padding: 24px 0 0;
-    }
-
-    /* Boutons de navigation du slider */
-    .news-nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      opacity: 0;
-      padding: 0;
-      min-height: auto;
-      min-width: auto;
-    }
-
-    .news-slider:hover .news-nav-btn {
-      opacity: 1;
-    }
-
-    .news-nav-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-50%) scale(1.1);
-    }
-
-    .news-nav-btn:active {
-      transform: translateY(-50%) scale(0.95);
-    }
-
-    .news-nav-btn.prev {
-      left: 12px;
-    }
-
-    .news-nav-btn.next {
-      right: 12px;
-    }
-
-    @media (min-width: 640px) {
-      .news-nav-btn {
-        width: 48px;
-        height: 48px;
-      }
-      .news-nav-btn.prev {
-        left: 20px;
-      }
-      .news-nav-btn.next {
-        right: 20px;
-      }
-    }
-
-    @media (max-width: 767px) {
-      .news-nav-btn {
-        opacity: 1;
-        width: 36px;
-        height: 36px;
-      }
-      .news-nav-btn.prev {
-        left: 8px;
-      }
-      .news-nav-btn.next {
-        right: 8px;
-      }
     }
 
     .scrollbar-hide {
@@ -1512,14 +1446,6 @@
             </div>
 
           </div>
-
-          <!-- Boutons de navigation -->
-          <button class="news-nav-btn prev" id="newsPrev" aria-label="Slide précédent">
-            <i class="fa-solid fa-chevron-left text-sm"></i>
-          </button>
-          <button class="news-nav-btn next" id="newsNext" aria-label="Slide suivant">
-            <i class="fa-solid fa-chevron-right text-sm"></i>
-          </button>
         </div>
 
         <!-- Indicateurs -->
@@ -2827,14 +2753,12 @@
       });
     });
 
-    // ========== CARROUSEL ACTUALITÉS ==========
+    // ========== CARROUSEL ACTUALITÉS (2 secondes, sans boutons) ==========
     document.addEventListener('DOMContentLoaded', function() {
       const slider = document.getElementById('newsSlider');
       const track = document.getElementById('newsSliderTrack');
       const slides = track ? track.querySelectorAll('.news-slide') : [];
       const dots = document.querySelectorAll('.news-dot');
-      const prevBtn = document.getElementById('newsPrev');
-      const nextBtn = document.getElementById('newsNext');
       
       if (!slider || !track || slides.length === 0) return;
 
@@ -2875,7 +2799,7 @@
           if (!isPaused) {
             nextSlide();
           }
-        }, 3000);
+        }, 2000); // 2 secondes
       }
 
       function stopAutoPlay() {
@@ -2883,21 +2807,6 @@
           clearInterval(autoInterval);
           autoInterval = null;
         }
-      }
-
-      // Boutons
-      if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
-          nextSlide();
-          startAutoPlay();
-        });
-      }
-
-      if (prevBtn) {
-        prevBtn.addEventListener('click', function() {
-          prevSlide();
-          startAutoPlay();
-        });
       }
 
       // Indicateurs
@@ -2938,7 +2847,7 @@
         
         setTimeout(function() {
           isPaused = false;
-        }, 3000);
+        }, 2000);
       }, { passive: true });
 
       // Pause quand l'onglet n'est pas visible
