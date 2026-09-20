@@ -2739,40 +2739,51 @@
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       window.OneSignalDeferred.push(async function(OneSignal) {
 
-        // Synchronisation de l'état initial
+        // Synchronisation de l'état (native d'abord, OneSignal ensuite)
         async function syncState() {
           try {
-            const isOptedIn = await OneSignal.User.PushSubscription.optedIn;
-            const perm = await OneSignal.Notifications.permission;
-            if (isOptedIn === true && perm === true) {
+            const nativePerm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
+
+            if (nativePerm === 'granted') {
               setStateSubscribed();
               if (bellToggle) bellToggle.style.display = 'flex';
-            } else if (Notification.permission === 'denied') {
+              // Synchroniser OneSignal en arrière-plan sans bloquer
+              try {
+                const optPromise = OneSignal.User.PushSubscription.optIn();
+                await Promise.race([optPromise, new Promise(r => setTimeout(r, 2500))]);
+              } catch (_) {}
+              return;
+            }
+
+            if (nativePerm === 'denied') {
               setStateDenied();
               if (bellToggle) bellToggle.style.display = 'flex';
-            } else {
-              setStateDefault();
-              const dismissed = sessionStorage.getItem(STORAGE_KEY_DISMISSED) === 'true';
-              if (!dismissed) {
-                setTimeout(showWidget, 2500);
-              } else if (bellToggle) {
-                bellToggle.style.display = 'flex';
-              }
+              return;
+            }
+
+            // État par défaut (non abonné, non refusé)
+            setStateDefault();
+            const dismissed = sessionStorage.getItem(STORAGE_KEY_DISMISSED) === 'true';
+            if (!dismissed) {
+              setTimeout(showWidget, 2500);
+            } else if (bellToggle) {
+              bellToggle.style.display = 'flex';
             }
           } catch (e) {
-            console.warn('[Push] Erreur synchronisation OneSignal:', e);
+            console.warn('[Push] Erreur syncState:', e);
+            setStateDefault();
           }
         }
 
         // Écouter les changements d'abonnement OneSignal
-        OneSignal.User.PushSubscription.addEventListener('change', function(event) {
-          const isNowOpted = event && event.current && event.current.optedIn;
-          if (isNowOpted) {
-            setStateSubscribed();
-          } else {
-            setStateDefault();
-          }
-        });
+        try {
+          OneSignal.User.PushSubscription.addEventListener('change', function(event) {
+            const isNowOpted = event && event.current && event.current.optedIn;
+            if (isNowOpted) {
+              setStateSubscribed();
+            }
+          });
+        } catch (_) {}
 
         await syncState();
 
@@ -2780,31 +2791,74 @@
         if (actionBtn) {
           actionBtn.addEventListener('click', async function() {
             try {
-              const currentOptedIn = await OneSignal.User.PushSubscription.optedIn;
-              if (currentOptedIn) {
-                await OneSignal.User.PushSubscription.optOut();
+              // 1. Si déjà abonné : on propose de désactiver
+              if (Notification.permission === 'granted') {
+                actionBtn.textContent = 'Désactivation...';
+                try {
+                  await Promise.race([
+                    OneSignal.User.PushSubscription.optOut(),
+                    new Promise(r => setTimeout(r, 2500))
+                  ]);
+                } catch (_) {}
                 setStateDefault();
-              } else {
-                actionBtn.textContent = 'Activation...';
-                // 1. Demande de permission native au navigateur
-                await OneSignal.Notifications.requestPermission();
-                // 2. Inscription au service Push OneSignal
-                await OneSignal.User.PushSubscription.optIn();
+                return;
+              }
 
-                const newPerm = await OneSignal.Notifications.permission;
-                const newOpted = await OneSignal.User.PushSubscription.optedIn;
+              // 2. Si déjà bloqué : on informe l'utilisateur
+              if (Notification.permission === 'denied') {
+                setStateDenied();
+                return;
+              }
 
-                if (newPerm === true || newOpted === true) {
-                  setStateSubscribed();
-                  setTimeout(hideWidget, 3500);
-                } else if (Notification.permission === 'denied') {
-                  setStateDenied();
-                } else {
-                  setStateDefault();
+              // 3. Demande d'activation
+              actionBtn.textContent = 'Activation...';
+
+              // Demande de permission au navigateur avec timeout défensif (ne bloque JAMAIS)
+              let perm = 'default';
+              if (typeof Notification !== 'undefined' && Notification.requestPermission) {
+                try {
+                  const permPromise = Notification.requestPermission();
+                  perm = await Promise.race([
+                    permPromise,
+                    new Promise(r => setTimeout(() => r(Notification.permission), 7000))
+                  ]);
+                } catch (errPerm) {
+                  console.warn('[Push] requestPermission native:', errPerm);
+                  // Fallback OneSignal
+                  try {
+                    await Promise.race([
+                      OneSignal.Notifications.requestPermission(),
+                      new Promise(r => setTimeout(r, 4000))
+                    ]);
+                    perm = Notification.permission;
+                  } catch (_) {}
                 }
               }
+
+              // Traitement immédiat de la réponse
+              if (perm === 'granted' || Notification.permission === 'granted') {
+                // Succès immédiat côté UI !
+                setStateSubscribed();
+                setTimeout(hideWidget, 3500);
+
+                // Enregistrement OneSignal en tâche de fond
+                try {
+                  await Promise.race([
+                    OneSignal.User.PushSubscription.optIn(),
+                    new Promise(r => setTimeout(r, 4000))
+                  ]);
+                  console.log('[Push] Abonnement OneSignal enregistré avec succès !');
+                } catch (errOpt) {
+                  console.warn('[Push] Erreur optIn OneSignal (non bloquant):', errOpt);
+                }
+              } else if (perm === 'denied' || Notification.permission === 'denied') {
+                setStateDenied();
+              } else {
+                // L'utilisateur a fermé ou annulé la boîte de dialogue
+                setStateDefault();
+              }
             } catch (err) {
-              console.error('[Push] Erreur lors de l\'activation:', err);
+              console.error('[Push] Erreur activation:', err);
               setStateDefault();
             }
           });
