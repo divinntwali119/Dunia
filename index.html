@@ -888,44 +888,291 @@
     }
 
     /* ============================================ */
-    /* SECTION ACTUALITÉS / PUBLICITÉS */
+    /* SECTION ACTUALITÉS / PUBLICITÉS - CARROUSEL */
     /* ============================================ */
-    .news-card {
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    .news-slider {
       position: relative;
+      width: 100%;
       overflow: hidden;
     }
-    .news-card::after {
-      content: '';
+
+    .news-slider-track {
+      display: flex;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+
+    .news-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      position: relative;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+
+    @media (min-width: 640px) {
+      .news-slide {
+        min-height: 420px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .news-slide {
+        min-height: 480px;
+      }
+    }
+
+    .news-slide-img {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(11, 12, 38, 0.85) 0%, rgba(11, 12, 38, 0.3) 40%, transparent 70%);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 6s ease;
+    }
+
+    .news-slide.active .news-slide-img {
+      transform: scale(1.06);
+    }
+
+    .news-slide-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(11, 12, 38, 0.92) 0%,
+        rgba(11, 12, 38, 0.6) 40%,
+        rgba(11, 12, 38, 0.2) 70%,
+        transparent 100%
+      );
       z-index: 1;
-      pointer-events: none;
     }
-    .news-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 30px 60px -15px rgba(37, 99, 235, 0.35);
-    }
-    .news-card:hover .news-img {
-      transform: scale(1.08);
-    }
-    .news-img {
-      transition: transform 0.7s ease;
-    }
-    .news-card .news-content {
+
+    .news-slide-content {
       position: relative;
       z-index: 2;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 800px;
     }
-    .news-tag {
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: all 0.3s ease;
+
+    @media (min-width: 640px) {
+      .news-slide-content {
+        padding: 2.5rem;
+      }
     }
-    .news-card:hover .news-tag {
-      background: #2563eb;
+
+    @media (min-width: 1024px) {
+      .news-slide-content {
+        padding: 3.5rem 4rem;
+      }
+    }
+
+    .news-slide-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #1e40af;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    @media (min-width: 640px) {
+      .news-slide-tag {
+        font-size: 11px;
+        padding: 7px 16px;
+      }
+    }
+
+    .news-slide-title {
+      font-size: 1.25rem;
+      font-weight: 800;
       color: #ffffff;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
+
+    @media (min-width: 640px) {
+      .news-slide-title {
+        font-size: 1.75rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .news-slide-title {
+        font-size: 2.25rem;
+      }
+    }
+
+    .news-slide-desc {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      max-width: 600px;
+    }
+
+    @media (min-width: 640px) {
+      .news-slide-desc {
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+    }
+
+    .news-slide-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      font-size: 10px;
+      color: #94a3b8;
+    }
+
+    @media (min-width: 640px) {
+      .news-slide-meta {
+        font-size: 12px;
+        gap: 20px;
+      }
+    }
+
+    .news-slide-meta i {
+      color: #60a5fa;
+      margin-right: 4px;
+    }
+
+    /* Indicateurs */
+    .news-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 0 0;
+    }
+
+    .news-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      padding: 0;
+      min-height: auto;
+      min-width: auto;
+    }
+
+    @media (min-width: 640px) {
+      .news-dot {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .news-dot.active {
+      background: #2563eb;
+      width: 24px;
+      border-radius: 9999px;
+    }
+
+    html.dark .news-dot {
+      background: #333333;
+    }
+    html.dark .news-dot.active {
+      background: #3b82f6;
+    }
+
+    /* Bouton CTA sous le slider */
+    .news-slider-cta {
+      display: flex;
+      justify-content: center;
+      padding: 24px 0 0;
+    }
+
+    /* Boutons de navigation du slider */
+    .news-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0;
+      padding: 0;
+      min-height: auto;
+      min-width: auto;
+    }
+
+    .news-slider:hover .news-nav-btn {
+      opacity: 1;
+    }
+
+    .news-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .news-nav-btn:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    .news-nav-btn.prev {
+      left: 12px;
+    }
+
+    .news-nav-btn.next {
+      right: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .news-nav-btn {
+        width: 48px;
+        height: 48px;
+      }
+      .news-nav-btn.prev {
+        left: 20px;
+      }
+      .news-nav-btn.next {
+        right: 20px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .news-nav-btn {
+        opacity: 1;
+        width: 36px;
+        height: 36px;
+      }
+      .news-nav-btn.prev {
+        left: 8px;
+      }
+      .news-nav-btn.next {
+        right: 8px;
+      }
+    }
+
     .scrollbar-hide {
       -ms-overflow-style: none;
       scrollbar-width: none;
@@ -1113,135 +1360,185 @@
   </section>
 
   <!-- ============================================ -->
-  <!-- NOUVELLE SECTION : ACTUALITÉS & PUBLICITÉS -->
+  <!-- SECTION ACTUALITÉS & PUBLICITÉS - CARROUSEL -->
   <!-- ============================================ -->
-  <section id="actualites" class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative overflow-hidden">
+  <section id="actualites" class="py-12 sm:py-20 relative overflow-hidden">
     <!-- Décorations -->
     <div class="absolute top-10 right-0 w-56 h-56 sm:w-80 sm:h-80 bg-blue-100/40 rounded-full blur-3xl -z-10"></div>
     <div class="absolute bottom-10 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-50/60 rounded-full blur-3xl -z-10"></div>
 
-    <!-- En-tête -->
-    <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-8 sm:mb-12 gap-4 text-center sm:text-left reveal">
-      <div>
-        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">
-          Actualités & Publicités
-        </h2>
-        <p class="text-slate-500 text-xs sm:text-sm mt-3 max-w-xl">
-          Découvrez les dernières annonces, les formations à venir et les publicités de nos partenaires.
-        </p>
-      </div>
-      
-    </div>
-
-    <!-- Grille d'actualités -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
-
-      <!-- Carte 1 : Annonce principale (grande) -->
-      <div class="news-card reveal bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 group md:col-span-2 lg:col-span-2 relative min-h-[280px] sm:min-h-[340px]">
-        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80"
-             alt="Formation en présentiel à Kinshasa"
-             class="news-img absolute inset-0 w-full h-full object-cover">
-        <div class="news-content absolute bottom-0 left-0 right-0 p-5 sm:p-8">
-          <span class="news-tag inline-block bg-white/90 text-blue-700 text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
-            <i class="fa-solid fa-star text-yellow-500 mr-1"></i> À la une
-          </span>
-          <h3 class="text-white font-extrabold text-lg sm:text-2xl mb-2 leading-tight">
-            Lancement des premières formations en présentiel à l'Université de Kinshasa
-          </h3>
-          <p class="text-slate-200 text-xs sm:text-sm leading-relaxed max-w-2xl mb-3">
-            Dunia organise ses premières sessions en présentiel à la Faculté des Sciences et Technologies. Inscrivez-vous dès maintenant pour participer.
-          </p>
-          <div class="flex items-center gap-4 text-[10px] sm:text-xs text-slate-300">
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-calendar text-blue-400"></i> 15 Mars 2026</span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-blue-400"></i> Kinshasa, RDC</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Carte 2 : Actualité -->
-      <div class="news-card reveal delay-100 bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 group relative min-h-[280px] sm:min-h-[340px]">
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
-             alt="Nouvelle formation IA"
-             class="news-img absolute inset-0 w-full h-full object-cover">
-        <div class="news-content absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-          <span class="news-tag inline-block bg-white/90 text-blue-700 text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
-            <i class="fa-solid fa-robot mr-1"></i> Nouvelle formation
-          </span>
-          <h3 class="text-white font-extrabold text-base sm:text-lg mb-2 leading-tight">
-            Maîtriser l'IA : une formation bientôt disponible
-          </h3>
-          <p class="text-slate-200 text-[11px] sm:text-xs leading-relaxed">
-            Apprenez à utiliser les outils d'intelligence artificielle pour booster votre productivité.
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16">
+      <!-- En-tête -->
+      <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-8 sm:mb-12 gap-4 text-center sm:text-left reveal">
+        <div>
+          <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">
+            Actualités & Publicités
+          </h2>
+          <p class="text-slate-500 text-xs sm:text-sm mt-3 max-w-xl">
+            Découvrez les dernières annonces, les formations à venir et les publicités de nos partenaires.
           </p>
         </div>
       </div>
 
-      <!-- Carte 3 : Publicité partenaire -->
-      <div class="news-card reveal delay-200 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl overflow-hidden shadow-lg group relative min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-5 sm:p-7 text-white">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700"></div>
-        <div class="relative z-10">
-          <div class="flex items-center gap-2 mb-4">
-            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-bullhorn text-lg"></i>
+      <!-- Carrousel -->
+      <div class="reveal">
+        <div class="news-slider" id="newsSlider">
+          <div class="news-slider-track" id="newsSliderTrack">
+
+            <!-- Slide 1 -->
+            <div class="news-slide active">
+              <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1600&q=80"
+                   alt="Formation en présentiel à Kinshasa"
+                   class="news-slide-img"
+                   loading="eager">
+              <div class="news-slide-overlay"></div>
+              <div class="news-slide-content">
+                <span class="news-slide-tag">
+                  <i class="fa-solid fa-star text-yellow-500"></i> À la une
+                </span>
+                <h3 class="news-slide-title">
+                  Lancement des premières formations en présentiel à l'Université de Kinshasa
+                </h3>
+                <p class="news-slide-desc">
+                  Dunia organise ses premières sessions en présentiel à la Faculté des Sciences et Technologies. Inscrivez-vous dès maintenant pour participer.
+                </p>
+                <div class="news-slide-meta">
+                  <span><i class="fa-solid fa-calendar"></i> 15 Mars 2026</span>
+                  <span><i class="fa-solid fa-location-dot"></i> Kinshasa, RDC</span>
+                </div>
+              </div>
             </div>
-            <span class="bg-white/20 backdrop-blur-sm text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Publicité</span>
-          </div>
-          <h3 class="font-extrabold text-lg sm:text-xl mb-2 leading-tight">
-            Devenez partenaire de Dunia
-          </h3>
-          <p class="text-blue-100 text-xs sm:text-sm leading-relaxed mb-4">
-            Vous proposez des services numériques ? Faites-vous connaître auprès de notre communauté d'apprenants.
-          </p>
-        </div>
-        <a href="https://wa.me/243962104398" class="relative z-10 group/btn inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-xs px-5 py-3 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all self-start">
-          Nous contacter <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-1"></i>
-        </a>
-      </div>
 
-      <!-- Carte 4 : Événement -->
-      <div class="news-card reveal delay-300 bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 group relative min-h-[260px] sm:min-h-[300px]">
-        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"
-             alt="Hackathon Dunia"
-             class="news-img absolute inset-0 w-full h-full object-cover">
-        <div class="news-content absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-          <span class="news-tag inline-block bg-white/90 text-emerald-700 text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
-            <i class="fa-solid fa-calendar-star mr-1"></i> Événement
-          </span>
-          <h3 class="text-white font-extrabold text-base sm:text-lg mb-2 leading-tight">
-            Hackathon Dunia : 48h pour créer
-          </h3>
-          <p class="text-slate-200 text-[11px] sm:text-xs leading-relaxed">
-            Participez à notre premier hackathon et tentez de gagner des formations gratuites.
-          </p>
-        </div>
-      </div>
-
-      <!-- Carte 5 : Publicité -->
-      <div class="news-card reveal delay-400 bg-gradient-to-br from-slate-900 to-brand-navy rounded-2xl overflow-hidden shadow-lg group relative min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-5 sm:p-7 text-white">
-        <div class="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/20 rounded-full -ml-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
-        <div class="relative z-10">
-          <div class="flex items-center gap-2 mb-4">
-            <div class="w-10 h-10 bg-blue-500/30 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-graduation-cap text-lg text-blue-400"></i>
+            <!-- Slide 2 -->
+            <div class="news-slide">
+              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80"
+                   alt="Nouvelle formation IA"
+                   class="news-slide-img"
+                   loading="lazy">
+              <div class="news-slide-overlay"></div>
+              <div class="news-slide-content">
+                <span class="news-slide-tag">
+                  <i class="fa-solid fa-robot"></i> Nouvelle formation
+                </span>
+                <h3 class="news-slide-title">
+                  Maîtriser l'IA : une formation bientôt disponible
+                </h3>
+                <p class="news-slide-desc">
+                  Apprenez à utiliser les outils d'intelligence artificielle pour booster votre productivité et créer des solutions innovantes.
+                </p>
+                <div class="news-slide-meta">
+                  <span><i class="fa-solid fa-calendar"></i> Bientôt</span>
+                  <span><i class="fa-solid fa-signal"></i> Tous niveaux</span>
+                </div>
+              </div>
             </div>
-            <span class="bg-blue-500/30 backdrop-blur-sm text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider text-blue-200">Promo</span>
-          </div>
-          <h3 class="font-extrabold text-lg sm:text-xl mb-2 leading-tight">
-            -50% sur votre première formation
-          </h3>
-          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
-            Profitez de notre offre de lancement et accédez à toutes nos formations à moitié prix.
-          </p>
-        </div>
-        <a href="https://wa.me/243962104398" class="relative z-10 group/btn inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all self-start">
-          J'en profite <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-1"></i>
-        </a>
-      </div>
-      <a href="actualites.html" class="group inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/40 active:scale-95 whitespace-nowrap">
-        Voir tout
-        <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-      </a>
 
+            <!-- Slide 3 -->
+            <div class="news-slide">
+              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1600&q=80"
+                   alt="Devenez partenaire de Dunia"
+                   class="news-slide-img"
+                   loading="lazy">
+              <div class="news-slide-overlay" style="background: linear-gradient(to top, rgba(37, 99, 235, 0.95) 0%, rgba(37, 99, 235, 0.7) 40%, rgba(37, 99, 235, 0.3) 70%, transparent 100%);"></div>
+              <div class="news-slide-content">
+                <span class="news-slide-tag" style="background: rgba(255,255,255,0.2); color: #ffffff; backdrop-filter: blur(8px);">
+                  <i class="fa-solid fa-bullhorn"></i> Publicité
+                </span>
+                <h3 class="news-slide-title">
+                  Devenez partenaire de Dunia
+                </h3>
+                <p class="news-slide-desc">
+                  Vous proposez des services numériques ? Faites-vous connaître auprès de notre communauté d'apprenants.
+                </p>
+                <div class="news-slide-meta" style="color: #dbeafe;">
+                  <span><i class="fa-solid fa-handshake" style="color: #ffffff;"></i> Partenariat</span>
+                  <span><i class="fa-solid fa-users" style="color: #ffffff;"></i> Visibilité</span>
+                </div>
+                <a href="https://wa.me/243962104398" class="mt-4 inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-xs px-5 py-3 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all">
+                  Nous contacter <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="news-slide">
+              <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1600&q=80"
+                   alt="Hackathon Dunia"
+                   class="news-slide-img"
+                   loading="lazy">
+              <div class="news-slide-overlay"></div>
+              <div class="news-slide-content">
+                <span class="news-slide-tag" style="background: rgba(16, 185, 129, 0.95); color: #ffffff;">
+                  <i class="fa-solid fa-calendar-star"></i> Événement
+                </span>
+                <h3 class="news-slide-title">
+                  Hackathon Dunia : 48h pour créer
+                </h3>
+                <p class="news-slide-desc">
+                  Participez à notre premier hackathon et tentez de gagner des formations gratuites et des prix exclusifs.
+                </p>
+                <div class="news-slide-meta">
+                  <span><i class="fa-solid fa-calendar"></i> 20-22 Avril 2026</span>
+                  <span><i class="fa-solid fa-trophy"></i> Prix à gagner</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 5 -->
+            <div class="news-slide">
+              <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80"
+                   alt="Promo -50%"
+                   class="news-slide-img"
+                   loading="lazy">
+              <div class="news-slide-overlay" style="background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 40%, rgba(15, 23, 42, 0.3) 70%, transparent 100%);"></div>
+              <div class="news-slide-content">
+                <span class="news-slide-tag" style="background: rgba(37, 99, 235, 0.3); color: #93c5fd; backdrop-filter: blur(8px);">
+                  <i class="fa-solid fa-graduation-cap"></i> Promo
+                </span>
+                <h3 class="news-slide-title">
+                  -50% sur votre première formation
+                </h3>
+                <p class="news-slide-desc">
+                  Profitez de notre offre de lancement et accédez à toutes nos formations à moitié prix. Places limitées !
+                </p>
+                <div class="news-slide-meta">
+                  <span><i class="fa-solid fa-tag"></i> Offre limitée</span>
+                  <span><i class="fa-solid fa-clock"></i> Jusqu'au 30 Avril</span>
+                </div>
+                <a href="https://wa.me/243962104398" class="mt-4 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all">
+                  J'en profite <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Boutons de navigation -->
+          <button class="news-nav-btn prev" id="newsPrev" aria-label="Slide précédent">
+            <i class="fa-solid fa-chevron-left text-sm"></i>
+          </button>
+          <button class="news-nav-btn next" id="newsNext" aria-label="Slide suivant">
+            <i class="fa-solid fa-chevron-right text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Indicateurs -->
+        <div class="news-dots" id="newsDots">
+          <button class="news-dot active" data-slide="0" aria-label="Slide 1"></button>
+          <button class="news-dot" data-slide="1" aria-label="Slide 2"></button>
+          <button class="news-dot" data-slide="2" aria-label="Slide 3"></button>
+          <button class="news-dot" data-slide="3" aria-label="Slide 4"></button>
+          <button class="news-dot" data-slide="4" aria-label="Slide 5"></button>
+        </div>
+
+        <!-- CTA -->
+        <div class="news-slider-cta">
+          <a href="actualites.html" class="group inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/40 active:scale-95 whitespace-nowrap">
+            Voir toutes les actualités
+            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2528,6 +2825,134 @@
       btn.addEventListener('click', function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
+    });
+
+    // ========== CARROUSEL ACTUALITÉS ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const slider = document.getElementById('newsSlider');
+      const track = document.getElementById('newsSliderTrack');
+      const slides = track ? track.querySelectorAll('.news-slide') : [];
+      const dots = document.querySelectorAll('.news-dot');
+      const prevBtn = document.getElementById('newsPrev');
+      const nextBtn = document.getElementById('newsNext');
+      
+      if (!slider || !track || slides.length === 0) return;
+
+      let currentIndex = 0;
+      const totalSlides = slides.length;
+      let autoInterval = null;
+      let isPaused = false;
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      function goToSlide(index) {
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+        currentIndex = index;
+        
+        track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+        
+        slides.forEach(function(slide, i) {
+          slide.classList.toggle('active', i === currentIndex);
+        });
+        
+        dots.forEach(function(dot, i) {
+          dot.classList.toggle('active', i === currentIndex);
+        });
+      }
+
+      function nextSlide() {
+        goToSlide(currentIndex + 1);
+      }
+
+      function prevSlide() {
+        goToSlide(currentIndex - 1);
+      }
+
+      function startAutoPlay() {
+        if (autoInterval) clearInterval(autoInterval);
+        autoInterval = setInterval(function() {
+          if (!isPaused) {
+            nextSlide();
+          }
+        }, 3000);
+      }
+
+      function stopAutoPlay() {
+        if (autoInterval) {
+          clearInterval(autoInterval);
+          autoInterval = null;
+        }
+      }
+
+      // Boutons
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+          nextSlide();
+          startAutoPlay();
+        });
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+          prevSlide();
+          startAutoPlay();
+        });
+      }
+
+      // Indicateurs
+      dots.forEach(function(dot) {
+        dot.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-slide'), 10);
+          goToSlide(index);
+          startAutoPlay();
+        });
+      });
+
+      // Pause au survol (desktop)
+      slider.addEventListener('mouseenter', function() {
+        isPaused = true;
+      });
+
+      slider.addEventListener('mouseleave', function() {
+        isPaused = false;
+      });
+
+      // Swipe tactile
+      slider.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        isPaused = true;
+      }, { passive: true });
+
+      slider.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+        }
+        
+        setTimeout(function() {
+          isPaused = false;
+        }, 3000);
+      }, { passive: true });
+
+      // Pause quand l'onglet n'est pas visible
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          isPaused = true;
+        } else {
+          isPaused = false;
+        }
+      });
+
+      // Initialiser
+      goToSlide(0);
+      startAutoPlay();
     });
   </script>
 
