@@ -49,8 +49,17 @@
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+      const isGitHubPages = window.location.hostname.endsWith('github.io') && pathParts.length > 0;
+      const repoName = isGitHubPages ? pathParts[0] : '';
+
       await OneSignal.init({
         appId: "ca77ab9d-f6f7-4311-85f9-1416fb389c43",
+        allowLocalhostAsSecureOrigin: true,
+        ...(isGitHubPages ? {
+          serviceWorkerPath: repoName + '/OneSignalSDKWorker.js',
+          serviceWorkerParam: { scope: '/' + repoName + '/' }
+        } : {})
       });
     });
   </script>

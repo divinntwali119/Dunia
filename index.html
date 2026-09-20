@@ -49,8 +49,17 @@
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+      const isGitHubPages = window.location.hostname.endsWith('github.io') && pathParts.length > 0;
+      const repoName = isGitHubPages ? pathParts[0] : '';
+
       await OneSignal.init({
         appId: "ca77ab9d-f6f7-4311-85f9-1416fb389c43",
+        allowLocalhostAsSecureOrigin: true,
+        ...(isGitHubPages ? {
+          serviceWorkerPath: repoName + '/OneSignalSDKWorker.js',
+          serviceWorkerParam: { scope: '/' + repoName + '/' }
+        } : {})
       });
     });
   </script>
@@ -2358,6 +2367,44 @@
     </div>
   </div>
 
+  <!-- BOUTON CLOCHE FLOTTANT PERMANENT -->
+  <button id="pushBellToggle" aria-label="Gérer les notifications" style="
+    position: fixed;
+    bottom: 90px;
+    left: 16px;
+    z-index: 9997;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(11, 12, 38, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 14px rgba(79, 70, 229, 0.35);
+    color: #fff;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  " onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+    <span id="pushBellBadge" style="
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 2px solid #0b0c26;
+      display: none;
+    "></span>
+  </button>
+
   <!-- SCRIPT -->
   <script>
     // ========== ÉCRAN DE CHARGEMENT ==========
@@ -2580,18 +2627,18 @@
     });
 
     // ========== PUSH NOTIFICATIONS — ONESIGNAL ==========
+    // ========== PUSH NOTIFICATIONS — ONESIGNAL ==========
     (function() {
-      // App ID OneSignal — ca77ab9d-f6f7-4311-85f9-1416fb389c43
-      const ONESIGNAL_APP_ID = 'ca77ab9d-f6f7-4311-85f9-1416fb389c43';
-
       const STORAGE_KEY_DISMISSED = 'dunia-push-dismissed';
 
       // ── Éléments UI ────────────────────────────────────────────────────────
-      const widget    = document.getElementById('pushWidget');
-      const actionBtn = document.getElementById('pushActionBtn');
+      const widget      = document.getElementById('pushWidget');
+      const bellToggle  = document.getElementById('pushBellToggle');
+      const bellBadge   = document.getElementById('pushBellBadge');
+      const actionBtn   = document.getElementById('pushActionBtn');
       const dismissBtn2 = document.getElementById('pushDismissBtn');
-      const titleEl   = document.getElementById('pushWidgetTitle');
-      const descEl    = document.getElementById('pushWidgetDesc');
+      const titleEl     = document.getElementById('pushWidgetTitle');
+      const descEl      = document.getElementById('pushWidgetDesc');
 
       if (!widget) return;
 
@@ -2612,13 +2659,17 @@
 
       // ── Helpers UI ─────────────────────────────────────────────────────────
       function showWidget() {
+        if (bellToggle) bellToggle.style.display = 'none';
         widget.style.display = 'flex';
-        widget.style.animation = 'pushSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both';
+        widget.style.animation = 'pushSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both';
       }
 
       function hideWidget() {
         widget.style.animation = 'pushSlideOut 0.25s ease both';
-        setTimeout(function() { widget.style.display = 'none'; }, 250);
+        setTimeout(function() {
+          widget.style.display = 'none';
+          if (bellToggle) bellToggle.style.display = 'flex';
+        }, 240);
       }
 
       function setStateSubscribed() {
@@ -2632,16 +2683,20 @@
           actionBtn.style.boxShadow = 'none';
           actionBtn.setAttribute('aria-label', 'Désactiver les notifications push');
         }
-        showWidget();
-        setTimeout(hideWidget, 4000);
+        if (bellBadge) {
+          bellBadge.style.display = 'block';
+          bellBadge.style.background = '#22c55e';
+        }
       }
 
       function setStateDenied() {
         if (titleEl) titleEl.textContent = 'Notifications bloquées';
         if (descEl)  descEl.textContent  = 'Autorisez-les dans les paramètres de votre navigateur';
         if (actionBtn) actionBtn.style.display = 'none';
-        showWidget();
-        setTimeout(hideWidget, 5000);
+        if (bellBadge) {
+          bellBadge.style.display = 'block';
+          bellBadge.style.background = '#ef4444';
+        }
       }
 
       function setStateDefault() {
@@ -2656,170 +2711,102 @@
           actionBtn.style.display = '';
           actionBtn.setAttribute('aria-label', 'Activer les notifications push');
         }
-        showWidget();
+        if (bellBadge) {
+          bellBadge.style.display = 'none';
+        }
       }
 
-      // ── Configuration du widget & observateurs OneSignal ──────────────────
+      // Clic sur la cloche pour rouvrir ou fermer
+      if (bellToggle) {
+        bellToggle.addEventListener('click', function() {
+          if (widget.style.display === 'flex') {
+            hideWidget();
+          } else {
+            showWidget();
+          }
+        });
+      }
+
+      // Bouton Fermer (X)
+      if (dismissBtn2) {
+        dismissBtn2.addEventListener('click', function() {
+          hideWidget();
+          sessionStorage.setItem(STORAGE_KEY_DISMISSED, 'true');
+        });
+      }
+
+      // ── Configuration OneSignal ───────────────────────────────────────────
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       window.OneSignalDeferred.push(async function(OneSignal) {
 
-        // ── Push Subscription Verification Dialog (requis par le guide OneSignal) ──
-        // S'affiche une seule fois quand un vrai ID serveur est reçu (non 'local-').
-        // L'ID 'local-' est un placeholder temporaire — il ne signifie PAS que
-        // le device est enregistré auprès des serveurs OneSignal.
-        const VERIFY_SHOWN_KEY = 'dunia-onesignal-verified';
-
-        function isRealSubscriptionId(id) {
-          return typeof id === 'string' && id.length > 0 && !id.startsWith('local-');
-        }
-
-        function showVerificationDialog() {
-          if (localStorage.getItem(VERIFY_SHOWN_KEY) === 'true') return;
-          localStorage.setItem(VERIFY_SHOWN_KEY, 'true');
-
-          // Création du modal natif (in-page)
-          const overlay = document.createElement('div');
-          overlay.id = 'osVerifyOverlay';
-          overlay.setAttribute('role', 'dialog');
-          overlay.setAttribute('aria-modal', 'true');
-          overlay.setAttribute('aria-labelledby', 'osVerifyTitle');
-          overlay.style.cssText = [
-            'position:fixed;inset:0;z-index:99999',
-            'background:rgba(0,0,0,0.65)',
-            'display:flex;align-items:center;justify-content:center',
-            'padding:16px',
-            'animation:pushSlideIn 0.3s ease both'
-          ].join(';');
-
-          const box = document.createElement('div');
-          box.style.cssText = [
-            'background:rgba(11,12,38,0.97)',
-            'backdrop-filter:blur(24px)',
-            '-webkit-backdrop-filter:blur(24px)',
-            'border:1px solid rgba(99,102,241,0.4)',
-            'border-radius:20px',
-            'padding:28px 24px 20px',
-            'max-width:380px;width:100%',
-            'box-shadow:0 24px 64px rgba(0,0,0,0.6)',
-            'text-align:center',
-            'font-family:Poppins,sans-serif'
-          ].join(';');
-
-          // Icône
-          const icon = document.createElement('div');
-          icon.style.cssText = [
-            'width:56px;height:56px;border-radius:16px',
-            'background:linear-gradient(135deg,#4f46e5,#7c3aed)',
-            'display:flex;align-items:center;justify-content:center',
-            'margin:0 auto 16px',
-            'box-shadow:0 8px 20px rgba(79,70,229,0.5)'
-          ].join(';');
-          icon.innerHTML = '<svg width="28" height="28" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
-
-          const title = document.createElement('p');
-          title.id = 'osVerifyTitle';
-          title.style.cssText = 'margin:0 0 10px;font-size:15px;font-weight:700;color:#f1f5f9;line-height:1.4';
-          title.textContent = 'Your OneSignal SDK integration is complete!';
-
-          const msg = document.createElement('p');
-          msg.style.cssText = 'margin:0 0 20px;font-size:12px;color:#94a3b8;line-height:1.6';
-          msg.textContent = 'You can now send Push Notifications & In-App Messages through OneSignal. Tap below to enable push notifications.';
-
-          const btn = document.createElement('button');
-          btn.id = 'osVerifyGotIt';
-          btn.textContent = 'Got it';
-          btn.style.cssText = [
-            'width:100%;padding:12px',
-            'border-radius:12px;border:none',
-            'background:linear-gradient(135deg,#4f46e5,#7c3aed)',
-            'color:#fff;font-size:13px;font-weight:700',
-            'font-family:inherit;cursor:pointer',
-            'box-shadow:0 4px 16px rgba(79,70,229,0.4)',
-            'transition:opacity 0.2s'
-          ].join(';');
-          btn.onmouseover = function() { btn.style.opacity = '0.85'; };
-          btn.onmouseout  = function() { btn.style.opacity = '1'; };
-
-          btn.addEventListener('click', async function() {
-            document.body.removeChild(overlay);
-            // Demande la permission push (seul endroit autorisé par le guide)
-            try {
-              await OneSignal.Slidedown.promptPush();
-              const newPerm = await OneSignal.Notifications.permission;
-              if (newPerm === true) {
-                setStateSubscribed();
-              } else if (Notification.permission === 'denied') {
-                setStateDenied();
+        // Synchronisation de l'état initial
+        async function syncState() {
+          try {
+            const isOptedIn = await OneSignal.User.PushSubscription.optedIn;
+            const perm = await OneSignal.Notifications.permission;
+            if (isOptedIn === true && perm === true) {
+              setStateSubscribed();
+              if (bellToggle) bellToggle.style.display = 'flex';
+            } else if (Notification.permission === 'denied') {
+              setStateDenied();
+              if (bellToggle) bellToggle.style.display = 'flex';
+            } else {
+              setStateDefault();
+              const dismissed = sessionStorage.getItem(STORAGE_KEY_DISMISSED) === 'true';
+              if (!dismissed) {
+                setTimeout(showWidget, 2500);
+              } else if (bellToggle) {
+                bellToggle.style.display = 'flex';
               }
-            } catch (err) {
-              console.warn('[Push] Permission refusée ou erreur:', err);
             }
-          });
-
-          box.appendChild(icon);
-          box.appendChild(title);
-          box.appendChild(msg);
-          box.appendChild(btn);
-          overlay.appendChild(box);
-          document.body.appendChild(overlay);
-        }
-
-        // Observer — stocké hors scope local pour éviter la désallocation (OneSignal = weak ref)
-        window._duniaOSObserver = {
-          onChange: function(event) {
-            const id = event && event.current && event.current.id;
-            if (isRealSubscriptionId(id)) showVerificationDialog();
-          }
-        };
-        OneSignal.User.PushSubscription.addEventListener('change', window._duniaOSObserver.onChange);
-
-        // Évaluer immédiatement — l'ID peut déjà être assigné avant l'attachement de l'observer
-        const currentId = OneSignal.User.PushSubscription.id;
-        if (isRealSubscriptionId(currentId)) showVerificationDialog();
-
-        // ── Lire l'état courant de la souscription ────────────────────────────
-        const permission  = await OneSignal.Notifications.permission;
-        const isOptedIn   = await OneSignal.User.PushSubscription.optedIn;
-
-        if (permission === true && isOptedIn === true) {
-          setStateSubscribed();
-        } else if (Notification.permission === 'denied') {
-          setStateDenied();
-        } else {
-          const dismissed = localStorage.getItem(STORAGE_KEY_DISMISSED) === 'true';
-          if (!dismissed) {
-            setTimeout(showWidget, 5000);
+          } catch (e) {
+            console.warn('[Push] Erreur synchronisation OneSignal:', e);
           }
         }
+
+        // Écouter les changements d'abonnement OneSignal
+        OneSignal.User.PushSubscription.addEventListener('change', function(event) {
+          const isNowOpted = event && event.current && event.current.optedIn;
+          if (isNowOpted) {
+            setStateSubscribed();
+          } else {
+            setStateDefault();
+          }
+        });
+
+        await syncState();
 
         // Bouton Activer / Désactiver
         if (actionBtn) {
           actionBtn.addEventListener('click', async function() {
-            const currentOptedIn = await OneSignal.User.PushSubscription.optedIn;
-            if (currentOptedIn) {
-              await OneSignal.User.PushSubscription.optOut();
-              setStateDefault();
-            } else {
-              try {
-                await OneSignal.Slidedown.promptPush();
+            try {
+              const currentOptedIn = await OneSignal.User.PushSubscription.optedIn;
+              if (currentOptedIn) {
+                await OneSignal.User.PushSubscription.optOut();
+                setStateDefault();
+              } else {
+                actionBtn.textContent = 'Activation...';
+                // 1. Demande de permission native au navigateur
+                await OneSignal.Notifications.requestPermission();
+                // 2. Inscription au service Push OneSignal
+                await OneSignal.User.PushSubscription.optIn();
+
                 const newPerm = await OneSignal.Notifications.permission;
-                if (newPerm === true) {
+                const newOpted = await OneSignal.User.PushSubscription.optedIn;
+
+                if (newPerm === true || newOpted === true) {
                   setStateSubscribed();
+                  setTimeout(hideWidget, 3500);
                 } else if (Notification.permission === 'denied') {
                   setStateDenied();
+                } else {
+                  setStateDefault();
                 }
-              } catch (err) {
-                console.warn('[Push] Permission refusée ou erreur:', err);
               }
+            } catch (err) {
+              console.error('[Push] Erreur lors de l\'activation:', err);
+              setStateDefault();
             }
-          });
-        }
-
-        // Bouton Fermer
-        if (dismissBtn2) {
-          dismissBtn2.addEventListener('click', function() {
-            hideWidget();
-            localStorage.setItem(STORAGE_KEY_DISMISSED, 'true');
           });
         }
       });
