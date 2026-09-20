@@ -30,8 +30,8 @@
       "name": "Voir les formations",
       "short_name": "Formations",
       "description": "Découvrir toutes les formations Dunia",
-      "url": "/Dunia/formations.html",
-      "icons": [{ "src": "/Dunia/icons/icon-96x96.png", "sizes": "96x96", "type": "image/png" }]
+      "url": "formations.html",
+      "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Rejoindre WhatsApp",

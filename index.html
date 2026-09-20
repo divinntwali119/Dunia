@@ -2065,8 +2065,8 @@
     // ========== PWA : SERVICE WORKER ==========
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        const swUrl = (location.pathname.replace(/\/[^/]*$/, '') || '/') + '/service-worker.js';
-        navigator.serviceWorker.register(swUrl)
+        const swUrl = new URL('./service-worker.js', window.location.href).href;
+        navigator.serviceWorker.register(swUrl, { scope: './' })
           .then(function(reg) {
             console.log('[PWA] Service Worker enregistré:', reg.scope);
           })

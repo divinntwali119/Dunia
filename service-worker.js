@@ -7,7 +7,6 @@ const CACHE_NAME = 'dunia-v1.2.0';
 const RUNTIME_CACHE = 'dunia-runtime-v1.2.0';
 const IMAGE_CACHE = 'dunia-images-v1.2.0';
 
-/* Détecte dynamiquement la base du site selon l'emplacement du service worker */
 const swPath = (typeof self !== 'undefined' && self.location && self.location.pathname) ? self.location.pathname : '/';
 let BASE = swPath.replace(/\/service-worker\.js$/, '');
 if (!BASE) BASE = '/';
@@ -19,7 +18,6 @@ function joinPath(p) {
   return cleanBase === '/' ? '/' + cleanP : cleanBase + '/' + cleanP;
 }
 
-/* Fichiers essentiels — leur absence ne bloque PAS l'installation */
 const PRECACHE_URLS = [
   joinPath(''),
   joinPath('index.html'),
@@ -29,7 +27,6 @@ const PRECACHE_URLS = [
   joinPath('images/logo-dunia.png')
 ];
 
-/* Fichiers optionnels — ignorés silencieusement si manquants */
 const OPTIONAL_URLS = [
   joinPath('icons/icon-32x32.png'),
   joinPath('icons/icon-96x96.png'),
@@ -95,10 +92,7 @@ self.addEventListener('activate', (event) => {
           })
         );
       })
-      .then(() => {
-        console.log('[SW] Activation terminée — prise de contrôle');
-        return self.clients.claim();
-      })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -110,33 +104,24 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   if (!url.protocol.startsWith('http')) return;
 
-  /* Ignorer réseaux sociaux et domaines externes */
+  // Ignore les réseaux sociaux
   if (url.hostname.includes('wa.me') ||
-      url.hostname.includes('whatsapp.com') ||
       url.hostname.includes('facebook.com') ||
       url.hostname.includes('instagram.com') ||
-      url.hostname.includes('linkedin.com') ||
-      url.hostname.includes('youtube.com') ||
-      url.hostname.includes('tiktok.com') ||
-      url.hostname.includes('pinimg.com') ||
-      url.hostname.includes('unsplash.com') ||
-      url.hostname.includes('fbcdn.net') ||
-      url.hostname.includes('fna.fbcdn.net')) {
+      url.hostname.includes('linkedin.com')) {
     return;
   }
 
-  /* Polices Google */
+  // Polices Google
   if (url.hostname.includes('fonts.googleapis.com') ||
       url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
       caches.open(RUNTIME_CACHE).then((cache) => {
         return cache.match(request).then((cachedResponse) => {
           const fetchPromise = fetch(request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              cache.put(request, networkResponse.clone());
-            }
+            cache.put(request, networkResponse.clone());
             return networkResponse;
-          }).catch(() => cachedResponse);
+          });
           return cachedResponse || fetchPromise;
         });
       })
@@ -144,28 +129,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* CDN externes */
-  if (url.hostname.includes('cdn.tailwindcss.com') ||
-      url.hostname.includes('cdnjs.cloudflare.com')) {
-    event.respondWith(
-      caches.open(RUNTIME_CACHE).then((cache) => {
-        return cache.match(request).then((cachedResponse) => {
-          const fetchPromise = fetch(request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              cache.put(request, networkResponse.clone());
-            }
-            return networkResponse;
-          }).catch(() => cachedResponse);
-          return cachedResponse || fetchPromise;
-        });
-      })
-    );
-    return;
-  }
-
-  /* Images */
+  // Images
   if (request.destination === 'image' ||
-      url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/i)) {
+      url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/)) {
     event.respondWith(
       caches.open(IMAGE_CACHE).then((cache) => {
         return cache.match(request).then((cachedResponse) => {
@@ -182,27 +148,16 @@ self.addEventListener('fetch', (event) => {
               cache.put(request, networkResponse.clone());
             }
             return networkResponse;
-          }).catch(() => {
-            return caches.match(BASE + '/images/logo-dunia.png');
-          });
+          }).catch(() => caches.match(BASE + '/images/logo-dunia.png'));
         });
       })
     );
     return;
   }
 
-  /* Vidéos — Network First */
-  if (request.destination === 'video' ||
-      url.pathname.match(/\.(mp4|webm|ogg)$/i)) {
-    event.respondWith(
-      fetch(request).catch(() => caches.match(request))
-    );
-    return;
-  }
-
-  /* HTML — Network First */
+  // HTML : Network First
   if (request.mode === 'navigate' ||
-      (request.headers.get('accept') && request.headers.get('accept').includes('text/html'))) {
+      request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
       fetch(request)
         .then((networkResponse) => {
@@ -222,35 +177,31 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* CSS / JS — Cache First */
+  // CSS / JS : Cache First
   if (request.destination === 'style' ||
       request.destination === 'script' ||
-      url.pathname.match(/\.(css|js)$/i)) {
+      url.pathname.match(/\.(css|js)$/)) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
         if (cachedResponse) return cachedResponse;
         return fetch(request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseClone = networkResponse.clone();
-            caches.open(RUNTIME_CACHE).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
+          const responseClone = networkResponse.clone();
+          caches.open(RUNTIME_CACHE).then((cache) => {
+            cache.put(request, responseClone);
+          });
           return networkResponse;
-        }).catch(() => {
-          return new Response('', { status: 408, statusText: 'Offline' });
         });
       })
     );
     return;
   }
 
-  /* Par défaut */
+  // Par défaut
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) return cachedResponse;
       return fetch(request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+        if (networkResponse && networkResponse.status === 200) {
           const responseClone = networkResponse.clone();
           caches.open(RUNTIME_CACHE).then((cache) => {
             cache.put(request, responseClone);
@@ -262,7 +213,6 @@ self.addEventListener('fetch', (event) => {
       if (request.mode === 'navigate') {
         return caches.match(BASE + '/offline.html');
       }
-      return new Response('', { status: 408, statusText: 'Offline' });
     })
   );
 });
@@ -271,8 +221,5 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
-  }
-  if (event.data && event.data.type === 'CHECK_VERSION') {
-    event.ports[0].postMessage({ version: CACHE_NAME });
   }
 });
