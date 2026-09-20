@@ -1,6 +1,6 @@
 /* ============================================================
    SERVICE WORKER — DUNIA PWA (GitHub Pages /Dunia/)
-   Version 1.2.0 — Installation tolérante aux erreurs
+   Version 1.3.0 — Push Notifications + Installation tolérante aux erreurs
    ============================================================ */
 
 const CACHE_NAME = 'dunia-v1.2.0';
@@ -222,4 +222,85 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+});
+
+/* ============ PUSH NOTIFICATIONS ============ */
+
+/**
+ * Réception d'une notification Push (même lorsque l'app est fermée).
+ * Les données peuvent venir de OneSignal ou d'un payload JSON manuel.
+ */
+self.addEventListener('push', (event) => {
+  let data = {
+    title: 'DUNIA',
+    body: 'Une nouvelle actualité est disponible sur notre site.',
+    icon: joinPath('icons/icon-192x192.png'),
+    badge: joinPath('icons/icon-96x96.png'),
+    url: joinPath('actualites.html'),
+    tag: 'dunia-push'
+  };
+
+  // Tentative de lecture du payload JSON envoyé par OneSignal / API
+  if (event.data) {
+    try {
+      const payload = event.data.json();
+      if (payload.title)  data.title  = payload.title;
+      if (payload.body)   data.body   = payload.body;
+      if (payload.icon)   data.icon   = payload.icon;
+      if (payload.badge)  data.badge  = payload.badge;
+      if (payload.url)    data.url    = payload.url;
+      if (payload.tag)    data.tag    = payload.tag;
+    } catch (e) {
+      // Payload non-JSON — on conserve les valeurs par défaut
+      const text = event.data.text();
+      if (text) data.body = text;
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon,
+    badge: data.badge,
+    tag: data.tag,
+    renotify: true,
+    vibrate: [200, 100, 200],
+    data: { url: data.url },
+    actions: [
+      { action: 'open', title: '📖 Voir l\'actualité' },
+      { action: 'dismiss', title: '✕ Fermer' }
+    ]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+/**
+ * Clic sur la notification — ouvre la page cible ou focus l'onglet existant.
+ */
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'dismiss') return;
+
+  const targetUrl = (event.notification.data && event.notification.data.url)
+    ? event.notification.data.url
+    : joinPath('actualites.html');
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((windowClients) => {
+        // Chercher un onglet existant avec la même URL
+        for (const client of windowClients) {
+          if (client.url === targetUrl && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // Sinon ouvrir un nouvel onglet
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      })
+  );
 });

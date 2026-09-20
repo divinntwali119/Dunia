@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OneSignal</title>
+    <meta
+      name="description"
+      content="The world's leader for mobile push notifications, web push, SMS, email and in-app messaging. Trusted by 1.8 million+ businesses to send 10 billion+ messages per day."
+    />
+
+    <!-- Set a light default before first paint. Keep THEME_BOOTSTRAP_STORAGE_KEY/LEGACY_STORAGE_KEY
+         in sync with the constants of the same name in src/features/userPreferences/constants.ts,
+         and this resolution logic in sync with readThemePreferenceFromStorage() /
+         resolveDataTheme() in src/features/userPreferences/themeBootstrap.ts.
+         The legacy fallback is a one-release migration aid; remove it once the legacy blob is
+         fully retired. -->
+    <script type="feb275449700bea14ea056bb-text/javascript">
+      (function () {
+        var THEME_BOOTSTRAP_STORAGE_KEY = "onesignal_theme_bootstrap_v1";
+        var LEGACY_STORAGE_KEY = "onesignal_user_preferences_v1";
+        // Keep in sync with PATHS.notificationPreview.index in src/shared/router/paths.ts.
+        var LIGHT_THEME_LOCKED_PATH = "/notification-preview-iframe";
+        var html = document.documentElement;
+
+        // Default to light unless we read an explicit stored preference.
+        html.dataset.theme = "light";
+
+        // The marketing site embeds this route in an iframe from the dashboard origin, so
+        // it shares localStorage with the logged-in dashboard. Lock it to light so a
+        // user's dark theme preference never leaks into the public embed.
+        if (window.location.pathname === LIGHT_THEME_LOCKED_PATH) {
+          return;
+        }
+
+        try {
+          var themePreference;
+
+          // Parsed independently of the legacy fallback below (its own try/catch), matching
+          // readThemePreferenceFromStorage()/readDedicatedThemeBootstrap() in themeBootstrap.ts: a
+          // corrupt dedicated-key value must still fall through to the legacy blob rather than
+          // aborting straight to the light default.
+          var parsedBootstrap = null;
+          try {
+            var rawBootstrap = window.localStorage.getItem(THEME_BOOTSTRAP_STORAGE_KEY);
+            parsedBootstrap = rawBootstrap ? JSON.parse(rawBootstrap) : null;
+          } catch (bootstrapError) {
+            parsedBootstrap = null;
+          }
+
+          if (parsedBootstrap === "light" || parsedBootstrap === "dark" || parsedBootstrap === "system") {
+            themePreference = parsedBootstrap;
+          } else {
+            try {
+              var rawLegacy = window.localStorage.getItem(LEGACY_STORAGE_KEY);
+              var parsedLegacy = rawLegacy ? JSON.parse(rawLegacy) : null;
+              var resolvedLegacy =
+                parsedLegacy && typeof parsedLegacy === "object" && parsedLegacy.value
+                  ? parsedLegacy.value
+                  : parsedLegacy;
+              themePreference = resolvedLegacy && resolvedLegacy.theme;
+            } catch (legacyError) {
+              themePreference = undefined;
+            }
+          }
+
+          var systemPrefersDark =
+            window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+          if (themePreference === "dark") {
+            html.dataset.theme = "dark";
+          } else if (themePreference === "system") {
+            // Only consult OS preference when the user explicitly chose System.
+            html.dataset.theme = systemPrefersDark ? "dark" : "light";
+          }
+          // "light", missing, or unknown theme values keep the light default above.
+        } catch (error) {
+          // Leave the light default.
+          html.dataset.theme = "light";
+        }
+      })();
+    </script>
+
+    <!-- STYLESHEETS -->
+    <link rel="stylesheet" href="https://js.recurly.com/v4/recurly.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.onesignal.com/sdks/OneSignalSDKStyles.css?v=1595364832"
+    />
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Nunito Sans is used by CMS styling in auth flows. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i|Inconsolata:400|Roboto:300,400,500,600"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- FAVICONS -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="OneSignal" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- SEO -->
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@onesignal" />
+    <meta
+      name="twitter:title"
+      content="Customer Messaging Delivered | Send Mobile & Web Push Notifications, Email, SMS & In-App"
+    />
+    <meta
+      name="twitter:description"
+      content="The world's leader for mobile push notifications, web push, SMS, email and in-app messaging. Trusted by 1.8 million+ businesses to send 10 billion+ messages per day."
+    />
+    <meta name="twitter:creator" content="" />
+    <meta name="twitter:image:src" content="https://media.onesignal.com/cms/onesignal.com.jpg" />
+    <meta name="twitter:domain" content="onesignal.com" />
+
+    <!-- Open Graph data -->
+    <meta
+      property="og:title"
+      content="Customer Messaging Delivered | Send Mobile & Web Push Notifications, Email, SMS & In-App"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://onesignal.com/" />
+    <meta property="og:image" content="https://media.onesignal.com/cms/onesignal.com.jpg" />
+    <meta
+      property="og:description"
+      content="The world's leader for mobile push notifications, web push, SMS, email and in-app messaging. Trusted by 1.8 million+ businesses to send 10 billion+ messages per day."
+    />
+
+    <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=es2021%2Ces2022%2Ces2023" type="feb275449700bea14ea056bb-text/javascript"></script>
+
+    <script src="https://js.recurly.com/v4/recurly.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+
+    <!-- THIRD PARTY SCRIPTS -->
+
+    <!-- Defer intercom because we can wait until the page is fully setup before showing the bubble -->
+    <script defer src="/analytics/intercom.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "9756ad6899da4d3facd248d74c5bc3cc"}' type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script async src="https://cdn.bizible.com/scripts/bizible.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script async src="/analytics/twitter.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script async src="/analytics/facebook.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script async src="/analytics/quora.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script async src="/analytics/linkedin.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script async src="/analytics/bing.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script async src="/analytics/openai.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-942286284" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script async src="/analytics/gtag.js" type="feb275449700bea14ea056bb-text/javascript"></script>
+    <script type="feb275449700bea14ea056bb-module" crossorigin src="/assets/index-CVehkYHu.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-CLO_Cjao.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DKVmPZAL.css">
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+
+    <!-- Tracking pixel fallbacks for facebook, quora, linkedin -->
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=518357991676389&ev=PageView&noscript=1"
+    /></noscript>
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://q.quora.com/_/ad/3e27edbd1b354a10aebc3a999694d6c2/pixel?tag=ViewContent&noscript=1"
+    /></noscript>
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display: none"
+        alt=""
+        src="https://px.ads.linkedin.com/collect/?pid=1381202&fmt=gif"
+      />
+    </noscript>
+  <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="feb275449700bea14ea056bb-|49" defer></script></body>
+</html>

@@ -44,6 +44,9 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- OneSignal Push SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -2268,6 +2271,85 @@
     </div>
   </div>
 
+  <!-- WIDGET NOTIFICATIONS PUSH -->
+  <div id="pushWidget" aria-live="polite" style="
+    position: fixed;
+    bottom: 90px;
+    left: 16px;
+    z-index: 9998;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    max-width: 320px;
+    width: calc(100vw - 32px);
+    font-family: 'Poppins', sans-serif;
+  ">
+    <!-- Panneau principal -->
+    <div id="pushPanel" style="
+      background: rgba(11, 12, 38, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    ">
+      <!-- Icône -->
+      <div style="
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+      ">
+        <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </div>
+      <!-- Texte -->
+      <div style="flex: 1; min-width: 0;">
+        <p id="pushWidgetTitle" style="margin:0; font-size:12px; font-weight:700; color:#f1f5f9; line-height:1.3;">Rester informé</p>
+        <p id="pushWidgetDesc" style="margin:4px 0 0; font-size:10px; color:#94a3b8; line-height:1.4;">Activez les notifications pour ne rien manquer</p>
+      </div>
+      <!-- Actions -->
+      <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+        <button id="pushDismissBtn" aria-label="Fermer le panneau de notifications" style="
+          width:28px; height:28px; border-radius:8px;
+          border:none; background:rgba(255,255,255,0.06);
+          color:#94a3b8; cursor:pointer;
+          display:flex; align-items:center; justify-content:center;
+          transition:background 0.2s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <button id="pushActionBtn" aria-label="Activer les notifications push" style="
+          padding: 7px 13px;
+          border-radius: 10px;
+          border: none;
+          background: linear-gradient(135deg, #4f46e5, #7c3aed);
+          color: #fff;
+          font-size: 10px;
+          font-weight: 700;
+          font-family: inherit;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: opacity 0.2s, transform 0.15s;
+          box-shadow: 0 4px 12px rgba(79,70,229,0.35);
+        " onmouseover="this.style.opacity='0.88'; this.style.transform='translateY(-1px)'" onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)'">
+          🔔 Activer
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- SCRIPT -->
   <script>
     // ========== ÉCRAN DE CHARGEMENT ==========
@@ -2489,9 +2571,262 @@
       }
     });
 
+    // ========== PUSH NOTIFICATIONS — ONESIGNAL ==========
+    (function() {
+      // App ID OneSignal — ca77ab9d-f6f7-4311-85f9-1416fb389c43
+      const ONESIGNAL_APP_ID = 'ca77ab9d-f6f7-4311-85f9-1416fb389c43';
+
+      const STORAGE_KEY_DISMISSED = 'dunia-push-dismissed';
+
+      // ── Éléments UI ────────────────────────────────────────────────────────
+      const widget    = document.getElementById('pushWidget');
+      const actionBtn = document.getElementById('pushActionBtn');
+      const dismissBtn2 = document.getElementById('pushDismissBtn');
+      const titleEl   = document.getElementById('pushWidgetTitle');
+      const descEl    = document.getElementById('pushWidgetDesc');
+
+      if (!widget) return;
+
+      // ── Compatibilité navigateur ───────────────────────────────────────────
+      if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+        console.info('[Push] Notifications Push non supportées sur ce navigateur.');
+        return;
+      }
+
+      // ── Animation CSS ──────────────────────────────────────────────────────
+      const pushStyle = document.createElement('style');
+      pushStyle.textContent = [
+        '@keyframes pushSlideIn{from{opacity:0;transform:translateY(16px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}',
+        '@keyframes pushSlideOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(8px) scale(.96)}}',
+        '@media(max-width:480px){#pushWidget{left:8px!important;max-width:calc(100vw - 16px)!important;width:calc(100vw - 16px)!important}}'
+      ].join('');
+      document.head.appendChild(pushStyle);
+
+      // ── Helpers UI ─────────────────────────────────────────────────────────
+      function showWidget() {
+        widget.style.display = 'flex';
+        widget.style.animation = 'pushSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both';
+      }
+
+      function hideWidget() {
+        widget.style.animation = 'pushSlideOut 0.25s ease both';
+        setTimeout(function() { widget.style.display = 'none'; }, 250);
+      }
+
+      function setStateSubscribed() {
+        if (titleEl) titleEl.textContent = 'Notifications actives';
+        if (descEl)  descEl.textContent  = 'Vous recevrez les actualités Dunia';
+        if (actionBtn) {
+          actionBtn.textContent = '🔕 Désactiver';
+          actionBtn.style.background = 'rgba(255,255,255,0.08)';
+          actionBtn.style.border = '1px solid rgba(255,255,255,0.15)';
+          actionBtn.style.color = '#94a3b8';
+          actionBtn.style.boxShadow = 'none';
+          actionBtn.setAttribute('aria-label', 'Désactiver les notifications push');
+        }
+        showWidget();
+        setTimeout(hideWidget, 4000);
+      }
+
+      function setStateDenied() {
+        if (titleEl) titleEl.textContent = 'Notifications bloquées';
+        if (descEl)  descEl.textContent  = 'Autorisez-les dans les paramètres de votre navigateur';
+        if (actionBtn) actionBtn.style.display = 'none';
+        showWidget();
+        setTimeout(hideWidget, 5000);
+      }
+
+      function setStateDefault() {
+        if (titleEl) titleEl.textContent = 'Rester informé';
+        if (descEl)  descEl.textContent  = 'Activez les notifications pour ne rien manquer';
+        if (actionBtn) {
+          actionBtn.textContent = '🔔 Activer';
+          actionBtn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
+          actionBtn.style.border = 'none';
+          actionBtn.style.color = '#fff';
+          actionBtn.style.boxShadow = '0 4px 12px rgba(79,70,229,0.35)';
+          actionBtn.style.display = '';
+          actionBtn.setAttribute('aria-label', 'Activer les notifications push');
+        }
+        showWidget();
+      }
+
+      // ── Initialisation OneSignal ───────────────────────────────────────────
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: ONESIGNAL_APP_ID,
+          notifyButton: { enable: false },
+          promptOptions: { autoPrompt: false },
+          allowLocalhostAsSecureOrigin: true
+        });
+
+        // ── Push Subscription Verification Dialog (requis par le guide OneSignal) ──
+        // S'affiche une seule fois quand un vrai ID serveur est reçu (non 'local-').
+        // L'ID 'local-' est un placeholder temporaire — il ne signifie PAS que
+        // le device est enregistré auprès des serveurs OneSignal.
+        const VERIFY_SHOWN_KEY = 'dunia-onesignal-verified';
+
+        function isRealSubscriptionId(id) {
+          return typeof id === 'string' && id.length > 0 && !id.startsWith('local-');
+        }
+
+        function showVerificationDialog() {
+          if (localStorage.getItem(VERIFY_SHOWN_KEY) === 'true') return;
+          localStorage.setItem(VERIFY_SHOWN_KEY, 'true');
+
+          // Création du modal natif (in-page)
+          const overlay = document.createElement('div');
+          overlay.id = 'osVerifyOverlay';
+          overlay.setAttribute('role', 'dialog');
+          overlay.setAttribute('aria-modal', 'true');
+          overlay.setAttribute('aria-labelledby', 'osVerifyTitle');
+          overlay.style.cssText = [
+            'position:fixed;inset:0;z-index:99999',
+            'background:rgba(0,0,0,0.65)',
+            'display:flex;align-items:center;justify-content:center',
+            'padding:16px',
+            'animation:pushSlideIn 0.3s ease both'
+          ].join(';');
+
+          const box = document.createElement('div');
+          box.style.cssText = [
+            'background:rgba(11,12,38,0.97)',
+            'backdrop-filter:blur(24px)',
+            '-webkit-backdrop-filter:blur(24px)',
+            'border:1px solid rgba(99,102,241,0.4)',
+            'border-radius:20px',
+            'padding:28px 24px 20px',
+            'max-width:380px;width:100%',
+            'box-shadow:0 24px 64px rgba(0,0,0,0.6)',
+            'text-align:center',
+            'font-family:Poppins,sans-serif'
+          ].join(';');
+
+          // Icône
+          const icon = document.createElement('div');
+          icon.style.cssText = [
+            'width:56px;height:56px;border-radius:16px',
+            'background:linear-gradient(135deg,#4f46e5,#7c3aed)',
+            'display:flex;align-items:center;justify-content:center',
+            'margin:0 auto 16px',
+            'box-shadow:0 8px 20px rgba(79,70,229,0.5)'
+          ].join(';');
+          icon.innerHTML = '<svg width="28" height="28" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+
+          const title = document.createElement('p');
+          title.id = 'osVerifyTitle';
+          title.style.cssText = 'margin:0 0 10px;font-size:15px;font-weight:700;color:#f1f5f9;line-height:1.4';
+          title.textContent = 'Your OneSignal SDK integration is complete!';
+
+          const msg = document.createElement('p');
+          msg.style.cssText = 'margin:0 0 20px;font-size:12px;color:#94a3b8;line-height:1.6';
+          msg.textContent = 'You can now send Push Notifications & In-App Messages through OneSignal. Tap below to enable push notifications.';
+
+          const btn = document.createElement('button');
+          btn.id = 'osVerifyGotIt';
+          btn.textContent = 'Got it';
+          btn.style.cssText = [
+            'width:100%;padding:12px',
+            'border-radius:12px;border:none',
+            'background:linear-gradient(135deg,#4f46e5,#7c3aed)',
+            'color:#fff;font-size:13px;font-weight:700',
+            'font-family:inherit;cursor:pointer',
+            'box-shadow:0 4px 16px rgba(79,70,229,0.4)',
+            'transition:opacity 0.2s'
+          ].join(';');
+          btn.onmouseover = function() { btn.style.opacity = '0.85'; };
+          btn.onmouseout  = function() { btn.style.opacity = '1'; };
+
+          btn.addEventListener('click', async function() {
+            document.body.removeChild(overlay);
+            // Demande la permission push (seul endroit autorisé par le guide)
+            try {
+              await OneSignal.Slidedown.promptPush();
+              const newPerm = await OneSignal.Notifications.permission;
+              if (newPerm === true) {
+                setStateSubscribed();
+              } else if (Notification.permission === 'denied') {
+                setStateDenied();
+              }
+            } catch (err) {
+              console.warn('[Push] Permission refusée ou erreur:', err);
+            }
+          });
+
+          box.appendChild(icon);
+          box.appendChild(title);
+          box.appendChild(msg);
+          box.appendChild(btn);
+          overlay.appendChild(box);
+          document.body.appendChild(overlay);
+        }
+
+        // Observer — stocké hors scope local pour éviter la désallocation (OneSignal = weak ref)
+        window._duniaOSObserver = {
+          onChange: function(event) {
+            const id = event && event.current && event.current.id;
+            if (isRealSubscriptionId(id)) showVerificationDialog();
+          }
+        };
+        OneSignal.User.PushSubscription.addEventListener('change', window._duniaOSObserver.onChange);
+
+        // Évaluer immédiatement — l'ID peut déjà être assigné avant l'attachement de l'observer
+        const currentId = OneSignal.User.PushSubscription.id;
+        if (isRealSubscriptionId(currentId)) showVerificationDialog();
+
+        // ── Lire l'état courant de la souscription ────────────────────────────
+        const permission  = await OneSignal.Notifications.permission;
+        const isOptedIn   = await OneSignal.User.PushSubscription.optedIn;
+
+        if (permission === true && isOptedIn === true) {
+          setStateSubscribed();
+        } else if (Notification.permission === 'denied') {
+          setStateDenied();
+        } else {
+          const dismissed = localStorage.getItem(STORAGE_KEY_DISMISSED) === 'true';
+          if (!dismissed) {
+            setTimeout(showWidget, 5000);
+          }
+        }
+
+        // Bouton Activer / Désactiver
+        if (actionBtn) {
+          actionBtn.addEventListener('click', async function() {
+            const currentOptedIn = await OneSignal.User.PushSubscription.optedIn;
+            if (currentOptedIn) {
+              await OneSignal.User.PushSubscription.optOut();
+              setStateDefault();
+            } else {
+              try {
+                await OneSignal.Slidedown.promptPush();
+                const newPerm = await OneSignal.Notifications.permission;
+                if (newPerm === true) {
+                  setStateSubscribed();
+                } else if (Notification.permission === 'denied') {
+                  setStateDenied();
+                }
+              } catch (err) {
+                console.warn('[Push] Permission refusée ou erreur:', err);
+              }
+            }
+          });
+        }
+
+        // Bouton Fermer
+        if (dismissBtn2) {
+          dismissBtn2.addEventListener('click', function() {
+            hideWidget();
+            localStorage.setItem(STORAGE_KEY_DISMISSED, 'true');
+          });
+        }
+      });
+    })();
+
     // ========== VIDÉO AUTOPLAY (SÉCURITÉ) ==========
     document.addEventListener('DOMContentLoaded', function() {
       const video = document.getElementById('duniaVideo');
+
       if (!video) return;
 
       const playPromise = video.play();
