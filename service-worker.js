@@ -1,7 +1,14 @@
 /* ============================================================
    SERVICE WORKER — DUNIA PWA (GitHub Pages /Dunia/)
-   Version 1.3.0 — Push Notifications + Installation tolérante aux erreurs
+   Version 1.4.0 — OneSignal SDK + PWA Cache
    ============================================================ */
+
+// Import du SDK OneSignal Service Worker (gère les push OneSignal)
+try {
+  importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
+} catch (e) {
+  // Ignoré si indisponible en mode hors ligne
+}
 
 const CACHE_NAME = 'dunia-v1.2.0';
 const RUNTIME_CACHE = 'dunia-runtime-v1.2.0';
@@ -240,10 +247,14 @@ self.addEventListener('push', (event) => {
     tag: 'dunia-push'
   };
 
-  // Tentative de lecture du payload JSON envoyé par OneSignal / API
+  // Tentative de lecture du payload JSON
   if (event.data) {
     try {
       const payload = event.data.json();
+      // Si la notification provient de OneSignal, OneSignalSDK.sw.js la traite déjà
+      if (payload.custom || payload.onesignal) {
+        return;
+      }
       if (payload.title)  data.title  = payload.title;
       if (payload.body)   data.body   = payload.body;
       if (payload.icon)   data.icon   = payload.icon;
