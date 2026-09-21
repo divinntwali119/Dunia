@@ -1,0 +1,40 @@
+node_modules/
+/.env
+/private/
+*.log
+*.env
+venv/
+__pycache__/
+.DS_Store
+/*.key
+/*.pem
+secret-*# Fichiers d'environnement et secrets
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.secret
+*.token
+*credentials*
+
+# Logs et caches
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.cache/
+
+# Fichiers et dossiers systèmes
+.DS_Store
+Thumbs.db
+__MACOSX/
+*.bak
+*~
+
+# Archives locales et documentation hors production
+docs_archive/
+scratch/
