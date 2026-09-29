@@ -54,7 +54,7 @@ env.bak/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-staticfiles/
+staticfiles/k
 
 # Python packaging and build artifacts
 .Python
