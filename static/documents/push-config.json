@@ -1,0 +1,14 @@
+{
+  "default_notification": {
+    "title": "DUNIA",
+    "body": "Une nouvelle actualité est disponible sur notre site.",
+    "icon": "icons/icon-192x192.png",
+    "badge": "icons/icon-96x96.png",
+    "url": "actualites.html",
+    "tag": "dunia-push"
+  },
+  "onesignal": {
+    "app_id": "ca77ab9d-f6f7-4311-85f9-1416fb389c43"
+
+  }
+}
