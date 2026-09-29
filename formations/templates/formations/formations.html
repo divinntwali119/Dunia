@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Formations — {% endblock %}
+
+{% block main %}
+<!-- SECTION VIDÉO DE PRÉSENTATION (STYLE YOUTUBE) -->
+<section class="pt-8 sm:pt-14 pb-4 sm:pb-6 px-4 sm:px-6 md:px-16 max-w-6xl mx-auto relative">
+    <div class="text-center mb-6 sm:mb-8 reveal">
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">
+            Nos formations en vidéo
+        </h2>
+        <p class="text-slate-500 text-xs sm:text-sm mt-3 max-w-xl mx-auto">
+            Regardez la présentation de nos formations passées et plongez dans l'expérience Dunia.
+        </p>
+    </div>
+
+    <!-- LECTEUR VIDÉO -->
+    <div class="reveal">
+        <div class="video-player-wrapper" id="videoWrapper">
+            <div class="video-top-bar">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg overflow-hidden bg-white/10 p-0.5 border border-white/20 shrink-0">
+                        <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia"
+                            class="w-full h-full object-contain brightness-0 invert">
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-white text-xs sm:text-sm font-bold truncate">Comment utiliser Claude en RDC</p>
+                        <p class="text-white/70 text-[10px] sm:text-xs">Dunia • Formations passées</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-container" id="videoContainer">
+
+                <video id="duniaVideo" preload="metadata" playsinline poster="{% static 'images/logo-dunia.png' %}">
+                    <source src="{% static 'videos/formation claude.mp4' %}" type="video/mp4">
+                    Votre navigateur ne supporte pas la lecture vidéo.
+                </video>
+
+                <div class="big-play-btn" id="bigPlayBtn">
+                    <div class="big-play-icon">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                </div>
+
+                <div class="video-loading" id="videoLoading">
+                    <div class="loading-spinner"></div>
+                </div>
+
+                <div class="video-flash" id="videoFlash">
+                    <i class="fa-solid fa-play" id="flashIcon"></i>
+                </div>
+            </div>
+
+            <div class="video-controls" id="videoControls">
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-buffered" id="progressBuffered"></div>
+                        <div class="progress-filled" id="progressFilled"></div>
+                        <div class="progress-thumb" id="progressThumb"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1 sm:gap-2">
+                    <button class="ctrl-btn" id="playPauseBtn" aria-label="Lecture/Pause">
+                        <i class="fa-solid fa-play" id="playPauseIcon"></i>
+                    </button>
+
+                    <button class="ctrl-btn hidden sm:inline-flex" id="rewindBtn" aria-label="Reculer 10 secondes">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+
+                    <button class="ctrl-btn hidden sm:inline-flex" id="forwardBtn" aria-label="Avancer 10 secondes">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+
+                    <div class="volume-container" id="volumeContainer">
+                        <button class="ctrl-btn" id="muteBtn" aria-label="Couper le son">
+                            <i class="fa-solid fa-volume-high" id="volumeIcon"></i>
+                        </button>
+                        <div class="volume-slider-wrapper">
+                            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05"
+                                value="1" aria-label="Volume">
+                        </div>
+                    </div>
+
+                    <span class="time-display">
+                        <span id="currentTime">0:00</span>
+                        <span class="text-white/50 mx-1">/</span>
+                        <span id="duration">0:00</span>
+                    </span>
+
+                    <div class="flex-1"></div>
+
+                    <button class="ctrl-btn" id="speedBtn" aria-label="Vitesse de lecture">
+                        <span class="speed-label" id="speedLabel">1x</span>
+                    </button>
+
+                    <div class="speed-menu" id="speedMenu">
+                        <div class="speed-option" data-speed="0.5">0.5x</div>
+                        <div class="speed-option" data-speed="0.75">0.75x</div>
+                        <div class="speed-option active" data-speed="1">Normale <i class="fa-solid fa-check"></i></div>
+                        <div class="speed-option" data-speed="1.25">1.25x</div>
+                        <div class="speed-option" data-speed="1.5">1.5x</div>
+                        <div class="speed-option" data-speed="2">2x</div>
+                    </div>
+
+                    <button class="ctrl-btn" id="fullscreenBtn" aria-label="Plein écran">
+                        <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FILTRES PAR CATÉGORIE -->
+<section class="pt-8 sm:pt-14 pb-4 sm:pb-6 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+    <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 reveal" id="filterContainer">
+        <button
+            class="filter-btn active bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="all">
+            <i class="fa-solid fa-layer-group mr-1.5"></i>Toutes
+        </button>
+        <button
+            class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="developpement">
+            <i class="fa-solid fa-code mr-1.5"></i>Développement
+        </button>
+        <button
+            class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="ia">
+            <i class="fa-solid fa-brain mr-1.5"></i>IA
+        </button>
+        <button
+            class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="design">
+            <i class="fa-solid fa-pen-nib mr-1.5"></i>Design
+        </button>
+        <button
+            class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="autres">
+            <i class="fa-solid fa-ellipsis mr-1.5"></i>Autres
+        </button>
+    </div>
+
+    <div class="text-center mt-5 sm:mt-6 reveal">
+        <p class="text-[11px] sm:text-xs text-slate-500">
+            <span id="resultCount" class="font-bold text-blue-600">{{ formations|length }}</span>
+            <span id="resultLabel">formation{{ formations|length|pluralize }} disponible{{ formations|length|pluralize }}</span>
+        </p>
+    </div>
+</section>
+
+<!-- CATALOGUE DE FORMATIONS -->
+<section class="pb-12 sm:pb-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+
+    <div class="absolute top-20 right-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-100/40 rounded-full blur-3xl -z-10"></div>
+    <div class="absolute bottom-20 left-0 w-64 h-64 sm:w-96 sm:h-96 bg-blue-50/60 rounded-full blur-3xl -z-10"></div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8" id="formationsGrid" data-catalog data-singular="formation disponible" data-plural="formations disponibles">
+
+        {% for formation in formations %}
+        {% include 'formations/_card.html' with formation=formation preview=False only %}
+        {% endfor %}
+    </div>
+
+    <!-- Message AUCUN RÉSULTAT -->
+    <div id="noResults" {% if formations %}hidden{% endif %} class="text-center py-12 sm:py-16 reveal">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-5">
+            <i class="fa-solid fa-magnifying-glass text-2xl sm:text-3xl text-blue-400"></i>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-800 mb-2">Aucune formation trouvée</h3>
+        <p class="text-xs sm:text-sm text-slate-500 mb-6 max-w-md mx-auto px-4">
+            Aucun résultat ne correspond à votre recherche. Essayez d'autres mots-clés ou explorez toutes les
+            formations.
+        </p>
+        <button type="button" id="resetSearchBtn"
+            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-6 py-3 rounded-xl shadow-md transition active:scale-95">
+            <i class="fa-solid fa-rotate-left"></i>
+            Réinitialiser la recherche
+        </button>
+    </div>
+
+    <!-- Bandeau d'information -->
+    <div
+        class="mt-10 sm:mt-12 bg-blue-50 border border-blue-100 rounded-2xl p-5 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5 reveal">
+        <div class="flex items-center gap-3 sm:gap-4">
+            <div
+                class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl flex items-center justify-center shadow-lg p-2 border border-blue-100 shrink-0">
+                <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <h4 class="font-bold text-xs sm:text-base text-slate-800">D'autres formations arrivent bientôt</h4>
+                <p class="text-[10px] sm:text-xs text-slate-500">Certaines formations sont encore en préparation.
+                    Rejoignez la communauté pour être informé en premier.</p>
+            </div>
+        </div>
+        <a href="https://whatsapp.com/channel/0029VbDCfTdGU3BG3SIHmz21"
+            class="w-full sm:w-auto justify-center inline-flex items-center gap-2 bg-brand-navy hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-6 py-3 rounded-lg transition active:scale-95 whitespace-nowrap">
+            <i class="fa-brands fa-whatsapp"></i> Rejoindre WhatsApp
+        </a>
+    </div>
+</section>
+
+<!-- SECTION DEVENIR FORMATEUR -->
+<section class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 animated-gradient text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-0 w-full h-full"
+            style="background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px); background-size: 40px 40px;">
+        </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
+
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 sm:mb-5 leading-tight">
+            Vous souhaitez proposer une formation sur Dunia ?
+        </h2>
+        <p class="text-blue-100 text-xs sm:text-base mb-6 sm:mb-8 max-w-xl mx-auto leading-relaxed">
+            Partagez votre expertise avec une communauté grandissante d'apprenants. Nous accueillons les formateurs,
+            enseignants et professionnels qui souhaitent transmettre leurs connaissances.
+        </p>
+        <a href="https://wa.me/243962104398"
+            class="group inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-xs sm:text-sm px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-2xl transition-all hover:scale-105 active:scale-95">
+            <i class="fa-solid fa-handshake text-lg"></i>
+            Devenir formateur
+            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+        </a>
+    </div>
+</section>
+
+<!-- SECTION FAQ RAPIDE -->
+<section class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative">
+    <div class="absolute bottom-0 right-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
+
+    <div class="text-center mb-8 sm:mb-12 reveal">
+
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">Vous
+            hésitez encore ?</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 max-w-4xl mx-auto">
+        <div class="faq-item reveal bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-start gap-3">
+                <span
+                    class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+                <div>
+                    <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Comment choisir ma formation ?</h3>
+                    <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Explorez notre catalogue et
+                        utilisez les filtres par catégorie. Chaque formation indique son niveau, sa durée et son format
+                        pour vous aider à choisir.</p>
+                </div>
+            </div>
+        </div>
+        <div class="faq-item reveal delay-100 bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-start gap-3">
+                <span
+                    class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+                <div>
+                    <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Puis-je suivre plusieurs formations ?
+                    </h3>
+                    <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Oui, vous pouvez suivre autant de
+                        formations que vous le souhaitez. Nous vous recommandons de commencer par celles de niveau
+                        Débutant.</p>
+                </div>
+            </div>
+        </div>
+        <div class="faq-item reveal delay-200 bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-start gap-3">
+                <span
+                    class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+                <div>
+                    <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Les formations sont-elles certifiantes
+                        ?</h3>
+                    <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Cela dépend de la formation et du
+                        formateur. Lorsqu'une certification ou une attestation est disponible, l'information est
+                        indiquée dans les détails de la formation.</p>
+                </div>
+            </div>
+        </div>
+        <div class="faq-item reveal delay-300 bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-start gap-3">
+                <span
+                    class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0 mt-0.5 font-bold">Q</span>
+                <div>
+                    <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">Quand de nouvelles formations
+                        sortiront-elles ?</h3>
+                    <p class="text-[10px] sm:text-xs text-slate-500 leading-relaxed">Nous ajoutons régulièrement de
+                        nouvelles formations. Rejoignez notre communauté WhatsApp pour être informé en priorité.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="py-14 sm:py-20 px-4 sm:px-6 md:px-16 bg-brand-navy text-white text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-600 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-500 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="max-w-3xl mx-auto relative z-10 reveal">
+        <div class="w-16 sm:w-20 flex items-center justify-center mx-auto mb-6 sm:mb-8 animate-float p-2 sm:p-3">
+            <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia" class="w-full h-full object-contain brightness-0 invert">
+        </div>
+
+        <h2
+            class="mobile-section-title text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-5 sm:mb-6">
+            Prêt à commencer votre première formation ?
+        </h2>
+        <p class="text-slate-300 text-xs sm:text-base mb-8 sm:mb-10 max-w-xl mx-auto leading-relaxed">
+            Rejoignez notre communauté et soyez parmi les premiers à découvrir les nouvelles formations, événements et
+            nouveautés de Dunia.
+        </p>
+
+        <div class="flex flex-col xs:flex-row items-center justify-center gap-3 sm:gap-4">
+            <a href="https://wa.me/243962104398"
+                class="group w-full xs:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-4 rounded-xl shadow-2xl shadow-blue-600/30 transition-all hover:scale-105 active:scale-95">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                Rejoindre la communauté WhatsApp
+                <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+            </a>
+            <a href="{% url 'home:index' %}"
+                class="w-full xs:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-4 rounded-xl backdrop-blur-md transition-all hover:scale-105 active:scale-95">
+                Retour à l'accueil <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'js/catalog.js' %}" defer></script>
+{% endblock %}

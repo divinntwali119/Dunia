@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_styles %}
+<style>
+    .news-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(11, 12, 38, 0.96), rgba(11, 12, 38, 0.15));
+    }
+    .news-card { overflow-wrap: anywhere; }
+    .news-card h3, .news-card .news-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+{% block title %}Actualités — {% endblock %}
+{% block main %}
+<!-- SECTION ACTUALITÉS -->
+<section id="actualites" class="py-12 sm:py-20 px-4 sm:px-6 md:px-16 max-w-7xl mx-auto relative overflow-hidden">
+    <div class="absolute top-10 right-0 w-56 h-56 sm:w-80 sm:h-80 bg-blue-100/40 rounded-full blur-3xl -z-10"></div>
+    <div class="absolute bottom-10 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-50/60 rounded-full blur-3xl -z-10"></div>
+
+    <!-- En-tête -->
+    <div class="text-center mb-8 sm:mb-12 reveal">
+
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">
+            Ce qui se passe chez Dunia
+        </h2>
+        <p class="text-slate-500 text-xs sm:text-sm mt-3 max-w-xl mx-auto">
+            Découvrez les dernières annonces, les formations à venir et les publicités de nos partenaires.
+        </p>
+    </div>
+
+    <!-- Filtres par catégorie -->
+    <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 reveal mb-8 sm:mb-10" id="filterContainer">
+        <button
+            class="filter-btn active bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="all">
+            <i class="fa-solid fa-layer-group mr-1.5"></i>Toutes
+        </button>
+        <button
+            class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="annonce">
+            <i class="fa-solid fa-bullhorn mr-1.5"></i>Annonces
+        </button>
+        <button
+            class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="formation">
+            <i class="fa-solid fa-graduation-cap mr-1.5"></i>Formations
+        </button>
+        <button
+            class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="evenement">
+            <i class="fa-solid fa-calendar-star mr-1.5"></i>Événements
+        </button>
+        <button
+            class="filter-btn bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all"
+            data-category="publicite">
+            <i class="fa-solid fa-rectangle-ad mr-1.5"></i>Publicités
+        </button>
+    </div>
+
+    <!-- Compteur de résultats -->
+    <div class="text-center mb-6 sm:mb-8 reveal">
+        <p class="text-[11px] sm:text-xs text-slate-500">
+            <span id="resultCount" class="font-bold text-blue-600">{{ news|length }}</span>
+            <span id="resultLabel">actualité{{ news|length|pluralize }} disponible{{ news|length|pluralize }}</span>
+        </p>
+    </div>
+
+    <!-- Grille d'actualités -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8" id="newsGrid" data-catalog data-singular="actualité disponible" data-plural="actualités disponibles">
+
+        {% for item in news %}
+        {% if item.category == 'publicite' and not forloop.first %}
+        <div class="news-card reveal bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl overflow-hidden shadow-lg group relative min-h-[280px] sm:min-h-[320px] flex flex-col justify-between p-5 sm:p-7 text-white news-item"
+            data-category="{{ item.category }}" data-title="{{ item.title }}" data-description="{{ item.description }}">
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-bullhorn text-lg"></i>
+                    </div>
+                    <span class="bg-white/20 backdrop-blur-sm text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">{{ item.get_category_display }}</span>
+                </div>
+                <h3 class="font-extrabold text-lg sm:text-xl mb-2 leading-tight">{{ item.title }}</h3>
+                <p class="news-description text-blue-100 text-xs sm:text-sm leading-relaxed mb-4">{{ item.description|truncatewords:35 }}</p>
+                <time datetime="{{ item.published_date|date:'c' }}" class="text-[10px] text-blue-100">{{ item.published_date|date:"d F Y" }}</time>
+            </div>
+            <a href="{% url 'home:index' %}#contact"
+                class="relative z-10 group/btn inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-xs px-5 py-3 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all self-start mt-4">
+                Nous contacter <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-1"></i>
+            </a>
+        </div>
+        {% else %}
+        <div class="news-card reveal bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 group {% if forloop.first %}md:col-span-2 lg:col-span-2 min-h-[300px] sm:min-h-[380px]{% else %}min-h-[280px] sm:min-h-[320px]{% endif %} relative news-item"
+            data-category="{{ item.category }}" data-title="{{ item.title }}" data-description="{{ item.description }}">
+            <img src="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/hero-section.jpeg' %}{% endif %}"
+                alt="{{ item.title }}" class="news-img absolute inset-0 w-full h-full object-cover" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+            <div class="news-overlay"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 {% if forloop.first %}sm:p-8{% else %}sm:p-6{% endif %} z-10">
+                <span class="news-tag inline-block bg-white/90 text-blue-700 text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
+                    {% if forloop.first %}À la une{% else %}{{ item.get_category_display }}{% endif %}
+                </span>
+                <h3 class="text-white font-extrabold {% if forloop.first %}text-lg sm:text-2xl{% else %}text-base sm:text-lg{% endif %} mb-2 leading-tight">{{ item.title }}</h3>
+                <p class="news-description text-slate-200 {% if forloop.first %}text-xs sm:text-sm max-w-2xl{% else %}text-[11px] sm:text-xs{% endif %} leading-relaxed mb-3">{{ item.description|truncatewords:35 }}</p>
+                <div class="flex flex-wrap items-center gap-3 text-[10px] text-slate-300">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-calendar text-blue-400"></i><time datetime="{{ item.published_date|date:'c' }}">{{ item.published_date|date:"d F Y" }}</time></span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-tag text-blue-400"></i>{{ item.get_category_display }}</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Message AUCUN RÉSULTAT -->
+    <div id="noResults" {% if news %}hidden{% endif %} class="text-center py-12 sm:py-16 reveal">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-5">
+            <i class="fa-solid fa-magnifying-glass text-2xl sm:text-3xl text-blue-400"></i>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-800 mb-2">Aucune actualité trouvée</h3>
+        <p class="text-xs sm:text-sm text-slate-500 mb-6 max-w-md mx-auto px-4">
+            Aucun résultat ne correspond à cette catégorie. Essayez une autre catégorie ou affichez toutes les
+            actualités.
+        </p>
+        <button type="button" id="resetFilterBtn"
+            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-6 py-3 rounded-xl shadow-md transition active:scale-95">
+            <i class="fa-solid fa-rotate-left"></i>
+            Voir toutes les actualités
+        </button>
+    </div>
+
+    <!-- Bandeau d'information -->
+    <div
+        class="mt-10 sm:mt-12 bg-blue-50 border border-blue-100 rounded-2xl p-5 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5 reveal">
+        <div class="flex items-center gap-3 sm:gap-4">
+            <div
+                class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl flex items-center justify-center shadow-lg p-2 border border-blue-100 shrink-0">
+                <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <h4 class="font-bold text-xs sm:text-base text-slate-800">Ne manquez aucune actualité</h4>
+                <p class="text-[10px] sm:text-xs text-slate-500">Rejoignez la communauté pour être informé en premier
+                    des annonces et événements Dunia.</p>
+            </div>
+        </div>
+        <a href="https://whatsapp.com/channel/0029VbDCfTdGU3BG3SIHmz21"
+            class="w-full sm:w-auto justify-center inline-flex items-center gap-2 bg-brand-navy hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-6 py-3 rounded-lg transition active:scale-95 whitespace-nowrap">
+            <i class="fa-brands fa-whatsapp"></i> Rejoindre WhatsApp
+        </a>
+    </div>
+</section>
+
+<!-- SECTION NEWSLETTER -->
+<section class="py-12 sm:py-16 px-4 sm:px-6 md:px-16 animated-gradient text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-0 w-full h-full"
+            style="background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px); background-size: 40px 40px;">
+        </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
+        <div
+            class="w-14 h-14 sm:w-16 sm:h-16 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-5 border border-white/20">
+            <i class="fa-solid fa-envelope-open-text text-2xl"></i>
+        </div>
+        <h2 class="mobile-section-title text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 leading-tight">
+            Restez informé de nos actualités
+        </h2>
+        <p class="text-blue-100 text-xs sm:text-base mb-6 sm:mb-8 max-w-xl mx-auto leading-relaxed">
+            Recevez les nouvelles formations, les événements et les annonces Dunia directement dans votre boîte mail.
+        </p>
+
+        <form id="newsletterFormCta" class="w-full max-w-lg mx-auto flex flex-col xs:flex-row gap-2.5">
+            <input type="email" id="newsletterEmailCta" placeholder="Votre adresse email" required
+                class="flex-1 bg-white/15 border border-white/25 text-white text-xs sm:text-sm placeholder-blue-100/70 px-4 py-3.5 rounded-xl focus:outline-none focus:border-white focus:ring-2 focus:ring-white/30 transition backdrop-blur-md">
+            <button type="submit"
+                class="bg-white text-blue-700 font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-2xl transition-all hover:scale-105 active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i>
+                S'inscrire
+            </button>
+        </form>
+        <p id="newsletterMsgCta" class="hidden text-center text-[11px] mt-3 text-emerald-300 font-semibold"></p>
+
+        <p class="text-blue-200/70 text-[9px] sm:text-[10px] mt-4 flex flex-wrap items-center justify-center gap-3">
+            <span><i class="fa-solid fa-check mr-1"></i>Gratuit</span>
+            <span><i class="fa-solid fa-check mr-1"></i>Sans engagement</span>
+            <span><i class="fa-solid fa-check mr-1"></i>Désinscription facile</span>
+        </p>
+    </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="py-14 sm:py-20 px-4 sm:px-6 md:px-16 bg-brand-navy text-white text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-600 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-500 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="max-w-3xl mx-auto relative z-10 reveal">
+        <div class="w-16 sm:w-20 flex items-center justify-center mx-auto mb-6 sm:mb-8 animate-float p-2 sm:p-3">
+            <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia" class="w-full h-full object-contain brightness-0 invert">
+        </div>
+
+        <h2
+            class="mobile-section-title text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-5 sm:mb-6">
+            Prêt à découvrir nos prochaines formations ?
+        </h2>
+        <p class="text-slate-300 text-xs sm:text-base mb-8 sm:mb-10 max-w-xl mx-auto leading-relaxed">
+            Rejoignez notre communauté et soyez parmi les premiers à découvrir les nouvelles formations, événements et
+            nouveautés de Dunia.
+        </p>
+
+        <div class="flex flex-col xs:flex-row items-center justify-center gap-3 sm:gap-4">
+            <a href="https://wa.me/243962104398"
+                class="group w-full xs:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-4 rounded-xl shadow-2xl shadow-blue-600/30 transition-all hover:scale-105 active:scale-95">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                Rejoindre la communauté WhatsApp
+                <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+            </a>
+            <a href="{% url 'formations:list' %}"
+                class="w-full xs:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-xs sm:text-base px-6 sm:px-8 py-4 rounded-xl backdrop-blur-md transition-all hover:scale-105 active:scale-95">
+                Voir les formations <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'js/catalog.js' %}" defer></script>
+{% endblock %}

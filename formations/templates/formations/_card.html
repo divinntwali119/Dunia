@@ -1,0 +1,46 @@
+{% load static %}
+<div id="formation-{{ formation.pk }}"
+    class="service-card reveal delay-200 bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group formation-card"
+    data-category="{{ formation.category }}" data-title="{{ formation.title }}"
+    data-description="{{ formation.description }}">
+    <div class="relative overflow-hidden">
+        <img src="{% if formation.image %}{{ formation.image.url }}{% else %}{% static 'images/logo-dunia.png' %}{% endif %}"
+            alt="{{ formation.title }}" class="service-img h-44 sm:h-48 w-full {% if formation.image %}object-cover{% else %}object-contain p-8{% endif %}" loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
+    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between relative z-10">
+        <div>
+            <h3 class="font-bold text-base sm:text-lg text-slate-800 mb-2 group-hover:text-blue-600 transition-colors formation-title break-words">
+                {{ formation.title }}
+            </h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed formation-description break-words">{{ formation.description|truncatewords:40 }}</p>
+            <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-slate-400 mb-3 sm:mb-4">
+                {% if formation.duration %}
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-blue-500"></i>{{ formation.duration }}</span>
+                {% endif %}
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-signal text-blue-500"></i>{{ formation.get_level_display }}</span>
+            </div>
+        </div>
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden bg-white border border-slate-200 flex items-center justify-center p-0.5">
+                    <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia" class="w-full h-full object-contain">
+                </div>
+                <span class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Dunia</span>
+            </div>
+            {% if preview %}
+            <a href="{% url 'formations:list' %}#formation-{{ formation.pk }}"
+                class="group/btn text-blue-600 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all active:gap-3">
+                Voir la formation <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
+            </a>
+            {% else %}
+            {% with message="Bonjour Dunia, je souhaite avoir plus d'informations sur la formation : "|add:formation.title %}
+            <a href="https://wa.me/243962104398?text={{ message|urlencode }}" target="_blank" rel="noopener"
+                class="group/btn text-blue-600 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all active:gap-3">
+                S'inscrire <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
+            </a>
+            {% endwith %}
+            {% endif %}
+        </div>
+    </div>
+</div>
