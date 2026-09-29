@@ -1,0 +1,2567 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c26">
+    <title>{% block title %}{% endblock %}Dunia — Apprenez. Créez. Évoluez.</title>
+
+    <!-- Anti-FOUC : applique le thème avant le rendu -->
+    <script>
+        (function () {
+            try {
+                const saved = localStorage.getItem('dunia-theme');
+                const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && systemDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'icons/icon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'icons/icon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'icons/icon-48x48.png' %}">
+    <link rel="icon" type="image/png" sizes="64x64" href="{% static 'icons/icon-64x64.png' %}">
+    <link rel="shortcut icon" href="{% static 'icons/icon-32x32.png' %}">
+
+    <!-- Apple Touch Icons (iOS) -->
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'icons/icon-120x120.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'icons/icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{% static 'icons/icon-167x167.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'icons/icon-180x180.png' %}">
+    <link rel="apple-touch-icon" sizes="1024x1024" href="{% static 'icons/icon-1024x1024.png' %}">
+
+    <!-- PWA -->
+    <link rel="manifest" href="{% static 'documents/manifest.json' %}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dunia">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Dunia">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- OneSignal Push SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function (OneSignal) {
+            const pathParts = window.location.pathname.split('/').filter(Boolean);
+            const isGitHubPages = window.location.hostname.endsWith('github.io') && pathParts.length > 0;
+            const repoName = isGitHubPages ? pathParts[0] : '';
+
+            await OneSignal.init({
+                appId: "ca77ab9d-f6f7-4311-85f9-1416fb389c43",
+                allowLocalhostAsSecureOrigin: true,
+                ...(isGitHubPages ? {
+                    serviceWorkerPath: "{% static 'OneSignalSDK-v16-ServiceWorker/OneSignalSDK-v16-ServiceWorker/OneSignalSDKWorker.js' %}",
+                    serviceWorkerParam: { scope: '/' + repoName + '/' }
+                } : {})
+            });
+        });
+    </script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts (Poppins) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#2563eb',
+                            darkblue: '#1b1b50',
+                            navy: '#0b0c26',
+                            purple: '#3b82f6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '400px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            background-color: #0b0c26;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #334155;
+            overflow-x: hidden;
+            background-color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        .filter-btn.active {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .formation-card {
+            min-width: 0;
+            overflow-wrap: anywhere;
+            scroll-margin-top: 80px;
+        }
+
+        /* ============================================ */
+        /* NAVBAR FIXE SUR MOBILE */
+        /* ============================================ */
+        #mainHeader {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        @media (max-width: 1023px) {
+            #mainHeader {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+
+            body {
+                padding-top: 56px;
+            }
+
+            #mobileMenu {
+                top: 0;
+            }
+
+            .topbar-fixed {
+                position: relative;
+                z-index: 51;
+            }
+        }
+
+        /* ============================================ */
+        /* ÉCRAN DE CHARGEMENT */
+        /* ============================================ */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background-color: #0b0c26;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+            overflow: hidden;
+        }
+
+        #loader::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: haloPulse 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @media (min-width: 640px) {
+            #loader::before {
+                width: 600px;
+                height: 600px;
+            }
+        }
+
+        @keyframes haloPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        @media (min-width: 640px) {
+            .loader-container {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        .spinner {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg,
+                    rgba(37, 99, 235, 0) 0%,
+                    rgba(37, 99, 235, 0.15) 20%,
+                    rgba(59, 130, 246, 0.6) 70%,
+                    rgba(96, 165, 250, 1) 100%);
+            mask: radial-gradient(farthest-side, transparent calc(100% - 26px), #000 calc(100% - 25px));
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 26px), #000 calc(100% - 25px));
+            animation: spin 1.2s linear infinite;
+            filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
+        }
+
+        @media (min-width: 640px) {
+            .spinner {
+                mask: radial-gradient(farthest-side, transparent calc(100% - 44px), #000 calc(100% - 43px));
+                -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 44px), #000 calc(100% - 43px));
+            }
+        }
+
+        .spinner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: calc(50% - 13px);
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.9), 0 0 40px rgba(37, 99, 235, 0.6);
+        }
+
+        @media (min-width: 640px) {
+            .spinner::after {
+                left: calc(50% - 22px);
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-logo {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 50%;
+            z-index: 10;
+            animation: logoPulse 1.8s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
+            background: #ffffff;
+            padding: 4px;
+        }
+
+        @media (min-width: 640px) {
+            .loader-logo {
+                width: 96px;
+                height: 96px;
+                padding: 6px;
+            }
+        }
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.08);
+                opacity: 0.92;
+            }
+        }
+
+        /* ============================================ */
+        /* MENU MOBILE */
+        /* ============================================ */
+        #mobileMenu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
+            max-width: 320px;
+            background: #ffffff;
+            z-index: 100;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        html.dark #mobileMenu {
+            background: #000000;
+        }
+
+        #mobileMenu.open {
+            transform: translateX(0);
+        }
+
+        #mobileOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        #mobileOverlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            border-radius: 12px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 52px;
+        }
+
+        html.dark .mobile-nav-link {
+            color: #e2e8f0;
+        }
+
+        .mobile-nav-link:active,
+        .mobile-nav-link.active {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        html.dark .mobile-nav-link:active,
+        html.dark .mobile-nav-link.active {
+            background: #1a1a1a;
+            color: #60a5fa;
+        }
+
+        .mobile-nav-link i {
+            width: 20px;
+            text-align: center;
+            color: #2563eb;
+            font-size: 16px;
+        }
+
+        html.dark .mobile-nav-link i {
+            color: #60a5fa;
+        }
+
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+
+        html.dark .hamburger-line {
+            background-color: #ffffff !important;
+        }
+
+        .hamburger.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* ============================================ */
+        /* HERO */
+        /* ============================================ */
+        .hero-bg-img {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .hero-bg-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            background: linear-gradient(180deg,
+                    rgba(11, 12, 38, 0.88) 0%,
+                    rgba(11, 12, 38, 0.72) 35%,
+                    rgba(11, 12, 38, 0.62) 65%,
+                    rgba(11, 12, 38, 0.85) 100%);
+        }
+
+        /* ============================================ */
+        /* BANDEAU OUTILS */
+        /* ============================================ */
+        .tools-marquee {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            width: 100%;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+        }
+
+        .tools-track {
+            display: inline-flex;
+            align-items: center;
+            gap: 32px;
+            animation: toolsScroll 30s linear infinite;
+            padding-left: 24px;
+        }
+
+        .tools-track:active {
+            animation-play-state: paused;
+        }
+
+        @keyframes toolsScroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .tool-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            transition: color 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 640px) {
+            .tool-item {
+                font-size: 1rem;
+            }
+
+            .tools-track {
+                gap: 40px;
+                padding-left: 40px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .tools-marquee {
+                -webkit-mask-image: none;
+                mask-image: none;
+            }
+
+            .tools-track {
+                animation: none;
+                justify-content: space-between;
+                width: 100%;
+                padding-left: 0;
+                gap: 20px;
+            }
+
+            .tools-track .tool-item:nth-child(n+8) {
+                display: none;
+            }
+        }
+
+        /* ============================================ */
+        /* AUTRES STYLES */
+        /* ============================================ */
+        .cloud-shape-1 {
+            border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+        }
+
+        .cloud-shape-2 {
+            border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%;
+        }
+
+        .cloud-card {
+            border-radius: 30px 60px 30px 60px;
+        }
+
+        .service-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.05), transparent);
+            transition: left 0.5s ease;
+            z-index: 1;
+        }
+
+        .service-card:active::before {
+            left: 100%;
+        }
+
+        .service-card:active {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.2);
+        }
+
+        .service-card:active .service-img {
+            transform: scale(1.05);
+        }
+
+        .service-img {
+            transition: transform 0.6s ease;
+        }
+
+        @media (hover: hover) {
+            .service-card:hover::before {
+                left: 100%;
+            }
+
+            .service-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.2);
+            }
+
+            .service-card:hover .service-img {
+                transform: scale(1.1);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .delay-100 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-200 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-300 {
+            transition-delay: 0.3s;
+        }
+
+        .delay-400 {
+            transition-delay: 0.4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .animate-float-slow {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(0.95);
+                opacity: 1;
+            }
+        }
+
+        .pulse-ring {
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animated-gradient {
+            background: linear-gradient(-45deg, #2563eb, #3b82f6, #1d4ed8, #1e40af);
+            background-size: 400% 400%;
+            animation: gradient-shift 8s ease infinite;
+        }
+
+        .step-card {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .step-card:active {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.15);
+        }
+
+        .step-card:active .step-number {
+            background: #2563eb;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        @media (hover: hover) {
+            .step-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.15);
+            }
+
+            .step-card:hover .step-number {
+                background: #2563eb;
+                color: white;
+                transform: scale(1.1);
+            }
+        }
+
+        .step-number {
+            transition: all 0.4s ease;
+        }
+
+        .faq-item {
+            transition: all 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .faq-item:active {
+            border-color: #2563eb;
+            box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.15);
+        }
+
+        @keyframes blink-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .blink-dot {
+            animation: blink-dot 1.5s ease-in-out infinite;
+        }
+
+        /* ===== LOGO DUNIA ===== */
+        .logo-dunia {
+            height: 1.75rem;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+            .logo-dunia {
+                height: 2rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .logo-dunia {
+                height: 2.5rem;
+            }
+        }
+
+        html.dark .logo-dunia {
+            filter: brightness(0) invert(1);
+        }
+
+        .logo-dunia-footer {
+            height: 2rem;
+            width: auto;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+            transition: transform 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            .logo-dunia-footer {
+                height: 2.5rem;
+            }
+        }
+
+        .brand-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        html.dark .brand-name {
+            color: #ffffff;
+        }
+
+        .brand-name-footer {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .brand-tagline {
+            font-size: 0.55rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .brand-tagline-footer {
+            font-size: 0.55rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        @media (min-width: 768px) {
+
+            .brand-name,
+            .brand-name-footer {
+                font-size: 1.5rem;
+            }
+
+            .brand-tagline,
+            .brand-tagline-footer {
+                font-size: 0.65rem;
+            }
+        }
+
+        /* ============================================ */
+        /* MODE SOMBRE / CLAIR — NOIR PUR */
+        /* ============================================ */
+        html.dark body {
+            background-color: #000000;
+            color: #d4d4d4;
+        }
+
+        html.dark .bg-white {
+            background-color: #0a0a0a !important;
+        }
+
+        html.dark .bg-slate-50 {
+            background-color: #0f0f0f !important;
+        }
+
+        html.dark .bg-slate-50\/50 {
+            background-color: #0f0f0f !important;
+        }
+
+        html.dark .bg-slate-50\/60 {
+            background-color: #0f0f0f !important;
+        }
+
+        html.dark .bg-slate-100 {
+            background-color: #1a1a1a !important;
+        }
+
+        html.dark .bg-blue-50 {
+            background-color: #0a0a0a !important;
+        }
+
+        html.dark .bg-blue-50\/40 {
+            background-color: #0f0f0f !important;
+        }
+
+        html.dark .bg-blue-50\/60 {
+            background-color: #0f0f0f !important;
+        }
+
+        html.dark .bg-blue-100 {
+            background-color: #1a1a1a !important;
+        }
+
+        html.dark .bg-blue-100\/30 {
+            background-color: #0a0a0a !important;
+        }
+
+        html.dark .bg-blue-100\/40 {
+            background-color: #0a0a0a !important;
+        }
+
+        html.dark .bg-blue-100\/50 {
+            background-color: #1a1a1a !important;
+        }
+
+        html.dark .bg-emerald-50 {
+            background-color: #0a0a0a !important;
+        }
+
+        html.dark .bg-emerald-100 {
+            background-color: #1a1a1a !important;
+        }
+
+        html.dark .bg-purple-50 {
+            background-color: #0a0a0a !important;
+        }
+
+        html.dark .text-slate-900,
+        html.dark .text-slate-800,
+        html.dark .text-slate-700 {
+            color: #ffffff !important;
+        }
+
+        html.dark .text-slate-600,
+        html.dark .text-slate-500 {
+            color: #b0b0b0 !important;
+        }
+
+        html.dark .text-slate-400 {
+            color: #808080 !important;
+        }
+
+        html.dark .border-slate-100,
+        html.dark .border-slate-200 {
+            border-color: #1a1a1a !important;
+        }
+
+        html.dark .border-blue-100 {
+            border-color: #1a1a1a !important;
+        }
+
+        html.dark .bg-gradient-to-b.from-slate-50.to-white {
+            background: linear-gradient(to bottom, #000000, #000000) !important;
+        }
+
+        html.dark .bg-gradient-to-br.from-blue-50.to-white {
+            background: linear-gradient(to bottom right, #0a0a0a, #000000) !important;
+        }
+
+        html.dark header.bg-white {
+            background-color: #000000 !important;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        html.dark nav .text-slate-700 {
+            color: #d4d4d4 !important;
+        }
+
+        html.dark .blur-3xl,
+        html.dark [class*="blur-3xl"] {
+            display: none !important;
+        }
+
+        body,
+        header,
+        section,
+        footer,
+        div,
+        a,
+        p,
+        h1,
+        h2,
+        h3,
+        h4,
+        span,
+        button {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            color: #000000;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            background: #e2e8f0;
+            transform: scale(1.05);
+        }
+
+        html.dark .theme-toggle {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        html.dark .theme-toggle:hover {
+            background: #2a2a2a;
+        }
+
+        .theme-toggle .icon-sun {
+            display: none;
+        }
+
+        .theme-toggle .icon-moon {
+            display: block;
+        }
+
+        html.dark .theme-toggle .icon-sun {
+            display: block;
+        }
+
+        html.dark .theme-toggle .icon-moon {
+            display: none;
+        }
+
+        /* ============================================ */
+        /* AMÉLIORATIONS MOBILE */
+        /* ============================================ */
+        @media (max-width: 767px) {
+            .mobile-hero-title {
+                font-size: 1.55rem !important;
+                line-height: 1.25 !important;
+            }
+
+            .service-card .p-6 {
+                padding: 1.25rem;
+            }
+
+            .mobile-section-title {
+                font-size: 1.4rem !important;
+                line-height: 1.3 !important;
+            }
+
+            footer .grid {
+                gap: 2rem;
+            }
+
+            a,
+            button {
+                min-height: 44px;
+                min-width: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            section {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .rounded-3xl {
+                border-radius: 1.25rem;
+            }
+
+            .text-xs {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .mobile-hero-title {
+                font-size: 1.3rem !important;
+            }
+
+            .mobile-section-title {
+                font-size: 1.2rem !important;
+            }
+
+            .brand-name {
+                font-size: 0.95rem;
+            }
+        }
+
+        #mobileMenu::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #mobileMenu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #mobileMenu::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 4px;
+        }
+
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* ============================================ */
+        /* PWA INSTALL BANNER */
+        /* ============================================ */
+        #pwaInstallBanner {
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 640px) {
+
+            body,
+            html {
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
+        }
+
+        /* ============================================ */
+        /* VIDEO NUAGE */
+        /* ============================================ */
+        .video-cloud-wrapper {
+            position: relative;
+            border-radius: 55% 45% 60% 40% / 50% 55% 45% 50%;
+            overflow: hidden;
+            box-shadow: 0 30px 60px -20px rgba(37, 99, 235, 0.35);
+            border: 6px solid #eff6ff;
+            background: #dbeafe;
+        }
+
+        html.dark .video-cloud-wrapper {
+            border-color: #1a1a1a;
+            background: #0a0a0a;
+            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* ============================================ */
+        /* MODALES LÉGALES AMÉLIORÉES */
+        /* ============================================ */
+        #legalModal {
+            display: none;
+        }
+
+        #legalModal.active {
+            display: flex;
+        }
+
+        #legalContent {
+            scrollbar-width: thin;
+            scrollbar-color: #2563eb #f1f5f9;
+        }
+
+        #legalContent::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #legalContent::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        #legalContent::-webkit-scrollbar-thumb {
+            background: #2563eb;
+            border-radius: 10px;
+        }
+
+        html.dark #legalContent {
+            scrollbar-color: #3b82f6 #1a1a1a;
+        }
+
+        html.dark #legalContent::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        html.dark #legalContent::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+        }
+
+        #legalContent p {
+            margin-bottom: 0.75rem;
+        }
+
+        #legalContent p strong {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        html.dark #legalContent p strong {
+            color: #ffffff;
+        }
+
+        #legalContent ul {
+            margin-bottom: 0.75rem;
+            padding-left: 1.25rem;
+        }
+
+        #legalContent ul li {
+            margin-bottom: 0.25rem;
+            list-style: disc;
+        }
+
+        #legalModal.active {
+            animation: modalFadeIn 0.25s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #legalModal.active>div:last-child {
+            animation: modalSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ============================================ */
+        /* FOOTER ALIGNEMENT AMÉLIORÉ */
+        /* ============================================ */
+        .footer-col {
+            text-align: left;
+        }
+
+        .footer-col h4 {
+            text-align: left;
+        }
+
+        .footer-col ul {
+            text-align: left;
+        }
+
+        .footer-col ul li a,
+        .footer-col ul li button {
+            text-align: left;
+            justify-content: flex-start;
+        }
+
+        @media (max-width: 400px) {
+            .footer-col {
+                text-align: left;
+            }
+        }
+
+        /* ============================================ */
+        /* SECTION ACTUALITÉS / PUBLICITÉS - CARROUSEL */
+        /* ============================================ */
+        .news-slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .news-slider {
+                border-radius: 2rem;
+            }
+        }
+
+        .news-slider-track {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        .news-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            position: relative;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+        }
+
+        @media (min-width: 640px) {
+            .news-slide {
+                min-height: 420px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .news-slide {
+                min-height: 480px;
+            }
+        }
+
+        .news-slide-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 6s ease;
+        }
+
+        .news-slide.active .news-slide-img {
+            transform: scale(1.06);
+        }
+
+        .news-slide-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top,
+                    rgba(11, 12, 38, 0.92) 0%,
+                    rgba(11, 12, 38, 0.6) 40%,
+                    rgba(11, 12, 38, 0.2) 70%,
+                    transparent 100%);
+            z-index: 1;
+        }
+
+        .news-slide-content {
+            position: relative;
+            z-index: 2;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        @media (min-width: 640px) {
+            .news-slide-content {
+                padding: 2.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .news-slide-content {
+                padding: 3.5rem 4rem;
+            }
+        }
+
+        .news-slide-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1e40af;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (min-width: 640px) {
+            .news-slide-tag {
+                font-size: 11px;
+                padding: 7px 16px;
+            }
+        }
+
+        .news-slide-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (min-width: 640px) {
+            .news-slide-title {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .news-slide-title {
+                font-size: 2.25rem;
+            }
+        }
+
+        .news-slide-desc {
+            font-size: 11px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 14px;
+            max-width: 600px;
+        }
+
+        @media (min-width: 640px) {
+            .news-slide-desc {
+                font-size: 14px;
+                margin-bottom: 18px;
+            }
+        }
+
+        .news-slide-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            font-size: 10px;
+            color: #94a3b8;
+        }
+
+        @media (min-width: 640px) {
+            .news-slide-meta {
+                font-size: 12px;
+                gap: 20px;
+            }
+        }
+
+        .news-slide-meta i {
+            color: #60a5fa;
+            margin-right: 4px;
+        }
+
+        /* Indicateurs */
+        .news-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 0 0;
+        }
+
+        .news-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            padding: 0;
+            min-height: auto;
+            min-width: auto;
+        }
+
+        @media (min-width: 640px) {
+            .news-dot {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
+        .news-dot.active {
+            background: #2563eb;
+            width: 24px;
+            border-radius: 9999px;
+        }
+
+        html.dark .news-dot {
+            background: #333333;
+        }
+
+        html.dark .news-dot.active {
+            background: #3b82f6;
+        }
+
+        /* Bouton CTA sous le slider */
+        .news-slider-cta {
+            display: flex;
+            justify-content: center;
+            padding: 24px 0 0;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    {% block extra_styles %}{% endblock %}
+</head>
+
+<body class="bg-white">
+
+    {% include 'partials/header.html' %}
+
+    {% block main %}
+    {% endblock %}
+
+    {% include 'partials/footer.html' %}
+
+    <!-- ===== MODALES LÉGALES AMÉLIORÉES ===== -->
+    <div id="legalModal" class="fixed inset-0 z-[9999] items-center justify-center p-4">
+        <div id="legalOverlay" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+        <div
+            class="relative bg-white dark:bg-[#0a0a0a] rounded-2xl sm:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
+            <div
+                class="flex items-center justify-between p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#0f0f0f]">
+                <h3 id="legalTitle" class="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white pr-4">
+                    Titre</h3>
+                <button id="legalClose" aria-label="Fermer"
+                    class="w-9 h-9 rounded-lg bg-white dark:bg-[#1a1a1a] text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition shrink-0 border border-slate-200 dark:border-slate-800">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="legalContent"
+                class="p-4 sm:p-6 overflow-y-auto text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            </div>
+            <div
+                class="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#0f0f0f] flex justify-end">
+                <button id="legalAccept"
+                    class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-lg transition active:scale-95">
+                    J'ai compris
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BANNIÈRE COOKIES ===== -->
+    <div id="cookieBanner" class="hidden fixed bottom-0 left-0 right-0 z-[9998] p-3 sm:p-4">
+        <div
+            class="max-w-4xl mx-auto bg-white dark:bg-[#0a0a0a] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div class="flex items-start gap-3 flex-1">
+                <div
+                    class="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-cookie-bite"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white mb-1">Nous utilisons des
+                        cookies</p>
+                    <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Dunia utilise des cookies pour améliorer votre expérience, mémoriser vos préférences et analyser
+                        le trafic. Vous pouvez accepter ou refuser.
+                        <button type="button" data-legal="cookies"
+                            class="text-blue-600 dark:text-blue-400 underline hover:no-underline">En savoir
+                            plus</button>
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                <button id="cookieRefuse"
+                    class="flex-1 sm:flex-none text-[10px] sm:text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-4 py-2.5 rounded-lg transition">
+                    Refuser
+                </button>
+                <button id="cookieAccept"
+                    class="flex-1 sm:flex-none text-[10px] sm:text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded-lg transition active:scale-95">
+                    Accepter
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BANNIÈRE D'INSTALLATION PWA -->
+    <div id="pwaInstallBanner"
+        class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm bg-white rounded-2xl shadow-2xl border border-blue-100 p-4 z-[9997] items-center gap-3">
+        <div
+            class="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-1.5 border border-blue-100 shrink-0">
+            <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia" class="w-full h-full object-contain">
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-slate-800">Installer Dunia</p>
+            <p class="text-[10px] text-slate-500 leading-tight">Accédez à Dunia depuis votre écran d'accueil</p>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+            <button id="pwaDismissBtn"
+                class="w-8 h-8 text-slate-400 hover:text-slate-600 rounded-lg transition flex items-center justify-center"
+                aria-label="Fermer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <button id="pwaInstallBtn"
+                class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition flex items-center gap-1">
+                <i class="fa-solid fa-download"></i>
+                Installer
+            </button>
+        </div>
+    </div>
+
+    <!-- WIDGET NOTIFICATIONS PUSH -->
+    <div id="pushWidget" aria-live="polite" style="
+    position: fixed;
+    bottom: 90px;
+    left: 16px;
+    z-index: 9998;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    max-width: 320px;
+    width: calc(100vw - 32px);
+    font-family: 'Poppins', sans-serif;
+  ">
+        <!-- Panneau principal -->
+        <div id="pushPanel" style="
+      background: rgba(11, 12, 38, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    ">
+            <!-- Icône -->
+            <div style="
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+      ">
+                <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+            </div>
+            <!-- Texte -->
+            <div style="flex: 1; min-width: 0;">
+                <p id="pushWidgetTitle"
+                    style="margin:0; font-size:12px; font-weight:700; color:#f1f5f9; line-height:1.3;">Rester informé
+                </p>
+                <p id="pushWidgetDesc" style="margin:4px 0 0; font-size:10px; color:#94a3b8; line-height:1.4;">Activez
+                    les notifications pour ne rien manquer</p>
+            </div>
+            <!-- Actions -->
+            <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                <button id="pushDismissBtn" aria-label="Fermer le panneau de notifications" style="
+          width:28px; height:28px; border-radius:8px;
+          border:none; background:rgba(255,255,255,0.06);
+          color:#94a3b8; cursor:pointer;
+          display:flex; align-items:center; justify-content:center;
+          transition:background 0.2s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.12)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+                <button id="pushActionBtn" aria-label="Activer les notifications push" style="
+          padding: 7px 13px;
+          border-radius: 10px;
+          border: none;
+          background: linear-gradient(135deg, #4f46e5, #7c3aed);
+          color: #fff;
+          font-size: 10px;
+          font-weight: 700;
+          font-family: inherit;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: opacity 0.2s, transform 0.15s;
+          box-shadow: 0 4px 12px rgba(79,70,229,0.35);
+        " onmouseover="this.style.opacity='0.88'; this.style.transform='translateY(-1px)'"
+                    onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)'">
+                    🔔 Activer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOUTON CLOCHE FLOTTANT PERMANENT -->
+    <button id="pushBellToggle" aria-label="Gérer les notifications" style="
+    position: fixed;
+    bottom: 90px;
+    left: 16px;
+    z-index: 9997;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(11, 12, 38, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 14px rgba(79, 70, 229, 0.35);
+    color: #fff;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  " onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <span id="pushBellBadge" style="
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 2px solid #0b0c26;
+      display: none;
+    "></span>
+    </button>
+
+    <!-- SCRIPT -->
+    <script>
+        // ========== ÉCRAN DE CHARGEMENT ==========
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('loader');
+            setTimeout(function () {
+                loader.classList.add('hidden');
+            }, 700);
+        });
+
+        setTimeout(function () {
+            const loader = document.getElementById('loader');
+            if (loader) loader.classList.add('hidden');
+        }, 4000);
+
+        // ========== MENU MOBILE HAMBURGER ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+            function openMenu() {
+                mobileMenu.classList.add('open');
+                mobileOverlay.classList.add('open');
+                hamburgerBtn.classList.add('active');
+                hamburgerBtn.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+            }
+
+            function closeMenu() {
+                mobileMenu.classList.remove('open');
+                mobileOverlay.classList.remove('open');
+                hamburgerBtn.classList.remove('active');
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+            }
+
+            hamburgerBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (mobileMenu.classList.contains('open')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            });
+
+            closeMenuBtn.addEventListener('click', closeMenu);
+            mobileOverlay.addEventListener('click', closeMenu);
+
+            mobileNavLinks.forEach(function (link) {
+                link.addEventListener('click', function () {
+                    setTimeout(closeMenu, 200);
+                });
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+                    closeMenu();
+                }
+            });
+
+            window.addEventListener('resize', function () {
+                if (window.innerWidth >= 1024 && mobileMenu.classList.contains('open')) {
+                    closeMenu();
+                }
+            });
+
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            mobileMenu.addEventListener('touchstart', function (e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            mobileMenu.addEventListener('touchend', function (e) {
+                touchEndX = e.changedTouches[0].screenX;
+                if (touchEndX - touchStartX > 80) {
+                    closeMenu();
+                }
+            }, { passive: true });
+        });
+
+        // ========== MODE SOMBRE / CLAIR ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const html = document.documentElement;
+            const themeToggles = [
+                document.getElementById('themeToggle'),
+                document.getElementById('themeToggleMobile')
+            ].filter(Boolean);
+
+            function toggleTheme() {
+                const isDark = html.classList.toggle('dark');
+                localStorage.setItem('dunia-theme', isDark ? 'dark' : 'light');
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) {
+                    metaTheme.setAttribute('content', isDark ? '#000000' : '#ffffff');
+                }
+            }
+
+            themeToggles.forEach(function (btn) {
+                btn.addEventListener('click', toggleTheme);
+            });
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                if (!localStorage.getItem('dunia-theme')) {
+                    if (e.matches) {
+                        html.classList.add('dark');
+                    } else {
+                        html.classList.remove('dark');
+                    }
+                }
+            });
+        });
+
+        // ========== ANIMATIONS AU SCROLL ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+
+            const revealOnScroll = function () {
+                const windowHeight = window.innerHeight;
+                const elementVisible = 80;
+
+                reveals.forEach(function (reveal) {
+                    const elementTop = reveal.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveal.classList.add('active');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', revealOnScroll, { passive: true });
+            revealOnScroll();
+        });
+
+        // ========== SMOOTH SCROLL POUR LES ANCRES ==========
+        document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ========== PWA : SERVICE WORKER ==========
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                const swUrl = "{% static 'js/service-worker.js' %}";
+                navigator.serviceWorker.register(swUrl, { scope: './' })
+                    .then(function (reg) {
+                        console.log('[PWA] Service Worker enregistré:', reg.scope);
+                    })
+                    .catch(function (err) {
+                        console.error('[PWA] Erreur Service Worker:', err);
+                    });
+            });
+        }
+
+        // ========== PWA : BANNIÈRE D'INSTALLATION ==========
+        let deferredPrompt;
+        const banner = document.getElementById('pwaInstallBanner');
+        const installBtn = document.getElementById('pwaInstallBtn');
+        const dismissBtn = document.getElementById('pwaDismissBtn');
+
+        window.addEventListener('beforeinstallprompt', function (e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (localStorage.getItem('pwa-install-dismissed') === 'true') return;
+            setTimeout(function () {
+                if (banner) {
+                    banner.classList.remove('hidden');
+                    banner.classList.add('flex');
+                }
+            }, 3000);
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async function () {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('[PWA] Installation:', outcome);
+                deferredPrompt = null;
+                if (banner) {
+                    banner.classList.add('hidden');
+                    banner.classList.remove('flex');
+                }
+            });
+        }
+
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', function () {
+                if (banner) {
+                    banner.classList.add('hidden');
+                    banner.classList.remove('flex');
+                }
+                localStorage.setItem('pwa-install-dismissed', 'true');
+            });
+        }
+
+        window.addEventListener('appinstalled', function () {
+            console.log('[PWA] Application installée !');
+            if (banner) {
+                banner.classList.add('hidden');
+                banner.classList.remove('flex');
+            }
+        });
+
+        // ========== PUSH NOTIFICATIONS — ONESIGNAL ==========
+        // ========== PUSH NOTIFICATIONS — ONESIGNAL ==========
+        (function () {
+            const STORAGE_KEY_DISMISSED = 'dunia-push-dismissed';
+
+            // ── Éléments UI ────────────────────────────────────────────────────────
+            const widget = document.getElementById('pushWidget');
+            const bellToggle = document.getElementById('pushBellToggle');
+            const bellBadge = document.getElementById('pushBellBadge');
+            const actionBtn = document.getElementById('pushActionBtn');
+            const dismissBtn2 = document.getElementById('pushDismissBtn');
+            const titleEl = document.getElementById('pushWidgetTitle');
+            const descEl = document.getElementById('pushWidgetDesc');
+
+            if (!widget) return;
+
+            // ── Compatibilité navigateur ───────────────────────────────────────────
+            if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+                console.info('[Push] Notifications Push non supportées sur ce navigateur.');
+                return;
+            }
+
+            // ── Animation CSS ──────────────────────────────────────────────────────
+            const pushStyle = document.createElement('style');
+            pushStyle.textContent = [
+                '@keyframes pushSlideIn{from{opacity:0;transform:translateY(16px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}',
+                '@keyframes pushSlideOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(8px) scale(.96)}}',
+                '@media(max-width:480px){#pushWidget{left:8px!important;max-width:calc(100vw - 16px)!important;width:calc(100vw - 16px)!important}}'
+            ].join('');
+            document.head.appendChild(pushStyle);
+
+            // ── Helpers UI ─────────────────────────────────────────────────────────
+            function showWidget() {
+                if (bellToggle) bellToggle.style.display = 'none';
+                widget.style.display = 'flex';
+                widget.style.animation = 'pushSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both';
+            }
+
+            function hideWidget() {
+                widget.style.animation = 'pushSlideOut 0.25s ease both';
+                setTimeout(function () {
+                    widget.style.display = 'none';
+                    if (bellToggle) bellToggle.style.display = 'flex';
+                }, 240);
+            }
+
+            function setStateSubscribed() {
+                if (titleEl) titleEl.textContent = 'Notifications actives';
+                if (descEl) descEl.textContent = 'Vous recevrez les actualités Dunia';
+                if (actionBtn) {
+                    actionBtn.textContent = '🔕 Désactiver';
+                    actionBtn.style.background = 'rgba(255,255,255,0.08)';
+                    actionBtn.style.border = '1px solid rgba(255,255,255,0.15)';
+                    actionBtn.style.color = '#94a3b8';
+                    actionBtn.style.boxShadow = 'none';
+                    actionBtn.setAttribute('aria-label', 'Désactiver les notifications push');
+                }
+                if (bellBadge) {
+                    bellBadge.style.display = 'block';
+                    bellBadge.style.background = '#22c55e';
+                }
+            }
+
+            function setStateDenied() {
+                if (titleEl) titleEl.textContent = 'Notifications bloquées';
+                if (descEl) descEl.textContent = 'Autorisez-les dans les paramètres de votre navigateur';
+                if (actionBtn) actionBtn.style.display = 'none';
+                if (bellBadge) {
+                    bellBadge.style.display = 'block';
+                    bellBadge.style.background = '#ef4444';
+                }
+            }
+
+            function setStateDefault() {
+                if (titleEl) titleEl.textContent = 'Rester informé';
+                if (descEl) descEl.textContent = 'Activez les notifications pour ne rien manquer';
+                if (actionBtn) {
+                    actionBtn.textContent = '🔔 Activer';
+                    actionBtn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
+                    actionBtn.style.border = 'none';
+                    actionBtn.style.color = '#fff';
+                    actionBtn.style.boxShadow = '0 4px 12px rgba(79,70,229,0.35)';
+                    actionBtn.style.display = '';
+                    actionBtn.setAttribute('aria-label', 'Activer les notifications push');
+                }
+                if (bellBadge) {
+                    bellBadge.style.display = 'none';
+                }
+            }
+
+            // Clic sur la cloche pour rouvrir ou fermer
+            if (bellToggle) {
+                bellToggle.addEventListener('click', function () {
+                    if (widget.style.display === 'flex') {
+                        hideWidget();
+                    } else {
+                        showWidget();
+                    }
+                });
+            }
+
+            // Bouton Fermer (X)
+            if (dismissBtn2) {
+                dismissBtn2.addEventListener('click', function () {
+                    hideWidget();
+                    sessionStorage.setItem(STORAGE_KEY_DISMISSED, 'true');
+                });
+            }
+
+            // ── Configuration OneSignal ───────────────────────────────────────────
+            window.OneSignalDeferred = window.OneSignalDeferred || [];
+            window.OneSignalDeferred.push(async function (OneSignal) {
+
+                // Synchronisation de l'état (native d'abord, OneSignal ensuite)
+                async function syncState() {
+                    try {
+                        const nativePerm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
+
+                        if (nativePerm === 'granted') {
+                            setStateSubscribed();
+                            if (bellToggle) bellToggle.style.display = 'flex';
+                            // Synchroniser OneSignal en arrière-plan sans bloquer
+                            try {
+                                const optPromise = OneSignal.User.PushSubscription.optIn();
+                                await Promise.race([optPromise, new Promise(r => setTimeout(r, 2500))]);
+                            } catch (_) { }
+                            return;
+                        }
+
+                        if (nativePerm === 'denied') {
+                            setStateDenied();
+                            if (bellToggle) bellToggle.style.display = 'flex';
+                            return;
+                        }
+
+                        // État par défaut (non abonné, non refusé)
+                        setStateDefault();
+                        const dismissed = sessionStorage.getItem(STORAGE_KEY_DISMISSED) === 'true';
+                        if (!dismissed) {
+                            setTimeout(showWidget, 2500);
+                        } else if (bellToggle) {
+                            bellToggle.style.display = 'flex';
+                        }
+                    } catch (e) {
+                        console.warn('[Push] Erreur syncState:', e);
+                        setStateDefault();
+                    }
+                }
+
+                // Écouter les changements d'abonnement OneSignal
+                try {
+                    OneSignal.User.PushSubscription.addEventListener('change', function (event) {
+                        const isNowOpted = event && event.current && event.current.optedIn;
+                        if (isNowOpted) {
+                            setStateSubscribed();
+                        }
+                    });
+                } catch (_) { }
+
+                await syncState();
+
+                // Bouton Activer / Désactiver
+                if (actionBtn) {
+                    actionBtn.addEventListener('click', async function () {
+                        try {
+                            // 1. Si déjà abonné : on propose de désactiver
+                            if (Notification.permission === 'granted') {
+                                actionBtn.textContent = 'Désactivation...';
+                                try {
+                                    await Promise.race([
+                                        OneSignal.User.PushSubscription.optOut(),
+                                        new Promise(r => setTimeout(r, 2500))
+                                    ]);
+                                } catch (_) { }
+                                setStateDefault();
+                                return;
+                            }
+
+                            // 2. Si déjà bloqué : on informe l'utilisateur
+                            if (Notification.permission === 'denied') {
+                                setStateDenied();
+                                return;
+                            }
+
+                            // 3. Demande d'activation
+                            actionBtn.textContent = 'Activation...';
+
+                            // Demande de permission au navigateur avec timeout défensif (ne bloque JAMAIS)
+                            let perm = 'default';
+                            if (typeof Notification !== 'undefined' && Notification.requestPermission) {
+                                try {
+                                    const permPromise = Notification.requestPermission();
+                                    perm = await Promise.race([
+                                        permPromise,
+                                        new Promise(r => setTimeout(() => r(Notification.permission), 7000))
+                                    ]);
+                                } catch (errPerm) {
+                                    console.warn('[Push] requestPermission native:', errPerm);
+                                    // Fallback OneSignal
+                                    try {
+                                        await Promise.race([
+                                            OneSignal.Notifications.requestPermission(),
+                                            new Promise(r => setTimeout(r, 4000))
+                                        ]);
+                                        perm = Notification.permission;
+                                    } catch (_) { }
+                                }
+                            }
+
+                            // Traitement immédiat de la réponse
+                            if (perm === 'granted' || Notification.permission === 'granted') {
+                                // Succès immédiat côté UI !
+                                setStateSubscribed();
+                                setTimeout(hideWidget, 3500);
+
+                                // Enregistrement OneSignal en tâche de fond
+                                try {
+                                    await Promise.race([
+                                        OneSignal.User.PushSubscription.optIn(),
+                                        new Promise(r => setTimeout(r, 4000))
+                                    ]);
+                                    console.log('[Push] Abonnement OneSignal enregistré avec succès !');
+                                } catch (errOpt) {
+                                    console.warn('[Push] Erreur optIn OneSignal (non bloquant):', errOpt);
+                                }
+                            } else if (perm === 'denied' || Notification.permission === 'denied') {
+                                setStateDenied();
+                            } else {
+                                // L'utilisateur a fermé ou annulé la boîte de dialogue
+                                setStateDefault();
+                            }
+                        } catch (err) {
+                            console.error('[Push] Erreur activation:', err);
+                            setStateDefault();
+                        }
+                    });
+                }
+            });
+        })();
+
+        // ========== VIDÉO AUTOPLAY (SÉCURITÉ) ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.getElementById('duniaVideo');
+
+            if (!video) return;
+
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(function () {
+                    console.log('[Vidéo] Autoplay bloqué par le navigateur.');
+                });
+            }
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        video.play().catch(function () { });
+                    }
+                });
+            }, { threshold: 0.25 });
+
+            observer.observe(video);
+        });
+
+        // ========== FOOTER : ANNÉE DYNAMIQUE ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const yearEl = document.getElementById('currentYear');
+            if (yearEl) yearEl.textContent = new Date().getFullYear();
+        });
+
+        // ========== NEWSLETTER (mailto) ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('newsletterForm');
+            const email = document.getElementById('newsletterEmail');
+            const msg = document.getElementById('newsletterMsg');
+            if (!form) return;
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const value = email.value.trim();
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!regex.test(value)) {
+                    msg.textContent = '❌ Veuillez entrer une adresse email valide.';
+                    msg.className = 'text-center text-[11px] mt-3 text-red-400 font-semibold';
+                    msg.classList.remove('hidden');
+                    return;
+                }
+
+                const destinataire = 'duniaelearningcongo@gmail.com';
+                const sujet = encodeURIComponent('Nouvelle inscription à la newsletter Dunia');
+                const corps = encodeURIComponent(
+                    'Bonjour Dunia,\n\n' +
+                    'Je souhaite m\'inscrire à votre newsletter.\n\n' +
+                    'Mon adresse email : ' + value + '\n\n' +
+                    'Merci !'
+                );
+
+                window.location.href = 'mailto:' + destinataire + '?subject=' + sujet + '&body=' + corps;
+
+                msg.textContent = '✅ Votre client mail va s\'ouvrir pour envoyer votre inscription.';
+                msg.className = 'text-center text-[11px] mt-3 text-emerald-400 font-semibold';
+                msg.classList.remove('hidden');
+
+                try {
+                    const subs = JSON.parse(localStorage.getItem('dunia-newsletter') || '[]');
+                    if (!subs.includes(value)) subs.push(value);
+                    localStorage.setItem('dunia-newsletter', JSON.stringify(subs));
+                } catch (err) { }
+
+                setTimeout(function () { email.value = ''; }, 3000);
+            });
+        });
+
+        // ========== MODALES LÉGALES ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('legalModal');
+            const overlay = document.getElementById('legalOverlay');
+            const closeBtn = document.getElementById('legalClose');
+            const acceptBtn = document.getElementById('legalAccept');
+            const titleEl = document.getElementById('legalTitle');
+            const contentEl = document.getElementById('legalContent');
+
+            const legalContent = {
+                mentions: {
+                    title: 'Mentions légales',
+                    html: `
+            <p><strong>Éditeur du site :</strong> Dunia</p>
+            <p><strong>Siège :</strong> Kinshasa, République démocratique du Congo</p>
+            <p><strong>Email :</strong> <a href="mailto:duniaelearningcongo@gmail.com" class="text-blue-600 underline">duniaelearningcongo@gmail.com</a></p>
+            <p><strong>Téléphone :</strong> <a href="tel:+243962104398" class="text-blue-600 underline">+243 962 104 398</a></p>
+            <p><strong>Responsable de publication :</strong> L'équipe Dunia</p>
+            <p><strong>Hébergement :</strong> Les informations d'hébergement seront précisées au lancement officiel de la plateforme.</p>
+            <p>Dunia est une plateforme d'apprentissage dédiée aux compétences numériques. Le site est actuellement en phase de développement.</p>
+            <p>Toute reproduction, totale ou partielle, du contenu de ce site sans autorisation écrite préalable est interdite.</p>
+          `
+                },
+                confidentialite: {
+                    title: 'Politique de confidentialité',
+                    html: `
+            <p><strong>1. Collecte des données</strong></p>
+            <p>Dunia collecte uniquement les données que vous nous fournissez volontairement (nom, email, numéro de téléphone) via nos formulaires de contact, d'inscription ou de newsletter.</p>
+            <p><strong>2. Utilisation des données</strong></p>
+            <p>Vos données sont utilisées pour :</p>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Vous informer des nouveautés et formations Dunia</li>
+              <li>Répondre à vos demandes de contact</li>
+              <li>Améliorer nos services</li>
+            </ul>
+            <p><strong>3. Partage des données</strong></p>
+            <p>Nous ne vendons ni ne partageons vos données personnelles avec des tiers sans votre consentement, sauf obligation légale.</p>
+            <p><strong>4. Vos droits</strong></p>
+            <p>Conformément aux lois applicables, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à <a href="mailto:duniaelearningcongo@gmail.com" class="text-blue-600 underline">duniaelearningcongo@gmail.com</a>.</p>
+            <p><strong>5. Sécurité</strong></p>
+            <p>Nous mettons en œuvre des mesures techniques et organisationnelles pour protéger vos données contre tout accès non autorisé.</p>
+          `
+                },
+                cookies: {
+                    title: 'Politique de cookies',
+                    html: `
+            <p><strong>Qu'est-ce qu'un cookie ?</strong></p>
+            <p>Un cookie est un petit fichier texte stocké sur votre appareil lors de votre visite sur un site web. Il permet de mémoriser vos préférences et d'améliorer votre expérience.</p>
+            <p><strong>Cookies utilisés par Dunia :</strong></p>
+            <ul class="list-disc pl-5 space-y-1">
+              <li><strong>Cookies essentiels :</strong> nécessaires au fonctionnement du site (thème clair/sombre, préférences).</li>
+              <li><strong>Cookies analytiques :</strong> permettent de comprendre comment les visiteurs utilisent le site.</li>
+              <li><strong>Cookies de préférences :</strong> mémorisent vos choix (langue, thème).</li>
+            </ul>
+            <p><strong>Gestion des cookies</strong></p>
+            <p>Vous pouvez à tout moment accepter ou refuser les cookies via la bannière dédiée ou les paramètres de votre navigateur. Le refus de certains cookies peut affecter votre expérience sur le site.</p>
+            <p>Pour plus d'informations, contactez-nous à <a href="mailto:duniaelearningcongo@gmail.com" class="text-blue-600 underline">duniaelearningcongo@gmail.com</a>.</p>
+          `
+                },
+                cgu: {
+                    title: "Conditions générales d'utilisation",
+                    html: `
+            <p><strong>1. Objet</strong></p>
+            <p>Les présentes CGU régissent l'utilisation du site Dunia et de ses services. En accédant au site, vous acceptez sans réserve ces conditions.</p>
+            <p><strong>2. Accès au service</strong></p>
+            <p>Dunia est actuellement en développement. L'accès à certaines fonctionnalités peut être limité ou modifié sans préavis.</p>
+            <p><strong>3. Compte utilisateur</strong></p>
+            <p>L'utilisateur s'engage à fournir des informations exactes et à ne pas usurper l'identité d'un tiers. Il est responsable de la confidentialité de ses identifiants.</p>
+            <p><strong>4. Contenu</strong></p>
+            <p>Les contenus pédagogiques proposés sur Dunia sont protégés par le droit d'auteur. Toute reproduction non autorisée est interdite.</p>
+            <p><strong>5. Responsabilité</strong></p>
+            <p>Dunia ne saurait être tenu responsable des dommages directs ou indirects résultant de l'utilisation du site ou de l'impossibilité d'y accéder.</p>
+            <p><strong>6. Modification des CGU</strong></p>
+            <p>Dunia se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés des changements importants.</p>
+            <p>Pour toute question, contactez-nous à <a href="mailto:duniaelearningcongo@gmail.com" class="text-blue-600 underline">duniaelearningcongo@gmail.com</a>.</p>
+          `
+                }
+            };
+
+            function openModal(key) {
+                const data = legalContent[key];
+                if (!data) return;
+                titleEl.textContent = data.title;
+                contentEl.innerHTML = data.html;
+                contentEl.scrollTop = 0;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            document.querySelectorAll('[data-legal]').forEach(function (link) {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openModal(this.getAttribute('data-legal'));
+                });
+            });
+
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (acceptBtn) acceptBtn.addEventListener('click', closeModal);
+            if (overlay) overlay.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        });
+
+        // ========== BANNIÈRE COOKIES ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const cookieBanner = document.getElementById('cookieBanner');
+            const acceptBtn = document.getElementById('cookieAccept');
+            const refuseBtn = document.getElementById('cookieRefuse');
+            if (!cookieBanner) return;
+
+            const consent = localStorage.getItem('dunia-cookie-consent');
+
+            if (!consent) {
+                setTimeout(function () {
+                    cookieBanner.classList.remove('hidden');
+                }, 2000);
+            }
+
+            function hideBanner(value) {
+                cookieBanner.classList.add('hidden');
+                localStorage.setItem('dunia-cookie-consent', value);
+                localStorage.setItem('dunia-cookie-date', new Date().toISOString());
+            }
+
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', function () {
+                    hideBanner('accepted');
+                });
+            }
+
+            if (refuseBtn) {
+                refuseBtn.addEventListener('click', function () {
+                    hideBanner('refused');
+                });
+            }
+        });
+
+        // ========== BOUTON RETOUR EN HAUT ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.getElementById('backToTop');
+            if (!btn) return;
+
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 400) {
+                    btn.classList.remove('opacity-0', 'invisible', 'translate-y-4');
+                    btn.classList.add('opacity-100', 'visible', 'translate-y-0');
+                } else {
+                    btn.classList.add('opacity-0', 'invisible', 'translate-y-4');
+                    btn.classList.remove('opacity-100', 'visible', 'translate-y-0');
+                }
+            }, { passive: true });
+
+            btn.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // ========== CARROUSEL ACTUALITÉS (2 secondes, sans boutons) ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            const slider = document.getElementById('newsSlider');
+            const track = document.getElementById('newsSliderTrack');
+            const slides = track ? track.querySelectorAll('.news-slide') : [];
+            const dots = document.querySelectorAll('.news-dot');
+
+            if (!slider || !track || slides.length === 0) return;
+
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+            let autoInterval = null;
+            let isPaused = false;
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            function goToSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                currentIndex = index;
+
+                track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+
+                slides.forEach(function (slide, i) {
+                    slide.classList.toggle('active', i === currentIndex);
+                });
+
+                dots.forEach(function (dot, i) {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+
+            function nextSlide() {
+                goToSlide(currentIndex + 1);
+            }
+
+            function prevSlide() {
+                goToSlide(currentIndex - 1);
+            }
+
+            function startAutoPlay() {
+                if (autoInterval) clearInterval(autoInterval);
+                autoInterval = setInterval(function () {
+                    if (!isPaused) {
+                        nextSlide();
+                    }
+                }, 2000); // 2 secondes
+            }
+
+            function stopAutoPlay() {
+                if (autoInterval) {
+                    clearInterval(autoInterval);
+                    autoInterval = null;
+                }
+            }
+
+            // Indicateurs
+            dots.forEach(function (dot) {
+                dot.addEventListener('click', function () {
+                    const index = parseInt(this.getAttribute('data-slide'), 10);
+                    goToSlide(index);
+                    startAutoPlay();
+                });
+            });
+
+            // Pause au survol (desktop)
+            slider.addEventListener('mouseenter', function () {
+                isPaused = true;
+            });
+
+            slider.addEventListener('mouseleave', function () {
+                isPaused = false;
+            });
+
+            // Swipe tactile
+            slider.addEventListener('touchstart', function (e) {
+                touchStartX = e.changedTouches[0].screenX;
+                isPaused = true;
+            }, { passive: true });
+
+            slider.addEventListener('touchend', function (e) {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                }
+
+                setTimeout(function () {
+                    isPaused = false;
+                }, 2000);
+            }, { passive: true });
+
+            // Pause quand l'onglet n'est pas visible
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    isPaused = true;
+                } else {
+                    isPaused = false;
+                }
+            });
+
+            // Initialiser
+            goToSlide(0);
+            startAutoPlay();
+        });
+    </script>
+
+    {% block extra_scripts %}
+    {% endblock %}
+
+</body>
+</html>

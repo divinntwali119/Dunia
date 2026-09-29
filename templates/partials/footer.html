@@ -1,0 +1,221 @@
+{% load static %}
+<!-- ============================================ -->
+<!-- PIED DE PAGE COMPLET -->
+<!-- ============================================ -->
+<footer
+    class="bg-brand-navy text-slate-400 pt-12 sm:pt-16 pb-6 sm:pb-8 border-t border-slate-800 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600 to-transparent">
+    </div>
+
+    <!-- ===== NEWSLETTER (mailto) ===== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
+        <div
+            class="bg-gradient-to-br from-blue-600/10 to-blue-500/5 border border-blue-500/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-5 reveal">
+            <div class="text-center md:text-left w-full md:w-auto">
+                <h3 class="text-white font-extrabold text-lg sm:text-xl mb-1">
+                    <i class="fa-solid fa-envelope-open-text text-blue-500 mr-2"></i>
+                    Restez informé
+                </h3>
+                <p class="text-slate-400 text-[11px] sm:text-xs">Recevez les nouvelles formations et actualités Dunia
+                    directement dans votre boîte mail.</p>
+            </div>
+            <form id="newsletterForm" class="w-full md:w-auto flex flex-col xs:flex-row gap-2.5">
+                <input type="email" name="email" id="newsletterEmail" placeholder="Votre adresse email" required
+                    class="w-full xs:w-64 bg-white/5 border border-white/10 text-white text-xs placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    S'inscrire
+                </button>
+            </form>
+        </div>
+        <p id="newsletterMsg" class="hidden text-center text-[11px] mt-3 text-emerald-400 font-semibold"></p>
+    </div>
+
+    <!-- ===== COLONNES ALIGNÉES À GAUCHE ===== -->
+    <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12 text-left">
+
+        <!-- Colonne 1 : Marque -->
+        <div class="footer-col reveal xs:col-span-2 lg:col-span-1">
+            <a href="{% url 'home:index' %}" class="inline-flex items-center gap-2 sm:gap-3 mb-4 group">
+                <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia" class="logo-dunia-footer">
+                <div class="flex flex-col leading-none">
+                    <span class="brand-name-footer">Dunia</span>
+                    <span class="brand-tagline-footer">Apprendre • Créer • Évoluer</span>
+                </div>
+            </a>
+            <p class="text-[11px] sm:text-xs leading-relaxed mb-4 sm:mb-5 text-slate-400 max-w-sm">
+                Une plateforme d'apprentissage dédiée aux compétences numériques et à la transmission des connaissances.
+                Apprenez en ligne ou en présentiel à Kinshasa.
+            </p>
+            <div class="flex items-center gap-2 sm:gap-3 text-sm mb-5 flex-wrap">
+                <a href="https://wa.me/243962104398" aria-label="WhatsApp"
+                    class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i
+                        class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61592556733317" aria-label="Facebook"
+                    class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i
+                        class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"
+                    class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i
+                        class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="LinkedIn"
+                    class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i
+                        class="fa-brands fa-linkedin-in"></i></a>
+                <a href="#" aria-label="YouTube"
+                    class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i
+                        class="fa-brands fa-youtube"></i></a>
+                <a href="#" aria-label="TikTok"
+                    class="w-9 h-9 bg-white/5 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all active:scale-90"><i
+                        class="fa-brands fa-tiktok"></i></a>
+            </div>
+
+            <div class="space-y-2 text-[11px] sm:text-xs">
+                <p class="flex items-center gap-2 text-slate-400">
+                    <i class="fa-solid fa-location-dot text-blue-500 w-4"></i>
+                    Kinshasa, République démocratique du Congo
+                </p>
+                <p class="flex items-center gap-2 text-slate-400">
+                    <i class="fa-solid fa-envelope text-blue-500 w-4"></i>
+                    <a href="mailto:duniaelearningcongo@gmail.com"
+                        class="hover:text-blue-400 transition break-all">duniaelearningcongo@gmail.com</a>
+                </p>
+                <p class="flex items-center gap-2 text-slate-400">
+                    <i class="fa-solid fa-phone text-blue-500 w-4"></i>
+                    <a href="tel:+243962104398" class="hover:text-blue-400 transition">+243 962 104 398</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Colonne 2 : Navigation -->
+        <div class="footer-col reveal delay-100">
+            <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
+                <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
+                Navigation
+            </h4>
+            <ul class="space-y-2 sm:space-y-2.5 text-[11px] sm:text-xs">
+                <li><a href="{% url 'home:index' %}" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Accueil</a></li>
+                <li><a href="{% url 'formations:list' %}" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Formations</a></li>
+                <li><a href="{% url 'home:index' %}#about" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>À propos</a></li>
+                <li><a href="{% url 'news:list' %}"
+                        class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Actualités</a></li>
+                <li><a href="{% url 'home:index' %}#faq" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>FAQ</a></li>
+                <li><a href="{% url 'home:index' %}#contact" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Colonne 3 : Apprentissage -->
+        <div class="footer-col reveal delay-200">
+            <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
+                <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
+                Apprentissage
+            </h4>
+            <ul class="space-y-2 sm:space-y-2.5 text-[11px] sm:text-xs">
+                <li><a href="{% url 'formations:list' %}" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Développement web</a></li>
+                <li><a href="{% url 'formations:list' %}" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Intelligence artificielle</a>
+                </li>
+                <li><a href="{% url 'formations:list' %}" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Design graphique</a></li>
+                <li><a href="{% url 'formations:list' %}" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Toutes les formations</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Colonne 4 : Dunia & Légal -->
+        <div class="footer-col reveal delay-300">
+            <h4 class="text-white font-bold mb-3 sm:mb-4 text-xs sm:text-sm flex items-center gap-2">
+                <span class="w-1 h-4 bg-blue-600 rounded-full"></span>
+                Dunia
+            </h4>
+            <ul class="space-y-2 sm:space-y-2.5 text-[11px] sm:text-xs">
+                <li><a href="{% url 'home:index' %}#about" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Notre mission</a></li>
+                <li><a href="https://wa.me/243962104398"
+                        class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Devenir formateur</a></li>
+                <li><button type="button" data-legal="mentions"
+                        class="hover:text-blue-400 transition flex items-center gap-2 py-1 w-full text-left"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Mentions légales</button>
+                </li>
+                <li><button type="button" data-legal="confidentialite"
+                        class="hover:text-blue-400 transition flex items-center gap-2 py-1 w-full text-left"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Confidentialité</button></li>
+                <li><button type="button" data-legal="cookies"
+                        class="hover:text-blue-400 transition flex items-center gap-2 py-1 w-full text-left"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Cookies</button></li>
+                <li><button type="button" data-legal="cgu"
+                        class="hover:text-blue-400 transition flex items-center gap-2 py-1 w-full text-left"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>CGU</button></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ===== BADGES DE CONFIANCE ===== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-8 sm:mb-10">
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 py-4 border-y border-slate-800/60">
+            <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
+                <i class="fa-solid fa-shield-halved text-blue-500"></i> Paiement sécurisé
+            </span>
+            <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
+            <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
+                <i class="fa-solid fa-lock text-blue-500"></i> Données protégées
+            </span>
+            <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
+            <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
+                <i class="fa-solid fa-certificate text-blue-500"></i> Formateurs vérifiés
+            </span>
+            <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
+            <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
+                <i class="fa-solid fa-headset text-blue-500"></i> Support 7j/7
+            </span>
+        </div>
+    </div>
+
+    <!-- ===== BAS DE PAGE ===== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 border-t border-slate-800">
+        <div
+            class="flex flex-col lg:flex-row items-center justify-between gap-4 text-[10px] sm:text-[11px] text-slate-500">
+
+            <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
+                <p>© <span id="currentYear">2026</span> Dunia. Tous droits réservés.</p>
+                <span class="hidden sm:inline w-px h-3 bg-slate-800"></span>
+                <p class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-location-dot text-blue-500"></i>
+                    Kinshasa, RDC
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+                <button type="button" data-legal="mentions" class="hover:text-blue-400 transition">Mentions
+                    légales</button>
+                <span class="w-px h-3 bg-slate-800"></span>
+                <button type="button" data-legal="confidentialite"
+                    class="hover:text-blue-400 transition">Confidentialité</button>
+                <span class="w-px h-3 bg-slate-800"></span>
+                <button type="button" data-legal="cookies" class="hover:text-blue-400 transition">Cookies</button>
+                <span class="w-px h-3 bg-slate-800"></span>
+                <button type="button" data-legal="cgu" class="hover:text-blue-400 transition">CGU</button>
+            </div>
+        </div>
+
+        <p class="text-center text-[9px] sm:text-[10px] text-slate-600 mt-4">
+            Dunia est actuellement en développement. Certaines fonctionnalités et formations seront disponibles
+            prochainement.
+        </p>
+    </div>
+
+    <!-- Bouton retour en haut -->
+    <button id="backToTop" aria-label="Retour en haut"
+        class="fixed bottom-24 right-4 sm:right-6 w-11 h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl shadow-blue-600/40 flex items-center justify-center transition-all duration-300 opacity-0 invisible translate-y-4 z-[9997] active:scale-90">
+        <i class="fa-solid fa-arrow-up text-sm"></i>
+    </button>
+</footer>
