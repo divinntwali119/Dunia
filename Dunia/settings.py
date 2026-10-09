@@ -32,31 +32,48 @@ DEBUG = env.bool('DEBUG', default=False)
 LOGIN_URL = 'formations:login'
 LOGIN_REDIRECT_URL = 'formations:student_dashboard'
 LOGOUT_REDIRECT_URL = 'home:index'
+
+# --- Domaine / hôtes ---
+# Render fournit automatiquement RENDER_EXTERNAL_HOSTNAME (sans https:// ni /).
 RENDER_EXTERNAL_HOSTNAME = env.str('RENDER_EXTERNAL_HOSTNAME', default='').strip()
 SITE_URL = env.str(
     'SITE_URL',
     default=f'https://{RENDER_EXTERNAL_HOSTNAME}' if RENDER_EXTERNAL_HOSTNAME else 'http://127.0.0.1:8000',
 )
 DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='Dunia <no-reply@dunia.local>')
+
+# ALLOWED_HOSTS : valeurs par défaut + le hostname Render
 ALLOWED_HOSTS = env.list(
     'ALLOWED_HOSTS',
     default=['localhost', '127.0.0.1', '[::1]', 'testserver'] if DEBUG else [],
 )
+if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
+
+# CSRF_TRUSTED_ORIGINS : doit inclure le schéma complet https://
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
 if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
-ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
+    origin = f'https://{RENDER_EXTERNAL_HOSTNAME}'
+    if origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin)
 CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(CSRF_TRUSTED_ORIGINS))
+
+# --- Sécurité ---
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=not DEBUG)
-SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=31536000 if not DEBUG else 0)
-SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', default=not DEBUG)
+
+# HSTS : désactivé par défaut pour éviter de bloquer le navigateur en cas de souci.
+# Tu pourras l'activer plus tard, une fois que tout fonctionne.
+SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', default=False)
 SECURE_HSTS_PRELOAD = env.bool('SECURE_HSTS_PRELOAD', default=False)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if not DEBUG else None
+
+# --- Email ---
 EMAIL_BACKEND = env.str(
     'EMAIL_BACKEND',
     default='django.core.mail.backends.console.EmailBackend' if DEBUG
@@ -69,6 +86,8 @@ EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
 EMAIL_TIMEOUT = env.int('EMAIL_TIMEOUT', default=10)
+
+# --- Web Push ---
 WEBPUSH_VAPID_PUBLIC_KEY = env.str('WEBPUSH_VAPID_PUBLIC_KEY', default='')
 WEBPUSH_VAPID_PRIVATE_KEY = env.str('WEBPUSH_VAPID_PRIVATE_KEY', default='')
 WEBPUSH_CONTACT_EMAIL = env.str('WEBPUSH_CONTACT_EMAIL', default='duniaelearningcongo@gmail.com')
@@ -76,6 +95,7 @@ WEBPUSH_ENABLED = env.bool(
     'WEBPUSH_ENABLED',
     default=bool(WEBPUSH_VAPID_PUBLIC_KEY and WEBPUSH_VAPID_PRIVATE_KEY),
 )
+
 MOBILE_MONEY_INSTRUCTIONS = env.str(
     'MOBILE_MONEY_INSTRUCTIONS',
     default='Contactez Dunia via WhatsApp pour obtenir les coordonnées de paiement officielles.',
@@ -170,6 +190,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# --- Stockage (S3 / local) ---
 
 USE_S3 = env.bool('USE_S3', default=False)
 AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME', default='').strip()
