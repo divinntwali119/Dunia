@@ -42,21 +42,33 @@ SITE_URL = env.str(
 )
 DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='Dunia <no-reply@dunia.local>')
 
-# ALLOWED_HOSTS : valeurs par défaut + le hostname Render
-ALLOWED_HOSTS = env.list(
-    'ALLOWED_HOSTS',
-    default=['localhost', '127.0.0.1', '[::1]', 'testserver'] if DEBUG else [],
-)
+# --- ALLOWED_HOSTS ---
+# En prod, on autorise TOUS les sous-domaines onrender.com (point devant)
+# pour ne jamais dépendre de RENDER_EXTERNAL_HOSTNAME.
+if DEBUG:
+    ALLOWED_HOSTS = env.list(
+        'ALLOWED_HOSTS',
+        default=['localhost', '127.0.0.1', '[::1]', 'testserver'],
+    )
+else:
+    ALLOWED_HOSTS = env.list(
+        'ALLOWED_HOSTS',
+        default=['.onrender.com'],
+    )
+
 if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 
-# CSRF_TRUSTED_ORIGINS : doit inclure le schéma complet https://
+# --- CSRF_TRUSTED_ORIGINS ---
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
 if RENDER_EXTERNAL_HOSTNAME:
     origin = f'https://{RENDER_EXTERNAL_HOSTNAME}'
     if origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(origin)
+# Sécurité supplémentaire : autorise les domaines onrender.com si pas déjà présent
+if not DEBUG and 'https://*.onrender.com' not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append('https://*.onrender.com')
 CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(CSRF_TRUSTED_ORIGINS))
 
 # --- Sécurité ---
@@ -67,7 +79,6 @@ CSRF_COOKIE_SECURE = not DEBUG
 SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=not DEBUG)
 
 # HSTS : désactivé par défaut pour éviter de bloquer le navigateur en cas de souci.
-# Tu pourras l'activer plus tard, une fois que tout fonctionne.
 SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=0)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', default=False)
 SECURE_HSTS_PRELOAD = env.bool('SECURE_HSTS_PRELOAD', default=False)
@@ -157,7 +168,6 @@ if DATABASE_URL:
     DATABASES = {'default': env.db('DATABASE_URL')}
     DATABASES['default']['CONN_MAX_AGE'] = env.int('DATABASE_CONN_MAX_AGE', default=60)
     DATABASES['default']['CONN_HEALTH_CHECKS'] = True
-    # Sur Render (DEBUG=False), PostgreSQL exige SSL.
     if not DEBUG:
         DATABASES['default'].setdefault('OPTIONS', {})
         DATABASES['default']['OPTIONS']['sslmode'] = 'require'
