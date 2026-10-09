@@ -50,9 +50,8 @@ class PushNotificationAdmin(ModelAdmin):
         pending = list(queryset.filter(sent_at__isnull=True).values_list('pk', flat=True))
         for notification_id in pending:
             result = deliver_push_notification(notification_id)
-            if result['sent']:
-                delivered += result['delivered']
-                failed += result['failed']
+            delivered += result['delivered']
+            failed += result['failed']
         self.message_user(
             request,
             f'{len(pending)} campagne(s) traitée(s) : {delivered} envoi(s) accepté(s), {failed} échec(s).',

@@ -381,7 +381,18 @@ Le Blueprint active le stockage objet et demande les variables suivantes :
 
 Pour un fournisseur S3-compatible, ajouter `AWS_S3_ENDPOINT_URL` si nécessaire. Le stockage doit être disponible au premier lancement. Le domaine `.onrender.com` est ajouté automatiquement à `ALLOWED_HOSTS` et `CSRF_TRUSTED_ORIGINS`; pour un domaine personnalisé, ajouter son nom et son origine HTTPS. `SITE_URL` utilise par défaut le nom d'hôte Render ; le remplacer pour un domaine personnalisé.
 
-Pour les e-mails, ajouter les paramètres SMTP d'un fournisseur externe si les e-mails de bienvenue et de réinitialisation sont nécessaires. Les services Render gratuits bloquent les ports SMTP 25, 465 et 587 ; utiliser un fournisseur et un port autorisés. Pour les notifications Web Push, ajouter les clés VAPID dans l'environnement Render, jamais dans Git.
+Pour les notifications Web Push, ajouter une paire VAPID correspondante à l'environnement Render :
+
+| Variable | Valeur |
+| --- | --- |
+| `WEBPUSH_VAPID_PUBLIC_KEY` | Clé publique issue de `python manage.py generate_vapid_keys`. |
+| `WEBPUSH_VAPID_PRIVATE_KEY` | Clé privée correspondante ; la saisir directement dans Render et ne jamais la versionner ni la partager. |
+| `WEBPUSH_ENABLED` | `True` ; l'application garde néanmoins le push désactivé tant que les deux clés ne sont pas présentes. |
+| `WEBPUSH_CONTACT_EMAIL` | Adresse de contact VAPID, facultative si la valeur par défaut convient. |
+
+Conserver la même paire de clés après l'activation. Une paire différente oblige les appareils à se réabonner. Le panneau **Alertes** reste désactivé tant que Render ne reçoit pas les deux clés.
+
+Pour les e-mails, ajouter les paramètres SMTP d'un fournisseur externe si les e-mails de bienvenue et de réinitialisation sont nécessaires. Les services Render gratuits bloquent les ports SMTP 25, 465 et 587 ; utiliser un fournisseur et un port autorisés.
 
 Saisir les valeurs directement, sans ajouter de guillemets autour. Render propose aussi **Add from .env**, mais il faut alors remplacer les valeurs de développement, notamment la clé et `DEBUG`. Le fichier `.env` local n'a pas besoin d'être envoyé dans Git : les variables Render sont lues par `django-environ`. [Variables et secrets sur Render](https://render.com/docs/configure-environment-variables).
 

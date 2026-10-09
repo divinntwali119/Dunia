@@ -16,7 +16,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import NewsletterSubscribeForm
 from .models import News, NewsletterSubscriber, PushSubscription
-from .notifications import absolute_url
+from .notifications import absolute_url, webpush_is_configured
 
 
 PUSH_KEY_PATTERN = re.compile(r'^[A-Za-z0-9_-]{8,255}$')
@@ -28,9 +28,10 @@ def news(request: HttpRequest) -> HttpResponse:
 
 @ensure_csrf_cookie
 def notifications_settings(request: HttpRequest) -> HttpResponse:
+    push_enabled = webpush_is_configured()
     return render(request, 'news/notifications.html', {
-        'push_enabled': settings.WEBPUSH_ENABLED,
-        'push_public_key': settings.WEBPUSH_VAPID_PUBLIC_KEY if settings.WEBPUSH_ENABLED else '',
+        'push_enabled': push_enabled,
+        'push_public_key': settings.WEBPUSH_VAPID_PUBLIC_KEY if push_enabled else '',
     })
 
 
@@ -43,7 +44,7 @@ def _push_payload(request):
 
 @require_POST
 def push_subscribe(request: HttpRequest) -> JsonResponse:
-    if not settings.WEBPUSH_ENABLED:
+    if not webpush_is_configured():
         return JsonResponse({'ok': False, 'error': 'Les notifications push ne sont pas encore configurées.'}, status=503)
 
     payload = _push_payload(request)

@@ -137,7 +137,11 @@ class PushNotificationsTests(TestCase):
         self.assertNotContains(response, '<footer')
         self.assertNotContains(response, 'id="mobileMenu"')
 
-    @override_settings(WEBPUSH_ENABLED=True)
+    @override_settings(
+        WEBPUSH_ENABLED=True,
+        WEBPUSH_VAPID_PUBLIC_KEY='public-key-for-tests',
+        WEBPUSH_VAPID_PRIVATE_KEY='private-key-for-tests',
+    )
     def test_subscriptions_are_saved_per_device_and_linked_to_the_signed_in_user(self):
         user = get_user_model().objects.create_user('pushlearner', 'push@example.com', 'test-password-123')
         self.client.force_login(user)
@@ -164,7 +168,11 @@ class PushNotificationsTests(TestCase):
         self.client.post(reverse('news:push_subscribe'), json.dumps(payload), content_type='application/json')
         self.assertEqual(PushSubscription.objects.count(), 2)
 
-    @override_settings(WEBPUSH_ENABLED=True)
+    @override_settings(
+        WEBPUSH_ENABLED=True,
+        WEBPUSH_VAPID_PUBLIC_KEY='public-key-for-tests',
+        WEBPUSH_VAPID_PRIVATE_KEY='private-key-for-tests',
+    )
     def test_push_subscription_rejects_http_endpoints_and_invalid_keys(self):
         response = self.client.post(
             reverse('news:push_subscribe'),
@@ -174,6 +182,27 @@ class PushNotificationsTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(PushSubscription.objects.count(), 0)
+
+    @override_settings(
+        WEBPUSH_ENABLED=True,
+        WEBPUSH_VAPID_PUBLIC_KEY='',
+        WEBPUSH_VAPID_PRIVATE_KEY='',
+    )
+    def test_push_remains_disabled_when_vapid_keys_are_missing(self):
+        settings_response = self.client.get(reverse('news:notifications_settings'))
+        subscribe_response = self.client.post(
+            reverse('news:push_subscribe'),
+            json.dumps({
+                'endpoint': 'https://push.example.test/send/device-one',
+                'keys': {'p256dh': 'B' * 65, 'auth': 'a' * 22},
+            }),
+            content_type='application/json',
+        )
+
+        self.assertContains(settings_response, 'Les notifications du serveur ne sont pas encore configurées.')
+        self.assertNotContains(settings_response, 'Activer sur cet appareil')
+        self.assertEqual(subscribe_response.status_code, 503)
+        self.assertFalse(PushSubscription.objects.exists())
 
     def test_device_can_disable_its_subscription(self):
         subscription = PushSubscription.objects.create(
@@ -227,6 +256,60 @@ class PushNotificationsTests(TestCase):
         notification.refresh_from_db()
         self.assertIsNotNone(notification.sent_at)
         self.assertEqual(notification.delivered_count, 1)
+
+    @override_settings(
+        WEBPUSH_ENABLED=True,
+        WEBPUSH_VAPID_PUBLIC_KEY='public-key-for-tests',
+        WEBPUSH_VAPID_PRIVATE_KEY='private-key-for-tests',
+    )
+    @patch('news.notifications.webpush')
+    def test_campaign_without_active_devices_remains_pending(self, mock_webpush):
+        notification = create_push_notification(
+            'Formation disponible', 'Une nouvelle formation est prête.', '/formations/', send_now=False,
+        )
+
+        result = deliver_push_notification(notification.pk)
+
+        self.assertEqual(result, {'sent': False, 'delivered': 0, 'failed': 0})
+        mock_webpush.assert_not_called()
+        notification.refresh_from_db()
+        self.assertIsNone(notification.sent_at)
+        self.assertEqual(notification.delivered_count, 0)
+        self.assertEqual(notification.failed_count, 0)
+
+    @override_settings(
+        WEBPUSH_ENABLED=True,
+        WEBPUSH_VAPID_PUBLIC_KEY='public-key-for-tests',
+        WEBPUSH_VAPID_PRIVATE_KEY='private-key-for-tests',
+    )
+    @patch('news.notifications.webpush')
+    def test_fully_failed_campaign_can_be_retried(self, mock_webpush):
+        PushSubscription.objects.create(
+            endpoint='https://push.example.test/send/retry-device',
+            p256dh='B' * 65,
+            auth='a' * 22,
+        )
+        notification = create_push_notification(
+            'Formation disponible', 'Une nouvelle formation est prête.', '/formations/', send_now=False,
+        )
+        mock_webpush.side_effect = OSError('Temporary push service failure')
+
+        failed_result = deliver_push_notification(notification.pk)
+
+        self.assertEqual(failed_result, {'sent': False, 'delivered': 0, 'failed': 1})
+        notification.refresh_from_db()
+        self.assertIsNone(notification.sent_at)
+        self.assertEqual(notification.failed_count, 1)
+
+        mock_webpush.side_effect = None
+        retry_result = deliver_push_notification(notification.pk)
+
+        self.assertEqual(retry_result, {'sent': True, 'delivered': 1, 'failed': 0})
+        self.assertEqual(mock_webpush.call_count, 2)
+        notification.refresh_from_db()
+        self.assertIsNotNone(notification.sent_at)
+        self.assertEqual(notification.delivered_count, 1)
+        self.assertEqual(notification.failed_count, 0)
 
     @override_settings(
         WEBPUSH_ENABLED=True,

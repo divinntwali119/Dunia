@@ -19,6 +19,14 @@ def absolute_url(path):
     return f'{settings.SITE_URL.rstrip("/")}{path}'
 
 
+def webpush_is_configured():
+    return bool(
+        settings.WEBPUSH_ENABLED
+        and settings.WEBPUSH_VAPID_PUBLIC_KEY
+        and settings.WEBPUSH_VAPID_PRIVATE_KEY
+    )
+
+
 def _safe_target_url(path):
     parsed = urlsplit(path or '/')
     site = urlsplit(settings.SITE_URL)
@@ -57,7 +65,7 @@ def deliver_push_notification(notification_id):
     notification = PushNotification.objects.filter(pk=notification_id).first()
     if notification is None or notification.sent_at:
         return {'sent': False, 'delivered': 0, 'failed': 0}
-    if not settings.WEBPUSH_ENABLED or not settings.WEBPUSH_VAPID_PUBLIC_KEY or not settings.WEBPUSH_VAPID_PRIVATE_KEY:
+    if not webpush_is_configured():
         logger.info('Web Push non configuré : notification %s conservée comme brouillon.', notification_id)
         return {'sent': False, 'delivered': 0, 'failed': 0}
 
@@ -71,9 +79,11 @@ def deliver_push_notification(notification_id):
         'url': absolute_url(notification.target_url),
         'tag': f'dunia-{notification.pk}',
     })
+    attempted = 0
     delivered = 0
     failed = 0
     for subscription in subscriptions.iterator():
+        attempted += 1
         try:
             webpush(
                 subscription_info={
@@ -99,12 +109,17 @@ def deliver_push_notification(notification_id):
             failed += 1
             logger.exception('Erreur Web Push pour l’appareil %s.', subscription.pk)
 
-    PushNotification.objects.filter(pk=notification.pk, sent_at__isnull=True).update(
-        sent_at=timezone.now(),
-        delivered_count=delivered,
-        failed_count=failed,
-    )
-    return {'sent': True, 'delivered': delivered, 'failed': failed}
+    if attempted:
+        updates = {
+            'delivered_count': delivered,
+            'failed_count': failed,
+        }
+        if delivered:
+            updates['sent_at'] = timezone.now()
+        PushNotification.objects.filter(pk=notification.pk, sent_at__isnull=True).update(**updates)
+    else:
+        logger.info('Aucun appareil abonné pour la notification %s ; elle reste réessayable.', notification_id)
+    return {'sent': bool(delivered), 'delivered': delivered, 'failed': failed}
 
 
 def notify_newsletter_subscribers(title, summary, path):

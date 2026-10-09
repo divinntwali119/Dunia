@@ -37,3 +37,11 @@ services:
         sync: false
       - key: AWS_SECRET_ACCESS_KEY
         sync: false
+      - key: WEBPUSH_VAPID_PUBLIC_KEY
+        sync: false
+      - key: WEBPUSH_VAPID_PRIVATE_KEY
+        sync: false
+      - key: WEBPUSH_ENABLED
+        value: "True"
+      - key: WEBPUSH_CONTACT_EMAIL
+        value: duniaelearningcongo@gmail.com
