@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static tz %}
 {% block main %}
 <!-- ÉCRAN DE CHARGEMENT -->
 <div id="loader">
@@ -94,8 +94,7 @@
                             <p class="news-slide-desc break-words">{{ item.description|truncatewords:35 }}</p>
                             <div class="news-slide-meta">
                                 <span><i class="fa-solid fa-calendar"></i> <time
-                                        datetime="{{ item.published_date|date:'c' }}">{{ item.published_date|date:"d F
-                                        Y" }}</time></span>
+                                    datetime="{{ item.published_date|date:'c' }}">{{ item.published_date|localtime|date:"j F Y" }}</time></span>
                                 <span><i class="fa-solid fa-tag"></i> {{ item.get_category_display }}</span>
                             </div>
                         </div>

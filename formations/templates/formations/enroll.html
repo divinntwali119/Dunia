@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Inscription à {{ formation.title }} — {% endblock %}
+{% block main %}
+<section class="max-w-2xl mx-auto px-4 py-12 sm:py-20">
+    <div class="bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sm:p-9">
+        <a href="{% url 'formations:detail' formation.pk %}" class="text-sm font-semibold text-blue-600">← Retour à la formation</a>
+        <h1 class="text-3xl font-extrabold text-slate-900 mt-4">Demander une inscription</h1>
+        <p class="text-slate-600 mt-2">Formation : <strong>{{ formation.title }}</strong></p>
+        <p class="text-sm text-slate-500 mt-1">{% if formation.price %}Frais : {{ formation.price|floatformat:2 }} {{ formation.currency }}{% else %}Formation gratuite{% endif %}</p>
+        {% if formation.price %}<div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm p-4 mt-6">La place est réservée pendant la vérification. Le paiement Mobile Money sera déclaré dans l'étape suivante et confirmé par l'équipe Dunia.</div>{% endif %}
+        <form method="post" class="space-y-5 mt-7">
+            {% csrf_token %}
+            {% for error in form.non_field_errors %}<p class="text-sm text-red-600">{{ error }}</p>{% endfor %}
+            {% for field in form %}
+            <div class="{% if field.name == 'consent' %}flex items-start gap-3{% endif %}">
+                {{ field }}
+                <label for="{{ field.id_for_label }}" class="text-sm text-slate-700 {% if field.name == 'consent' %}leading-6{% else %}block font-semibold mb-1{% endif %}">{{ field.label }}</label>
+                {% for error in field.errors %}<p class="text-xs text-red-600 mt-1">{{ error }}</p>{% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="w-full rounded-xl bg-blue-600 py-3.5 font-bold text-white hover:bg-blue-700">Confirmer ma demande</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

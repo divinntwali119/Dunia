@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ lesson.title }} — {% endblock %}
+{% block main %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+    <a href="{% url 'formations:student_dashboard' %}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 mb-6"><i class="fa-solid fa-arrow-left"></i> Mon espace apprenant</a>
+    <div class="grid lg:grid-cols-[minmax(0,1fr)_320px] gap-7 items-start">
+        <article class="bg-white rounded-3xl border border-slate-100 shadow-xl p-6 sm:p-9">
+            <p class="text-xs uppercase tracking-wider font-bold text-blue-600">{{ lesson.formation.title }}</p>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">{{ lesson.title }}</h1>
+            {% if lesson.summary %}<p class="text-slate-500 mt-3">{{ lesson.summary }}</p>{% endif %}
+            {% if lesson.video_embed_url %}<div class="mt-7 aspect-video rounded-2xl overflow-hidden bg-slate-900"><iframe src="{{ lesson.video_embed_url }}" class="w-full h-full" title="{{ lesson.title }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+            {% elif lesson.video_url %}<a href="{{ lesson.video_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex gap-2 items-center mt-7 font-semibold text-blue-600"><i class="fa-solid fa-play"></i> Ouvrir la vidéo</a>{% endif %}
+            {% if lesson.content %}<div class="prose max-w-none mt-7 whitespace-pre-line leading-7 text-slate-700">{{ lesson.content }}</div>{% endif %}
+            {% if lesson.resources.all %}<div class="border-t border-slate-100 mt-8 pt-6"><h2 class="text-lg font-bold text-slate-900">Ressources de la leçon</h2><ul class="mt-3 space-y-2">{% for resource in lesson.resources.all %}<li>{% if resource.file %}<a href="{% url 'formations:resource_download' resource.pk %}" class="text-sm font-semibold text-blue-600 hover:underline"><i class="fa-solid fa-download mr-2"></i>{{ resource.title }}</a>{% elif resource.external_url %}<a href="{{ resource.external_url }}" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-blue-600 hover:underline"><i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>{{ resource.title }}</a>{% else %}<span class="text-sm text-slate-600">{{ resource.title }}</span>{% endif %}</li>{% endfor %}</ul></div>{% endif %}
+            <form method="post" action="{% url 'formations:complete_lesson' lesson.pk %}" class="mt-8">{% csrf_token %}<button type="submit" {% if is_completed %}disabled{% endif %} class="rounded-xl px-5 py-3 font-bold text-white {% if is_completed %}bg-emerald-600{% else %}bg-blue-600 hover:bg-blue-700{% endif %}">{% if is_completed %}<i class="fa-solid fa-check mr-2"></i>Leçon terminée{% else %}Marquer comme terminée{% endif %}</button></form>
+            {% if enrollment.certificate %}<a href="{% url 'formations:certificate' enrollment.certificate.certificate_number %}" class="inline-block mt-5 text-sm font-bold text-blue-600">Voir mon attestation</a>{% endif %}
+        </article>
+        <aside class="bg-white rounded-3xl border border-slate-100 shadow-lg p-5">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Contenu du cours</h2>
+            <ol class="space-y-2">{% for item in lessons %}<li><a href="{% url 'formations:lesson' item.pk %}" class="flex gap-3 rounded-xl p-3 text-sm {% if item.pk == lesson.pk %}bg-blue-50 text-blue-700 font-bold{% else %}text-slate-700 hover:bg-slate-50{% endif %}"><span>{% if item.pk in completed_ids %}<i class="fa-solid fa-circle-check text-emerald-600"></i>{% else %}{{ forloop.counter }}.{% endif %}</span><span>{{ item.title }}</span></a></li>{% endfor %}</ol>
+        </aside>
+    </div>
+</section>
+{% endblock %}

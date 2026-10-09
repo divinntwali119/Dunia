@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static tz %}
 {% block extra_styles %}
 <style>
     .news-overlay {
@@ -87,7 +87,7 @@
                 </div>
                 <h3 class="font-extrabold text-lg sm:text-xl mb-2 leading-tight">{{ item.title }}</h3>
                 <p class="news-description text-blue-100 text-xs sm:text-sm leading-relaxed mb-4">{{ item.description|truncatewords:35 }}</p>
-                <time datetime="{{ item.published_date|date:'c' }}" class="text-[10px] text-blue-100">{{ item.published_date|date:"d F Y" }}</time>
+                <time datetime="{{ item.published_date|date:'c' }}" class="text-[10px] text-blue-100">{{ item.published_date|localtime|date:"j F Y" }}</time>
             </div>
             <a href="{% url 'home:index' %}#contact"
                 class="relative z-10 group/btn inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-xs px-5 py-3 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all self-start mt-4">
@@ -107,7 +107,7 @@
                 <h3 class="text-white font-extrabold {% if forloop.first %}text-lg sm:text-2xl{% else %}text-base sm:text-lg{% endif %} mb-2 leading-tight">{{ item.title }}</h3>
                 <p class="news-description text-slate-200 {% if forloop.first %}text-xs sm:text-sm max-w-2xl{% else %}text-[11px] sm:text-xs{% endif %} leading-relaxed mb-3">{{ item.description|truncatewords:35 }}</p>
                 <div class="flex flex-wrap items-center gap-3 text-[10px] text-slate-300">
-                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-calendar text-blue-400"></i><time datetime="{{ item.published_date|date:'c' }}">{{ item.published_date|date:"d F Y" }}</time></span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-calendar text-blue-400"></i><time datetime="{{ item.published_date|date:'c' }}">{{ item.published_date|localtime|date:"j F Y" }}</time></span>
                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-tag text-blue-400"></i>{{ item.get_category_display }}</span>
                 </div>
             </div>
@@ -174,9 +174,12 @@
             Recevez les nouvelles formations, les événements et les annonces Dunia directement dans votre boîte mail.
         </p>
 
-        <form id="newsletterFormCta" class="w-full max-w-lg mx-auto flex flex-col xs:flex-row gap-2.5">
-            <input type="email" id="newsletterEmailCta" placeholder="Votre adresse email" required
+        <form method="post" action="{% url 'news:newsletter_subscribe' %}" id="newsletterFormCta" class="w-full max-w-lg mx-auto flex flex-col gap-2.5">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}#newsletterFormCta">
+            <input type="email" name="email" id="newsletterEmailCta" placeholder="Votre adresse email" required
                 class="flex-1 bg-white/15 border border-white/25 text-white text-xs sm:text-sm placeholder-blue-100/70 px-4 py-3.5 rounded-xl focus:outline-none focus:border-white focus:ring-2 focus:ring-white/30 transition backdrop-blur-md">
+            <label class="inline-flex items-center gap-2 text-left text-xs text-blue-100"><input type="checkbox" name="consent" required> J’accepte de recevoir les actualités par e-mail.</label>
             <button type="submit"
                 class="bg-white text-blue-700 font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-2xl transition-all hover:scale-105 active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
                 <i class="fa-solid fa-paper-plane"></i>

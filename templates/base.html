@@ -45,26 +45,6 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- OneSignal Push SDK -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-        window.OneSignalDeferred = window.OneSignalDeferred || [];
-        OneSignalDeferred.push(async function (OneSignal) {
-            const pathParts = window.location.pathname.split('/').filter(Boolean);
-            const isGitHubPages = window.location.hostname.endsWith('github.io') && pathParts.length > 0;
-            const repoName = isGitHubPages ? pathParts[0] : '';
-
-            await OneSignal.init({
-                appId: "ca77ab9d-f6f7-4311-85f9-1416fb389c43",
-                allowLocalhostAsSecureOrigin: true,
-                ...(isGitHubPages ? {
-                    serviceWorkerPath: "{% static 'OneSignalSDK-v16-ServiceWorker/OneSignalSDK-v16-ServiceWorker/OneSignalSDKWorker.js' %}",
-                    serviceWorkerParam: { scope: '/' + repoName + '/' }
-                } : {})
-            });
-        });
-    </script>
-
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -163,7 +143,7 @@
                 width: 100%;
             }
 
-            body {
+            body:not(.app-mode) {
                 padding-top: 56px;
             }
 
@@ -1519,18 +1499,120 @@
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
+
+        body.app-mode {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 0;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .app-topbar {
+            position: fixed;
+            inset: 0 0 auto;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: calc(64px + env(safe-area-inset-top));
+            padding: calc(0.65rem + env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 0.65rem max(1rem, env(safe-area-inset-left));
+            background: rgba(255, 255, 255, 0.94);
+            border-bottom: 1px solid #e2e8f0;
+            backdrop-filter: blur(16px);
+        }
+
+        .app-content {
+            position: absolute;
+            inset: calc(64px + env(safe-area-inset-top)) 0 calc(65px + env(safe-area-inset-bottom));
+            overflow-x: hidden;
+            overflow-y: auto;
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-gutter: stable;
+        }
+
+        .app-mode #cookieBanner {
+            bottom: calc(4.8rem + env(safe-area-inset-bottom));
+        }
+
+        html.dark .app-topbar {
+            background: rgba(0, 0, 0, 0.94);
+            border-color: #1a1a1a;
+        }
+
+        .app-bottom-nav {
+            position: fixed;
+            inset: auto 0 0;
+            z-index: 50;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            padding: 0.4rem max(0.4rem, env(safe-area-inset-left)) calc(0.4rem + env(safe-area-inset-bottom));
+            background: rgba(255, 255, 255, 0.96);
+            border-top: 1px solid #e2e8f0;
+            backdrop-filter: blur(18px);
+        }
+
+        html.dark .app-bottom-nav {
+            background: rgba(0, 0, 0, 0.96);
+            border-color: #1a1a1a;
+        }
+
+        .app-bottom-nav a {
+            display: flex;
+            min-height: 52px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.2rem;
+            border-radius: 0.8rem;
+            color: #64748b;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .app-bottom-nav a[aria-current="page"] {
+            color: #2563eb;
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .app-bottom-nav i {
+            font-size: 1rem;
+        }
     </style>
     {% block extra_styles %}{% endblock %}
 </head>
 
-<body class="bg-white">
+<body class="bg-white{% if APP_SHELL %} app-mode{% endif %}">
 
+    {% if APP_SHELL %}
+    {% include 'partials/app_header.html' %}
+    <div id="appContent" class="app-content">
+    {% else %}
     {% include 'partials/header.html' %}
+    {% endif %}
+
+    {% if messages %}
+    <div class="max-w-5xl mx-auto px-4 pt-4" role="status" aria-live="polite">
+        {% for message in messages %}
+        <div class="mb-2 rounded-xl border px-4 py-3 text-sm {% if message.tags == 'error' %}border-red-200 bg-red-50 text-red-800{% elif message.tags == 'success' %}border-emerald-200 bg-emerald-50 text-emerald-800{% else %}border-blue-200 bg-blue-50 text-blue-800{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     {% block main %}
     {% endblock %}
 
+    {% if APP_SHELL %}
+    </div>
+    {% include 'partials/app_bottom_nav.html' %}
+    {% else %}
     {% include 'partials/footer.html' %}
+    {% endif %}
 
     <!-- ===== MODALES LÉGALES AMÉLIORÉES ===== -->
     <div id="legalModal" class="fixed inset-0 z-[9999] items-center justify-center p-4">
@@ -1618,139 +1700,12 @@
         </div>
     </div>
 
-    <!-- WIDGET NOTIFICATIONS PUSH -->
-    <div id="pushWidget" aria-live="polite" style="
-    position: fixed;
-    bottom: 90px;
-    left: 16px;
-    z-index: 9998;
-    display: none;
-    flex-direction: column;
-    gap: 0;
-    max-width: 320px;
-    width: calc(100vw - 32px);
-    font-family: 'Poppins', sans-serif;
-  ">
-        <!-- Panneau principal -->
-        <div id="pushPanel" style="
-      background: rgba(11, 12, 38, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(99, 102, 241, 0.35);
-      border-radius: 16px;
-      padding: 14px 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04) inset;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    ">
-            <!-- Icône -->
-            <div style="
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(79,70,229,0.4);
-      ">
-                <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                </svg>
-            </div>
-            <!-- Texte -->
-            <div style="flex: 1; min-width: 0;">
-                <p id="pushWidgetTitle"
-                    style="margin:0; font-size:12px; font-weight:700; color:#f1f5f9; line-height:1.3;">Rester informé
-                </p>
-                <p id="pushWidgetDesc" style="margin:4px 0 0; font-size:10px; color:#94a3b8; line-height:1.4;">Activez
-                    les notifications pour ne rien manquer</p>
-            </div>
-            <!-- Actions -->
-            <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                <button id="pushDismissBtn" aria-label="Fermer le panneau de notifications" style="
-          width:28px; height:28px; border-radius:8px;
-          border:none; background:rgba(255,255,255,0.06);
-          color:#94a3b8; cursor:pointer;
-          display:flex; align-items:center; justify-content:center;
-          transition:background 0.2s;
-        " onmouseover="this.style.background='rgba(255,255,255,0.12)'"
-                    onmouseout="this.style.background='rgba(255,255,255,0.06)'">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
-                        aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-                <button id="pushActionBtn" aria-label="Activer les notifications push" style="
-          padding: 7px 13px;
-          border-radius: 10px;
-          border: none;
-          background: linear-gradient(135deg, #4f46e5, #7c3aed);
-          color: #fff;
-          font-size: 10px;
-          font-weight: 700;
-          font-family: inherit;
-          cursor: pointer;
-          white-space: nowrap;
-          transition: opacity 0.2s, transform 0.15s;
-          box-shadow: 0 4px 12px rgba(79,70,229,0.35);
-        " onmouseover="this.style.opacity='0.88'; this.style.transform='translateY(-1px)'"
-                    onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)'">
-                    🔔 Activer
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOUTON CLOCHE FLOTTANT PERMANENT -->
-    <button id="pushBellToggle" aria-label="Gérer les notifications" style="
-    position: fixed;
-    bottom: 90px;
-    left: 16px;
-    z-index: 9997;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(11, 12, 38, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(99, 102, 241, 0.4);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 14px rgba(79, 70, 229, 0.35);
-    color: #fff;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s, box-shadow 0.2s;
-  " onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-        </svg>
-        <span id="pushBellBadge" style="
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #22c55e;
-      border: 2px solid #0b0c26;
-      display: none;
-    "></span>
-    </button>
-
     <!-- SCRIPT -->
     <script>
         // ========== ÉCRAN DE CHARGEMENT ==========
         window.addEventListener('load', function () {
             const loader = document.getElementById('loader');
+            if (!loader) return;
             setTimeout(function () {
                 loader.classList.add('hidden');
             }, 700);
@@ -1768,6 +1723,8 @@
             const mobileMenu = document.getElementById('mobileMenu');
             const mobileOverlay = document.getElementById('mobileOverlay');
             const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+            if (!hamburgerBtn || !closeMenuBtn || !mobileMenu || !mobileOverlay) return;
 
             function openMenu() {
                 mobileMenu.classList.add('open');
@@ -1883,6 +1840,7 @@
             };
 
             window.addEventListener('scroll', revealOnScroll, { passive: true });
+            document.getElementById('appContent')?.addEventListener('scroll', revealOnScroll, { passive: true });
             revealOnScroll();
         });
 
@@ -1906,8 +1864,8 @@
         // ========== PWA : SERVICE WORKER ==========
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {
-                const swUrl = "{% static 'js/service-worker.js' %}";
-                navigator.serviceWorker.register(swUrl, { scope: './' })
+                const swUrl = "{% url 'home:service_worker' %}";
+                navigator.serviceWorker.register(swUrl, { scope: '/' })
                     .then(function (reg) {
                         console.log('[PWA] Service Worker enregistré:', reg.scope);
                     })
@@ -1967,246 +1925,6 @@
             }
         });
 
-        // ========== PUSH NOTIFICATIONS — ONESIGNAL ==========
-        // ========== PUSH NOTIFICATIONS — ONESIGNAL ==========
-        (function () {
-            const STORAGE_KEY_DISMISSED = 'dunia-push-dismissed';
-
-            // ── Éléments UI ────────────────────────────────────────────────────────
-            const widget = document.getElementById('pushWidget');
-            const bellToggle = document.getElementById('pushBellToggle');
-            const bellBadge = document.getElementById('pushBellBadge');
-            const actionBtn = document.getElementById('pushActionBtn');
-            const dismissBtn2 = document.getElementById('pushDismissBtn');
-            const titleEl = document.getElementById('pushWidgetTitle');
-            const descEl = document.getElementById('pushWidgetDesc');
-
-            if (!widget) return;
-
-            // ── Compatibilité navigateur ───────────────────────────────────────────
-            if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
-                console.info('[Push] Notifications Push non supportées sur ce navigateur.');
-                return;
-            }
-
-            // ── Animation CSS ──────────────────────────────────────────────────────
-            const pushStyle = document.createElement('style');
-            pushStyle.textContent = [
-                '@keyframes pushSlideIn{from{opacity:0;transform:translateY(16px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}',
-                '@keyframes pushSlideOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(8px) scale(.96)}}',
-                '@media(max-width:480px){#pushWidget{left:8px!important;max-width:calc(100vw - 16px)!important;width:calc(100vw - 16px)!important}}'
-            ].join('');
-            document.head.appendChild(pushStyle);
-
-            // ── Helpers UI ─────────────────────────────────────────────────────────
-            function showWidget() {
-                if (bellToggle) bellToggle.style.display = 'none';
-                widget.style.display = 'flex';
-                widget.style.animation = 'pushSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both';
-            }
-
-            function hideWidget() {
-                widget.style.animation = 'pushSlideOut 0.25s ease both';
-                setTimeout(function () {
-                    widget.style.display = 'none';
-                    if (bellToggle) bellToggle.style.display = 'flex';
-                }, 240);
-            }
-
-            function setStateSubscribed() {
-                if (titleEl) titleEl.textContent = 'Notifications actives';
-                if (descEl) descEl.textContent = 'Vous recevrez les actualités Dunia';
-                if (actionBtn) {
-                    actionBtn.textContent = '🔕 Désactiver';
-                    actionBtn.style.background = 'rgba(255,255,255,0.08)';
-                    actionBtn.style.border = '1px solid rgba(255,255,255,0.15)';
-                    actionBtn.style.color = '#94a3b8';
-                    actionBtn.style.boxShadow = 'none';
-                    actionBtn.setAttribute('aria-label', 'Désactiver les notifications push');
-                }
-                if (bellBadge) {
-                    bellBadge.style.display = 'block';
-                    bellBadge.style.background = '#22c55e';
-                }
-            }
-
-            function setStateDenied() {
-                if (titleEl) titleEl.textContent = 'Notifications bloquées';
-                if (descEl) descEl.textContent = 'Autorisez-les dans les paramètres de votre navigateur';
-                if (actionBtn) actionBtn.style.display = 'none';
-                if (bellBadge) {
-                    bellBadge.style.display = 'block';
-                    bellBadge.style.background = '#ef4444';
-                }
-            }
-
-            function setStateDefault() {
-                if (titleEl) titleEl.textContent = 'Rester informé';
-                if (descEl) descEl.textContent = 'Activez les notifications pour ne rien manquer';
-                if (actionBtn) {
-                    actionBtn.textContent = '🔔 Activer';
-                    actionBtn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
-                    actionBtn.style.border = 'none';
-                    actionBtn.style.color = '#fff';
-                    actionBtn.style.boxShadow = '0 4px 12px rgba(79,70,229,0.35)';
-                    actionBtn.style.display = '';
-                    actionBtn.setAttribute('aria-label', 'Activer les notifications push');
-                }
-                if (bellBadge) {
-                    bellBadge.style.display = 'none';
-                }
-            }
-
-            // Clic sur la cloche pour rouvrir ou fermer
-            if (bellToggle) {
-                bellToggle.addEventListener('click', function () {
-                    if (widget.style.display === 'flex') {
-                        hideWidget();
-                    } else {
-                        showWidget();
-                    }
-                });
-            }
-
-            // Bouton Fermer (X)
-            if (dismissBtn2) {
-                dismissBtn2.addEventListener('click', function () {
-                    hideWidget();
-                    sessionStorage.setItem(STORAGE_KEY_DISMISSED, 'true');
-                });
-            }
-
-            // ── Configuration OneSignal ───────────────────────────────────────────
-            window.OneSignalDeferred = window.OneSignalDeferred || [];
-            window.OneSignalDeferred.push(async function (OneSignal) {
-
-                // Synchronisation de l'état (native d'abord, OneSignal ensuite)
-                async function syncState() {
-                    try {
-                        const nativePerm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
-
-                        if (nativePerm === 'granted') {
-                            setStateSubscribed();
-                            if (bellToggle) bellToggle.style.display = 'flex';
-                            // Synchroniser OneSignal en arrière-plan sans bloquer
-                            try {
-                                const optPromise = OneSignal.User.PushSubscription.optIn();
-                                await Promise.race([optPromise, new Promise(r => setTimeout(r, 2500))]);
-                            } catch (_) { }
-                            return;
-                        }
-
-                        if (nativePerm === 'denied') {
-                            setStateDenied();
-                            if (bellToggle) bellToggle.style.display = 'flex';
-                            return;
-                        }
-
-                        // État par défaut (non abonné, non refusé)
-                        setStateDefault();
-                        const dismissed = sessionStorage.getItem(STORAGE_KEY_DISMISSED) === 'true';
-                        if (!dismissed) {
-                            setTimeout(showWidget, 2500);
-                        } else if (bellToggle) {
-                            bellToggle.style.display = 'flex';
-                        }
-                    } catch (e) {
-                        console.warn('[Push] Erreur syncState:', e);
-                        setStateDefault();
-                    }
-                }
-
-                // Écouter les changements d'abonnement OneSignal
-                try {
-                    OneSignal.User.PushSubscription.addEventListener('change', function (event) {
-                        const isNowOpted = event && event.current && event.current.optedIn;
-                        if (isNowOpted) {
-                            setStateSubscribed();
-                        }
-                    });
-                } catch (_) { }
-
-                await syncState();
-
-                // Bouton Activer / Désactiver
-                if (actionBtn) {
-                    actionBtn.addEventListener('click', async function () {
-                        try {
-                            // 1. Si déjà abonné : on propose de désactiver
-                            if (Notification.permission === 'granted') {
-                                actionBtn.textContent = 'Désactivation...';
-                                try {
-                                    await Promise.race([
-                                        OneSignal.User.PushSubscription.optOut(),
-                                        new Promise(r => setTimeout(r, 2500))
-                                    ]);
-                                } catch (_) { }
-                                setStateDefault();
-                                return;
-                            }
-
-                            // 2. Si déjà bloqué : on informe l'utilisateur
-                            if (Notification.permission === 'denied') {
-                                setStateDenied();
-                                return;
-                            }
-
-                            // 3. Demande d'activation
-                            actionBtn.textContent = 'Activation...';
-
-                            // Demande de permission au navigateur avec timeout défensif (ne bloque JAMAIS)
-                            let perm = 'default';
-                            if (typeof Notification !== 'undefined' && Notification.requestPermission) {
-                                try {
-                                    const permPromise = Notification.requestPermission();
-                                    perm = await Promise.race([
-                                        permPromise,
-                                        new Promise(r => setTimeout(() => r(Notification.permission), 7000))
-                                    ]);
-                                } catch (errPerm) {
-                                    console.warn('[Push] requestPermission native:', errPerm);
-                                    // Fallback OneSignal
-                                    try {
-                                        await Promise.race([
-                                            OneSignal.Notifications.requestPermission(),
-                                            new Promise(r => setTimeout(r, 4000))
-                                        ]);
-                                        perm = Notification.permission;
-                                    } catch (_) { }
-                                }
-                            }
-
-                            // Traitement immédiat de la réponse
-                            if (perm === 'granted' || Notification.permission === 'granted') {
-                                // Succès immédiat côté UI !
-                                setStateSubscribed();
-                                setTimeout(hideWidget, 3500);
-
-                                // Enregistrement OneSignal en tâche de fond
-                                try {
-                                    await Promise.race([
-                                        OneSignal.User.PushSubscription.optIn(),
-                                        new Promise(r => setTimeout(r, 4000))
-                                    ]);
-                                    console.log('[Push] Abonnement OneSignal enregistré avec succès !');
-                                } catch (errOpt) {
-                                    console.warn('[Push] Erreur optIn OneSignal (non bloquant):', errOpt);
-                                }
-                            } else if (perm === 'denied' || Notification.permission === 'denied') {
-                                setStateDenied();
-                            } else {
-                                // L'utilisateur a fermé ou annulé la boîte de dialogue
-                                setStateDefault();
-                            }
-                        } catch (err) {
-                            console.error('[Push] Erreur activation:', err);
-                            setStateDefault();
-                        }
-                    });
-                }
-            });
-        })();
-
         // ========== VIDÉO AUTOPLAY (SÉCURITÉ) ==========
         document.addEventListener('DOMContentLoaded', function () {
             const video = document.getElementById('duniaVideo');
@@ -2235,50 +1953,6 @@
         document.addEventListener('DOMContentLoaded', function () {
             const yearEl = document.getElementById('currentYear');
             if (yearEl) yearEl.textContent = new Date().getFullYear();
-        });
-
-        // ========== NEWSLETTER (mailto) ==========
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('newsletterForm');
-            const email = document.getElementById('newsletterEmail');
-            const msg = document.getElementById('newsletterMsg');
-            if (!form) return;
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const value = email.value.trim();
-                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-                if (!regex.test(value)) {
-                    msg.textContent = '❌ Veuillez entrer une adresse email valide.';
-                    msg.className = 'text-center text-[11px] mt-3 text-red-400 font-semibold';
-                    msg.classList.remove('hidden');
-                    return;
-                }
-
-                const destinataire = 'duniaelearningcongo@gmail.com';
-                const sujet = encodeURIComponent('Nouvelle inscription à la newsletter Dunia');
-                const corps = encodeURIComponent(
-                    'Bonjour Dunia,\n\n' +
-                    'Je souhaite m\'inscrire à votre newsletter.\n\n' +
-                    'Mon adresse email : ' + value + '\n\n' +
-                    'Merci !'
-                );
-
-                window.location.href = 'mailto:' + destinataire + '?subject=' + sujet + '&body=' + corps;
-
-                msg.textContent = '✅ Votre client mail va s\'ouvrir pour envoyer votre inscription.';
-                msg.className = 'text-center text-[11px] mt-3 text-emerald-400 font-semibold';
-                msg.classList.remove('hidden');
-
-                try {
-                    const subs = JSON.parse(localStorage.getItem('dunia-newsletter') || '[]');
-                    if (!subs.includes(value)) subs.push(value);
-                    localStorage.setItem('dunia-newsletter', JSON.stringify(subs));
-                } catch (err) { }
-
-                setTimeout(function () { email.value = ''; }, 3000);
-            });
         });
 
         // ========== MODALES LÉGALES ==========

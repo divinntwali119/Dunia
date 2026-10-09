@@ -28,7 +28,48 @@ SECRET_KEY = env.str('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
 
-ALLOWED_HOSTS = []
+LOGIN_URL = 'formations:login'
+LOGIN_REDIRECT_URL = 'formations:student_dashboard'
+LOGOUT_REDIRECT_URL = 'home:index'
+SITE_URL = env.str('SITE_URL', default='http://127.0.0.1:8000')
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='Dunia <no-reply@dunia.local>')
+ALLOWED_HOSTS = env.list(
+    'ALLOWED_HOSTS',
+    default=['localhost', '127.0.0.1', '[::1]', 'testserver'] if DEBUG else [],
+)
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=not DEBUG)
+SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=31536000 if not DEBUG else 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', default=not DEBUG)
+SECURE_HSTS_PRELOAD = env.bool('SECURE_HSTS_PRELOAD', default=False)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if not DEBUG else None
+EMAIL_BACKEND = env.str(
+    'EMAIL_BACKEND',
+    default='django.core.mail.backends.console.EmailBackend' if DEBUG
+    else 'django.core.mail.backends.smtp.EmailBackend',
+)
+EMAIL_HOST = env.str('EMAIL_HOST', default='')
+EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
+EMAIL_TIMEOUT = env.int('EMAIL_TIMEOUT', default=10)
+WEBPUSH_VAPID_PUBLIC_KEY = env.str('WEBPUSH_VAPID_PUBLIC_KEY', default='')
+WEBPUSH_VAPID_PRIVATE_KEY = env.str('WEBPUSH_VAPID_PRIVATE_KEY', default='')
+WEBPUSH_CONTACT_EMAIL = env.str('WEBPUSH_CONTACT_EMAIL', default='duniaelearningcongo@gmail.com')
+WEBPUSH_ENABLED = env.bool(
+    'WEBPUSH_ENABLED',
+    default=bool(WEBPUSH_VAPID_PUBLIC_KEY and WEBPUSH_VAPID_PRIVATE_KEY),
+)
+MOBILE_MONEY_INSTRUCTIONS = env.str(
+    'MOBILE_MONEY_INSTRUCTIONS',
+    default='Contactez Dunia via WhatsApp pour obtenir les coordonnées de paiement officielles.',
+)
 
 
 # Application definition
@@ -43,7 +84,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home',
     'formations',
-    'news'
+    'news.apps.NewsConfig',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +110,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Dunia.context_processors.site_features',
             ],
         },
     },
@@ -121,7 +163,7 @@ STORAGES = {
 
 LANGUAGE_CODE = 'fr-fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Kinshasa'
 
 USE_I18N = True
 
@@ -138,6 +180,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+PRIVATE_MEDIA_ROOT = BASE_DIR / 'private_media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

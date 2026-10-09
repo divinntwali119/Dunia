@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Attestation Dunia — {% endblock %}
+{% block extra_styles %}<style>@media print{header,footer,.app-topbar,.app-bottom-nav,.no-print{display:none!important}body{background:#fff!important}.certificate{box-shadow:none!important;border:8px double #2563eb!important;max-width:none!important;margin:0!important;min-height:95vh;display:flex;flex-direction:column;justify-content:center}}</style>{% endblock %}
+{% block main %}
+<section class="max-w-4xl mx-auto px-4 py-10 sm:py-16">
+    <div class="certificate bg-white border-[6px] border-double border-blue-600 rounded-3xl shadow-2xl px-6 py-10 sm:px-14 sm:py-16 text-center">
+        <img src="{% static 'images/logo-dunia.png' %}" alt="Dunia" class="w-20 h-20 object-contain mx-auto">
+        <p class="text-xs uppercase tracking-[0.3em] font-bold text-blue-600 mt-5">Dunia — Apprendre · Créer · Évoluer</p>
+        <h1 class="text-3xl sm:text-5xl font-serif font-bold text-slate-900 mt-8">Attestation de réussite</h1>
+        <p class="text-slate-500 mt-7">Cette attestation est remise à</p>
+        <p class="text-2xl sm:text-3xl font-bold text-blue-800 mt-2">{{ certificate.enrollment.user.get_full_name|default:certificate.enrollment.user.username }}</p>
+        <p class="text-slate-600 mt-5">pour avoir terminé avec succès la formation</p>
+        <p class="text-xl sm:text-2xl font-bold text-slate-900 mt-2">{{ certificate.enrollment.formation.title }}</p>
+        <p class="text-sm text-slate-500 mt-7">Délivrée le {{ certificate.issued_at|date:'d F Y' }}</p>
+        <p class="text-xs text-slate-400 mt-3">Numéro de vérification : {{ certificate.certificate_number }}</p>
+        <p class="text-xs text-slate-500 mt-2">Vérifier l’authenticité : {{ request.scheme }}://{{ request.get_host }}{% url 'formations:certificate' certificate.certificate_number %}</p>
+        <div class="mt-12 pt-4 border-t border-slate-200 max-w-xs mx-auto text-sm text-slate-600">Équipe pédagogique<br><strong>Dunia</strong></div>
+    </div>
+    <div class="no-print flex flex-wrap justify-center gap-3 mt-6"><button onclick="window.print()" class="rounded-xl bg-blue-600 px-5 py-3 font-bold text-white hover:bg-blue-700"><i class="fa-solid fa-print mr-2"></i>Imprimer / enregistrer en PDF</button><a href="{% url 'formations:student_dashboard' %}" class="rounded-xl border border-slate-200 px-5 py-3 font-bold text-slate-700">Retour à mon espace</a></div>
+</section>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ formation.title }} — {% endblock %}
+{% block main %}
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+    <a href="{% url 'formations:list' %}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800 mb-6">
+        <i class="fa-solid fa-arrow-left"></i> Toutes les formations
+    </a>
+    <div class="grid lg:grid-cols-[1.3fr_0.7fr] gap-8 items-start">
+        <article class="bg-white border border-slate-100 rounded-3xl shadow-xl overflow-hidden">
+            <img src="{% if formation.image %}{{ formation.image.url }}{% else %}{% static 'images/logo-dunia.png' %}{% endif %}"
+                 alt="{{ formation.title }}" class="w-full max-h-[420px] {% if formation.image %}object-cover{% else %}object-contain p-16 bg-slate-50{% endif %}">
+            <div class="p-6 sm:p-9">
+                <span class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">{{ formation.get_category_display }}</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-4 mb-5">{{ formation.title }}</h1>
+                <div class="flex flex-wrap gap-3 text-xs text-slate-600 mb-7">
+                    <span class="rounded-xl bg-slate-50 px-3 py-2"><i class="fa-solid fa-signal text-blue-600 mr-1"></i>{{ formation.get_level_display }}</span>
+                    {% if formation.duration %}<span class="rounded-xl bg-slate-50 px-3 py-2"><i class="fa-solid fa-clock text-blue-600 mr-1"></i>{{ formation.duration }}</span>{% endif %}
+                    <span class="rounded-xl bg-slate-50 px-3 py-2"><i class="fa-solid fa-laptop text-blue-600 mr-1"></i>{{ formation.get_delivery_mode_display }}</span>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900 mb-3">À propos de la formation</h2>
+                <div class="text-slate-600 leading-7 whitespace-pre-line">{{ formation.description }}</div>
+                {% if formation.instructor %}<p class="mt-6 text-sm text-slate-600"><strong>Formateur :</strong> {{ formation.instructor }}</p>{% endif %}
+                {% if formation.location %}<p class="mt-2 text-sm text-slate-600"><strong>Lieu / accès :</strong> {{ formation.location }}</p>{% endif %}
+                {% if formation.start_date %}<p class="mt-2 text-sm text-slate-600"><strong>Début :</strong> {{ formation.start_date|date:'d F Y' }}{% if formation.end_date %} — <strong>Fin :</strong> {{ formation.end_date|date:'d F Y' }}{% endif %}</p>{% endif %}
+                {% if lessons %}
+                <div class="border-t border-slate-100 mt-8 pt-7">
+                    <h2 class="text-xl font-bold text-slate-900 mb-4">Programme des leçons</h2>
+                    <ol class="space-y-3">
+                        {% for lesson in lessons %}
+                        <li class="flex gap-3 rounded-xl bg-slate-50 px-4 py-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 grid place-items-center font-bold shrink-0">{{ forloop.counter }}</span>
+                            <span><strong class="text-slate-800">{{ lesson.title }}</strong>{% if lesson.summary %}<br><span class="text-slate-500">{{ lesson.summary }}</span>{% endif %}</span>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                    <p class="text-xs text-slate-500 mt-3">Les leçons et ressources complètes sont accessibles aux apprenants inscrits et confirmés.</p>
+                </div>
+                {% endif %}
+            </div>
+        </article>
+
+        <aside class="lg:sticky lg:top-24 bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sm:p-8">
+            <p class="text-sm font-semibold text-slate-500">Frais de participation</p>
+            <p class="text-3xl font-extrabold text-slate-900 mt-1">{% if formation.price == 0 %}Gratuit{% else %}{{ formation.price|floatformat:2 }} {{ formation.currency }}{% endif %}</p>
+            {% if available_seats != None %}
+            <p class="mt-4 text-sm {% if available_seats == 0 %}text-amber-700{% else %}text-slate-600{% endif %}">
+                <i class="fa-solid fa-users mr-1"></i>
+                {% if available_seats == 0 %}Complet — inscription sur liste d'attente{% else %}{{ available_seats }} place{{ available_seats|pluralize }} disponible{{ available_seats|pluralize }}{% endif %}
+            </p>
+            {% endif %}
+            <div class="border-t border-slate-100 mt-6 pt-6">
+                {% if existing_enrollment %}
+                <p class="text-sm text-slate-600 mb-4">Votre statut : <strong>{{ existing_enrollment.get_status_display }}</strong></p>
+                <a href="{% url 'formations:student_dashboard' %}" class="w-full inline-flex justify-center rounded-xl bg-blue-600 px-5 py-3.5 text-white font-bold hover:bg-blue-700">Ouvrir mon espace apprenant</a>
+                {% elif user.is_authenticated %}
+                <a href="{% url 'formations:enroll' formation.pk %}" class="w-full inline-flex justify-center rounded-xl bg-blue-600 px-5 py-3.5 text-white font-bold hover:bg-blue-700">{% if formation.price %}Demander mon inscription{% else %}M'inscrire gratuitement{% endif %}</a>
+                {% else %}
+                <a href="{% url 'formations:login' %}?next={% url 'formations:enroll' formation.pk %}" class="w-full inline-flex justify-center rounded-xl bg-blue-600 px-5 py-3.5 text-white font-bold hover:bg-blue-700">Se connecter pour s'inscrire</a>
+                <a href="{% url 'formations:signup' %}?next={% url 'formations:enroll' formation.pk %}" class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-200 px-5 py-3.5 text-slate-800 font-bold hover:border-blue-400">Créer un compte apprenant</a>
+                {% endif %}
+            </div>
+            <p class="text-xs text-slate-500 mt-5 leading-5">Les inscriptions payantes sont confirmées après vérification manuelle du paiement Mobile Money.</p>
+        </aside>
+    </div>
+</section>
+{% endblock %}

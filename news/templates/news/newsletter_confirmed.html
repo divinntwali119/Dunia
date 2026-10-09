@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Newsletter confirmée — {% endblock %}
+{% block main %}
+<section class="max-w-2xl mx-auto px-4 py-16 text-center">
+    <div class="bg-white border border-slate-100 rounded-3xl shadow-xl p-8 sm:p-12">
+        <div class="mx-auto w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 grid place-items-center text-2xl"><i class="fa-solid fa-check"></i></div>
+        <h1 class="text-3xl font-extrabold text-slate-900 mt-5">Inscription confirmée</h1>
+        <p class="text-slate-600 mt-3">{{ subscriber.email }} recevra les nouvelles formations et actualités de Dunia.</p>
+        <a href="{% url 'home:index' %}" class="inline-flex mt-7 rounded-xl bg-blue-600 px-5 py-3 font-bold text-white">Retour à l’accueil</a>
+    </div>
+</section>
+{% endblock %}

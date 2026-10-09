@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Déclarer un paiement — {% endblock %}
+{% block main %}
+<section class="max-w-2xl mx-auto px-4 py-12 sm:py-20">
+    <div class="bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sm:p-9">
+        <span class="text-xs font-bold uppercase tracking-wider text-blue-600">Mobile Money</span>
+        <h1 class="text-3xl font-extrabold text-slate-900 mt-2">Déclarer mon paiement</h1>
+        <p class="text-sm text-slate-600 mt-3">{{ enrollment.formation.title }} — <strong>{{ enrollment.formation.price|floatformat:2 }} {{ enrollment.formation.currency }}</strong></p>
+        <div class="rounded-xl bg-blue-50 border border-blue-100 p-4 text-sm text-slate-700 mt-6">
+            <strong>Instructions :</strong><br>{{ mobile_money_instructions|linebreaksbr }}
+            <p class="text-xs text-slate-600 mt-3">N'envoyez jamais votre code PIN. Votre place et l'accès à la formation ne seront confirmés qu'après validation du transfert par l'équipe Dunia.</p>
+        </div>
+        {% if has_pending_payment %}<p class="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-4 mt-5">Une déclaration est déjà en cours de vérification pour cette inscription.</p>
+        {% else %}
+        <form method="post" enctype="multipart/form-data" class="space-y-4 mt-7">
+            {% csrf_token %}
+            {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-slate-700 mb-1.5">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p class="text-xs text-red-600 mt-1">{{ error }}</p>{% endfor %}
+            </div>
+            {% endfor %}
+            {% for error in form.non_field_errors %}<p class="text-sm text-red-600">{{ error }}</p>{% endfor %}
+            <button type="submit" class="w-full rounded-xl bg-blue-600 py-3.5 font-bold text-white hover:bg-blue-700">Envoyer pour vérification</button>
+        </form>
+        {% endif %}
+        <a href="{% url 'formations:student_dashboard' %}" class="block text-center text-sm font-semibold text-blue-600 mt-6">Retour à mon espace</a>
+    </div>
+</section>
+{% endblock %}

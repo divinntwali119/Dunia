@@ -1,18 +1,11 @@
 /* ============================================================
-   SERVICE WORKER — DUNIA PWA (GitHub Pages /Dunia/)
-   Version 1.4.0 — OneSignal SDK + PWA Cache
+    SERVICE WORKER — DUNIA PWA
+    Version 2.0.1 — Backend Web Push + safe offline shell
    ============================================================ */
 
-// Import du SDK OneSignal Service Worker (gère les push OneSignal)
-try {
-    importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
-} catch (e) {
-    // Ignoré si indisponible en mode hors ligne
-}
-
-const CACHE_NAME = 'dunia-v1.2.0';
-const RUNTIME_CACHE = 'dunia-runtime-v1.2.0';
-const IMAGE_CACHE = 'dunia-images-v1.2.0';
+const CACHE_NAME = 'dunia-shell-v2.0.1';
+const RUNTIME_CACHE = 'dunia-runtime-v2.0.1';
+const IMAGE_CACHE = 'dunia-images-v2.0.1';
 
 const swPath = (typeof self !== 'undefined' && self.location && self.location.pathname) ? self.location.pathname : '/';
 let BASE = swPath.replace(/\/service-worker\.js$/, '');
@@ -26,26 +19,10 @@ function joinPath(p) {
 }
 
 const PRECACHE_URLS = [
-    joinPath(''),
-    joinPath('index.html'),
-    joinPath('formations.html'),
-    joinPath('offline.html'),
-    joinPath('manifest.json'),
-    joinPath('images/logo-dunia.png')
-];
-
-const OPTIONAL_URLS = [
-    joinPath('icons/icon-32x32.png'),
-    joinPath('icons/icon-96x96.png'),
-    joinPath('icons/icon-128x128.png'),
-    joinPath('icons/icon-144x144.png'),
-    joinPath('icons/icon-152x152.png'),
-    joinPath('icons/icon-180x180.png'),
-    joinPath('icons/icon-192x192.png'),
-    joinPath('icons/icon-384x384.png'),
-    joinPath('icons/icon-512x512.png'),
-    joinPath('icons/icon-192x192-maskable.png'),
-    joinPath('icons/icon-512x512-maskable.png')
+    joinPath('static/documents/manifest.json'),
+    joinPath('static/images/logo-dunia.png'),
+    joinPath('static/icons/icon-192x192.png'),
+    joinPath('static/documents/offline.html')
 ];
 
 /* ============ INSTALLATION ============ */
@@ -57,19 +34,7 @@ self.addEventListener('install', (event) => {
             .then((cache) => {
                 console.log('[SW] Pré-cache des fichiers essentiels...');
 
-                const essentialPromises = PRECACHE_URLS.map((url) => {
-                    return cache.add(url).catch((err) => {
-                        console.warn('[SW] Fichier essentiel manquant:', url, err.message);
-                    });
-                });
-
-                const optionalPromises = OPTIONAL_URLS.map((url) => {
-                    return cache.add(url).catch(() => {
-                        /* Silencieux */
-                    });
-                });
-
-                return Promise.all([...essentialPromises, ...optionalPromises]);
+                return Promise.all(PRECACHE_URLS.map((url) => cache.add(url).catch(() => undefined)));
             })
             .then(() => {
                 console.log('[SW] Pré-cache terminé — activation immédiate');
@@ -92,7 +57,7 @@ self.addEventListener('activate', (event) => {
             .then((cacheNames) => {
                 return Promise.all(
                     cacheNames.map((cacheName) => {
-                        if (!currentCaches.includes(cacheName)) {
+                        if (cacheName.startsWith('dunia-') && !currentCaches.includes(cacheName)) {
                             console.log('[SW] Suppression ancien cache:', cacheName);
                             return caches.delete(cacheName);
                         }
@@ -110,6 +75,7 @@ self.addEventListener('fetch', (event) => {
 
     if (request.method !== 'GET') return;
     if (!url.protocol.startsWith('http')) return;
+    if (url.origin !== self.location.origin) return;
 
     // Ignore les réseaux sociaux
     if (url.hostname.includes('wa.me') ||
@@ -137,8 +103,9 @@ self.addEventListener('fetch', (event) => {
     }
 
     // Images
-    if (request.destination === 'image' ||
-        url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/)) {
+    if (url.pathname.startsWith(joinPath('static/')) && (
+        request.destination === 'image' || url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/)
+    )) {
         event.respondWith(
             caches.open(IMAGE_CACHE).then((cache) => {
                 return cache.match(request).then((cachedResponse) => {
@@ -155,30 +122,20 @@ self.addEventListener('fetch', (event) => {
                             cache.put(request, networkResponse.clone());
                         }
                         return networkResponse;
-                    }).catch(() => caches.match(BASE + '/images/logo-dunia.png'));
+                    }).catch(() => caches.match(joinPath('static/images/logo-dunia.png')));
                 });
             })
         );
         return;
     }
 
-    // HTML : Network First
+    // Ne jamais mettre en cache le HTML dynamique : pages de compte et données privées.
     if (request.mode === 'navigate' ||
         request.headers.get('accept')?.includes('text/html')) {
         event.respondWith(
             fetch(request)
-                .then((networkResponse) => {
-                    const responseClone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(request, responseClone);
-                    });
-                    return networkResponse;
-                })
                 .catch(() => {
-                    return caches.match(request).then((cachedResponse) => {
-                        if (cachedResponse) return cachedResponse;
-                        return caches.match(BASE + '/offline.html');
-                    });
+                    return caches.match(joinPath('static/documents/offline.html'));
                 })
         );
         return;
@@ -203,25 +160,8 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Par défaut
-    event.respondWith(
-        caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) return cachedResponse;
-            return fetch(request).then((networkResponse) => {
-                if (networkResponse && networkResponse.status === 200) {
-                    const responseClone = networkResponse.clone();
-                    caches.open(RUNTIME_CACHE).then((cache) => {
-                        cache.put(request, responseClone);
-                    });
-                }
-                return networkResponse;
-            });
-        }).catch(() => {
-            if (request.mode === 'navigate') {
-                return caches.match(BASE + '/offline.html');
-            }
-        })
-    );
+    // API, documents et médias privés restent toujours réseau uniquement.
+    event.respondWith(fetch(request));
 });
 
 /* ============ MESSAGE ============ */
@@ -234,16 +174,15 @@ self.addEventListener('message', (event) => {
 /* ============ PUSH NOTIFICATIONS ============ */
 
 /**
- * Réception d'une notification Push (même lorsque l'app est fermée).
- * Les données peuvent venir de OneSignal ou d'un payload JSON manuel.
+ * Réception d'une notification Web Push chiffrée envoyée par Django.
  */
 self.addEventListener('push', (event) => {
     let data = {
         title: 'DUNIA',
         body: 'Une nouvelle actualité est disponible sur notre site.',
-        icon: joinPath('icons/icon-192x192.png'),
-        badge: joinPath('icons/icon-96x96.png'),
-        url: joinPath('actualites.html'),
+        icon: joinPath('static/icons/icon-192x192.png'),
+        badge: joinPath('static/icons/icon-96x96.png'),
+        url: joinPath(''),
         tag: 'dunia-push'
     };
 
@@ -251,10 +190,6 @@ self.addEventListener('push', (event) => {
     if (event.data) {
         try {
             const payload = event.data.json();
-            // Si la notification provient de OneSignal, OneSignalSDK.sw.js la traite déjà
-            if (payload.custom || payload.onesignal) {
-                return;
-            }
             if (payload.title) data.title = payload.title;
             if (payload.body) data.body = payload.body;
             if (payload.icon) data.icon = payload.icon;
@@ -277,7 +212,7 @@ self.addEventListener('push', (event) => {
         vibrate: [200, 100, 200],
         data: { url: data.url },
         actions: [
-            { action: 'open', title: '📖 Voir l\'actualité' },
+            { action: 'open', title: 'Ouvrir Dunia' },
             { action: 'dismiss', title: '✕ Fermer' }
         ]
     };
@@ -295,17 +230,19 @@ self.addEventListener('notificationclick', (event) => {
 
     if (event.action === 'dismiss') return;
 
-    const targetUrl = (event.notification.data && event.notification.data.url)
+    const requestedUrl = event.notification.data && event.notification.data.url
         ? event.notification.data.url
-        : joinPath('actualites.html');
+        : joinPath('');
+    const target = new URL(requestedUrl, self.location.origin);
+    const targetUrl = target.origin === self.location.origin ? target.href : self.location.origin + joinPath('');
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true })
             .then((windowClients) => {
                 // Chercher un onglet existant avec la même URL
                 for (const client of windowClients) {
-                    if (client.url === targetUrl && 'focus' in client) {
-                        return client.focus();
+                    if (new URL(client.url).origin === self.location.origin && 'focus' in client) {
+                        return client.navigate(targetUrl).then((windowClient) => windowClient.focus());
                     }
                 }
                 // Sinon ouvrir un nouvel onglet

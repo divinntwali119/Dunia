@@ -18,6 +18,10 @@
         </ul>
 
         <div class="flex items-center gap-2 sm:gap-3">
+            <a href="{% if user.is_authenticated %}{% url 'formations:student_dashboard' %}{% else %}{% url 'formations:login' %}{% endif %}"
+                class="hidden md:inline-flex text-slate-700 hover:text-blue-600 text-xs md:text-sm font-semibold px-2 py-2 transition">
+                {% if user.is_authenticated %}Mon espace{% else %}Connexion{% endif %}
+            </a>
             <a href="https://wa.me/243962104398"
                 class="hidden sm:inline-flex bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-semibold px-4 md:px-6 py-2.5 rounded-lg shadow-md transition hover:scale-105">
                 Rejoindre la communauté <i class="fa-solid fa-arrow-right ml-2"></i>
@@ -90,6 +94,10 @@
         <a href="{% url 'news:list' %}" class="mobile-nav-link{% if request.resolver_match.namespace == 'news' %} active{% endif %}">
             <i class="fa-solid fa-bullhorn"></i>
             Actualités
+        </a>
+        <a href="{% if user.is_authenticated %}{% url 'formations:student_dashboard' %}{% else %}{% url 'formations:login' %}{% endif %}" class="mobile-nav-link">
+            <i class="fa-solid fa-user-graduate"></i>
+            {% if user.is_authenticated %}Mon espace apprenant{% else %}Connexion apprenant{% endif %}
         </a>
         <a href="{% url 'home:index' %}#contact" class="mobile-nav-link">
             <i class="fa-solid fa-envelope"></i>

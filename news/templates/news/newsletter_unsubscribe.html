@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Désinscription newsletter — {% endblock %}
+{% block main %}
+<section class="max-w-xl mx-auto px-4 py-16">
+    <div class="bg-white border border-slate-100 rounded-3xl shadow-xl p-8 text-center">
+        <h1 class="text-2xl font-extrabold text-slate-900">Se désinscrire de la newsletter ?</h1>
+        <p class="text-slate-600 mt-3">Vous ne recevrez plus les actualités Dunia à l’adresse {{ subscriber.email }}.</p>
+        <form method="post" class="mt-7">{% csrf_token %}<button type="submit" class="rounded-xl bg-blue-600 px-6 py-3 font-bold text-white hover:bg-blue-700">Confirmer la désinscription</button></form>
+        <a href="{% url 'home:index' %}" class="inline-block text-sm text-blue-600 font-semibold mt-5">Garder mon abonnement</a>
+    </div>
+</section>
+{% endblock %}

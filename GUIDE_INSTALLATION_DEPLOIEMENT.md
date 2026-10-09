@@ -5,6 +5,7 @@ Ce guide s'adresse à toute l'équipe. Il explique comment installer le projet s
 > Les étapes locales correspondent au code actuel. Les adaptations Render présentées ci-dessous sont **à appliquer avant le déploiement** : ce guide ne les ajoute pas automatiquement au projet.
 
 - [Installation locale](#installation-locale)
+- [Fonctionnalités disponibles](#fonctionnalites)
 - [Tester le projet](#tester-le-projet)
 - [Reprendre le travail au quotidien](#reprendre-le-travail-au-quotidien)
 - [Déployer sur Render](#deployer-sur-render)
@@ -88,13 +89,13 @@ Dunia/                     ← ouvrir le terminal ici
 
 ### 3. Placer le fichier `.env`
 
-Copier le fichier reçu de Moustapha **à côté de `manage.py`**. Son nom doit être exactement `.env`, sans extension `.txt`. Sur Windows, afficher les extensions dans l'Explorateur pour le vérifier.
+Copier le fichier reçu de Moustapha **à côté de `manage.py`**. Son nom doit être exactement `.env`, sans extension `.txt`. Sur Windows, afficher les extensions dans l'Explorateur pour le vérifier. Si aucun fichier n'a été fourni, copier `.env.example` en `.env`, puis remplacer la clé d'exemple par une valeur aléatoire.
 
 Le code actuel lit deux variables obligatoires :
 
 | Variable | Rôle en local |
 | --- | --- |
-| `SECRET_KEY` | Clé Django fournie dans le fichier reçu. |
+| `SECRET_KEY` | Clé Django fournie dans le fichier reçu ou générée localement. |
 | `DEBUG` | Mettre `True` sur votre machine de développement. |
 
 Vérifier cette ligne dans votre copie locale :
@@ -106,6 +107,8 @@ DEBUG=True
 Conserver la clé reçue. Ne pas publier le `.env` dans Git, un ticket ou une capture d'écran : il est déjà exclu par `.gitignore`. Django le charge automatiquement grâce à `django-environ` ; aucune commande `source .env` n'est nécessaire.
 
 Le fichier `.env` est un fichier de configuration. Le dossier `.venv`, créé à l'étape suivante, contient Python et les packages propres au projet : ce sont deux éléments différents.
+
+En local, les e-mails sont simulés par Django et leur contenu (liens de confirmation newsletter et de réinitialisation) s'affiche dans le terminal du serveur. Pour envoyer de vrais e-mails en production, configurer le serveur SMTP et `DEFAULT_FROM_EMAIL`.
 
 ### 4. Créer et activer l'environnement virtuel
 
@@ -204,6 +207,19 @@ python manage.py runserver 8001
 
 Dans ce cas, ouvrir `http://127.0.0.1:8001/`. `runserver` sert au développement ; le déploiement Render utilisera Gunicorn.
 
+<a id="fonctionnalites"></a>
+## Fonctionnalités disponibles
+
+- **Formations** : catalogue et fiche de détail avec format, dates, niveau, durée, lieu, formateur, tarif et nombre de places. Les informations facultatives se gèrent dans `/admin/`.
+- **Inscription** : créer un compte apprenant, fournir un téléphone/WhatsApp et accepter le contact de suivi. Les demandes et leur état sont consultables par l’équipe dans l’administration.
+- **Places et liste d’attente** : une place est réservée pendant l’attente du paiement; si la session est complète, la demande rejoint une liste ordonnée. Annuler une inscription dans l’administration libère la place et propose automatiquement la prochaine place disponible.
+- **Espace apprenant** : consulter les inscriptions, déclarer un paiement, accéder aux leçons et ressources après confirmation, suivre la progression et obtenir une attestation imprimable après avoir terminé toutes les leçons publiées.
+- **Mobile Money** : le site enregistre l’opérateur, la référence et une preuve facultative. L’équipe vérifie puis approuve ou rejette la déclaration dans l’administration. **Aucun transfert n’est débité ou vérifié automatiquement** : avant production, renseigner les coordonnées officielles avec `MOBILE_MONEY_INSTRUCTIONS`. Une API opérateur nécessite le choix d’un prestataire et des identifiants marchands.
+- **Newsletter** : formulaire avec consentement, confirmation d’adresse par e-mail, enregistrement en administration et désinscription par lien individuel. Les nouvelles formations et actualités publiées sont envoyées aux abonnés confirmés.
+- **Notifications Push Web** : Dunia envoie les notifications directement depuis Django avec Web Push et VAPID. Configurer `WEBPUSH_VAPID_PUBLIC_KEY`, `WEBPUSH_VAPID_PRIVATE_KEY`, `WEBPUSH_CONTACT_EMAIL` et `WEBPUSH_ENABLED=True` dans l’environnement serveur. Générer une paire de clés avec `python manage.py generate_vapid_keys` et conserver la clé privée secrète. Les navigateurs exigent HTTPS (localhost est accepté pour le développement); chaque appareil doit autoriser les notifications. Sur iOS/iPadOS 16.4+, l’installation sur l’écran d’accueil est nécessaire.
+
+Pour activer les e-mails réels et les push, définir `SITE_URL`, `DEFAULT_FROM_EMAIL`, les variables SMTP et les variables Web Push dans l’environnement du serveur. Ne jamais versionner les secrets. Les réglages commentés de [.env.example](.env.example) donnent la liste des options disponibles. Après le déploiement du code, exécuter `python manage.py migrate` pour créer les tables d’appareils et de campagnes push.
+
 <a id="tester-le-projet"></a>
 ## Tester le projet
 
@@ -227,7 +243,7 @@ python manage.py check
 python manage.py test
 ```
 
-Résultats attendus : aucune erreur de configuration et `OK` à la fin des tests. Lors de la rédaction de ce guide, **11 tests passent** : pages publiques, contenus, liens, fichiers statiques et publication depuis l'administration.
+Résultats attendus : aucune erreur de configuration et `OK` à la fin des tests. La suite comprend actuellement **19 tests** couvrant pages publiques, inscriptions, paiements déclaratifs, cours, progression, attestations, newsletter, notifications et administration.
 
 Les tests Django créent une base de test distincte puis la détruisent. Ils ne remplissent pas votre catalogue local. Cette commande vérifie le comportement automatisé ; la vérification dans le navigateur reste utile pour l'affichage et les images.
 

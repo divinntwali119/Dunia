@@ -7,7 +7,7 @@
     <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600 to-transparent">
     </div>
 
-    <!-- ===== NEWSLETTER (mailto) ===== -->
+    <!-- ===== NEWSLETTER ===== -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
         <div
             class="bg-gradient-to-br from-blue-600/10 to-blue-500/5 border border-blue-500/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-5 reveal">
@@ -19,9 +19,15 @@
                 <p class="text-slate-400 text-[11px] sm:text-xs">Recevez les nouvelles formations et actualités Dunia
                     directement dans votre boîte mail.</p>
             </div>
-            <form id="newsletterForm" class="w-full md:w-auto flex flex-col xs:flex-row gap-2.5">
+            <form method="post" action="{% url 'news:newsletter_subscribe' %}" id="newsletterForm" class="w-full md:w-auto flex flex-col xs:flex-row gap-2.5">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}#newsletterForm">
                 <input type="email" name="email" id="newsletterEmail" placeholder="Votre adresse email" required
                     class="w-full xs:w-64 bg-white/5 border border-white/10 text-white text-xs placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition">
+                <label for="newsletterConsent" class="flex items-center gap-2 text-[10px] text-slate-300">
+                    <input type="checkbox" id="newsletterConsent" name="consent" value="on" required>
+                    J’accepte de recevoir les actualités par e-mail.
+                </label>
                 <button type="submit"
                     class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
                     <i class="fa-solid fa-paper-plane"></i>
@@ -29,7 +35,6 @@
                 </button>
             </form>
         </div>
-        <p id="newsletterMsg" class="hidden text-center text-[11px] mt-3 text-emerald-400 font-semibold"></p>
     </div>
 
     <!-- ===== COLONNES ALIGNÉES À GAUCHE ===== -->
@@ -127,6 +132,8 @@
                 <li><a href="{% url 'formations:list' %}" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
                             class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Toutes les formations</a>
                 </li>
+                <li><a href="{% if user.is_authenticated %}{% url 'formations:student_dashboard' %}{% else %}{% url 'formations:signup' %}{% endif %}" class="hover:text-blue-400 transition flex items-center gap-2 py-1"><i
+                            class="fa-solid fa-chevron-right text-[8px] text-blue-500"></i>Espace apprenant</a></li>
             </ul>
         </div>
 
@@ -163,7 +170,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-8 sm:mb-10">
         <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 py-4 border-y border-slate-800/60">
             <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">
-                <i class="fa-solid fa-shield-halved text-blue-500"></i> Paiement sécurisé
+                <i class="fa-solid fa-shield-halved text-blue-500"></i> Paiements vérifiés par l’équipe
             </span>
             <span class="w-px h-4 bg-slate-800 hidden xs:block"></span>
             <span class="inline-flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 font-medium">

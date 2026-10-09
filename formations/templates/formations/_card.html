@@ -29,17 +29,15 @@
                 <span class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Dunia</span>
             </div>
             {% if preview %}
-            <a href="{% url 'formations:list' %}#formation-{{ formation.pk }}"
+            <a href="{% url 'formations:detail' formation.pk %}"
                 class="group/btn text-blue-600 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all active:gap-3">
                 Voir la formation <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
             </a>
             {% else %}
-            {% with message="Bonjour Dunia, je souhaite avoir plus d'informations sur la formation : "|add:formation.title %}
-            <a href="https://wa.me/243962104398?text={{ message|urlencode }}" target="_blank" rel="noopener"
+            <a href="{% url 'formations:detail' formation.pk %}"
                 class="group/btn text-blue-600 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 hover:gap-2.5 transition-all active:gap-3">
-                S'inscrire <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
+                Détails et inscription <i class="fa-solid fa-arrow-right transition-transform group-hover/btn:translate-x-0.5"></i>
             </a>
-            {% endwith %}
             {% endif %}
         </div>
     </div>
