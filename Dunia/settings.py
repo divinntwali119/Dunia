@@ -9,16 +9,6 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-import dj_database_url
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True,
-    )
-}
-
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -147,6 +137,10 @@ if DATABASE_URL:
     DATABASES = {'default': env.db('DATABASE_URL')}
     DATABASES['default']['CONN_MAX_AGE'] = env.int('DATABASE_CONN_MAX_AGE', default=60)
     DATABASES['default']['CONN_HEALTH_CHECKS'] = True
+    # Sur Render (DEBUG=False), PostgreSQL exige SSL.
+    if not DEBUG:
+        DATABASES['default'].setdefault('OPTIONS', {})
+        DATABASES['default']['OPTIONS']['sslmode'] = 'require'
 elif DEBUG:
     DATABASES = {
         'default': {
