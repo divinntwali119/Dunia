@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
 from environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,18 +28,27 @@ env = Env()
 SECRET_KEY = env.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG')
+DEBUG = env.bool('DEBUG', default=False)
 
 LOGIN_URL = 'formations:login'
 LOGIN_REDIRECT_URL = 'formations:student_dashboard'
 LOGOUT_REDIRECT_URL = 'home:index'
-SITE_URL = env.str('SITE_URL', default='http://127.0.0.1:8000')
+RENDER_EXTERNAL_HOSTNAME = env.str('RENDER_EXTERNAL_HOSTNAME', default='').strip()
+SITE_URL = env.str(
+    'SITE_URL',
+    default=f'https://{RENDER_EXTERNAL_HOSTNAME}' if RENDER_EXTERNAL_HOSTNAME else 'http://127.0.0.1:8000',
+)
 DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='Dunia <no-reply@dunia.local>')
 ALLOWED_HOSTS = env.list(
     'ALLOWED_HOSTS',
     default=['localhost', '127.0.0.1', '[::1]', 'testserver'] if DEBUG else [],
 )
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
+ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(CSRF_TRUSTED_ORIGINS))
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
@@ -122,12 +133,20 @@ WSGI_APPLICATION = 'Dunia.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = env.str('DATABASE_URL', default='')
+if DATABASE_URL:
+    DATABASES = {'default': env.db('DATABASE_URL')}
+    DATABASES['default']['CONN_MAX_AGE'] = env.int('DATABASE_CONN_MAX_AGE', default=60)
+    DATABASES['default']['CONN_HEALTH_CHECKS'] = True
+elif DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    raise ImproperlyConfigured('DATABASE_URL is required when DEBUG=False.')
 
 
 # Password validation
@@ -149,12 +168,58 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+USE_S3 = env.bool('USE_S3', default=False)
+AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME', default='').strip()
+AWS_S3_REGION_NAME = env.str('AWS_S3_REGION_NAME', default='us-east-1').strip() or 'us-east-1'
+AWS_S3_ENDPOINT_URL = env.str('AWS_S3_ENDPOINT_URL', default='').strip() or None
+AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID', default='').strip() or None
+AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='').strip() or None
+AWS_QUERYSTRING_EXPIRE = env.int('AWS_QUERYSTRING_EXPIRE', default=3600)
+AWS_S3_ADDRESSING_STYLE = env.str('AWS_S3_ADDRESSING_STYLE', default='path')
+
+if USE_S3:
+    missing_storage_settings = [
+        name for name, value in {
+            'AWS_STORAGE_BUCKET_NAME': AWS_STORAGE_BUCKET_NAME,
+            'AWS_ACCESS_KEY_ID': AWS_ACCESS_KEY_ID,
+            'AWS_SECRET_ACCESS_KEY': AWS_SECRET_ACCESS_KEY,
+        }.items() if not value
+    ]
+    if missing_storage_settings:
+        raise ImproperlyConfigured(
+            f"Set {', '.join(missing_storage_settings)} when USE_S3=True."
+        )
+    S3_STORAGE_OPTIONS = {
+        'bucket_name': AWS_STORAGE_BUCKET_NAME,
+        'region_name': AWS_S3_REGION_NAME,
+        'endpoint_url': AWS_S3_ENDPOINT_URL,
+        'access_key': AWS_ACCESS_KEY_ID,
+        'secret_key': AWS_SECRET_ACCESS_KEY,
+        'default_acl': None,
+        'querystring_auth': True,
+        'querystring_expire': AWS_QUERYSTRING_EXPIRE,
+        'file_overwrite': False,
+        'signature_version': 's3v4',
+        'addressing_style': AWS_S3_ADDRESSING_STYLE,
+    }
+    default_storage = {
+        'BACKEND': 'storages.backends.s3.S3Storage',
+        'OPTIONS': {**S3_STORAGE_OPTIONS, 'location': 'media'},
+    }
+else:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            'Configure durable production media storage with USE_S3=True before deploying.'
+        )
+    S3_STORAGE_OPTIONS = {}
+    default_storage = {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    }
+
 STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    'default': default_storage,
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
 }
 

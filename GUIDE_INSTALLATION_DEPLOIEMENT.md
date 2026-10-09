@@ -2,7 +2,7 @@
 
 Ce guide s'adresse à toute l'équipe. Il explique comment installer le projet sur Windows, macOS ou Linux, utiliser le fichier `.env` transmis par Moustapha, lancer Django et vérifier son fonctionnement. La seconde partie décrit les modifications et les étapes nécessaires pour le déployer sur Render.
 
-> Les étapes locales correspondent au code actuel. Les adaptations Render présentées ci-dessous sont **à appliquer avant le déploiement** : ce guide ne les ajoute pas automatiquement au projet.
+> La configuration de déploiement Render est préparée dans le dépôt. Les étapes ci-dessous décrivent son application dans le tableau de bord et les vérifications avant mise en ligne.
 
 - [Installation locale](#installation-locale)
 - [Fonctionnalités disponibles](#fonctionnalites)
@@ -280,139 +280,38 @@ Ne pas recréer `.venv`, le `.env` ou le superutilisateur à chaque démarrage. 
 
 Cette partie est destinée à la personne chargée du déploiement. Elle suppose un dépôt Git accessible à Render et un compte Render. Les modifications de code se font une fois, sont testées puis partagées dans le dépôt.
 
-L'application est un **Web Service Python**. Le point d'entrée est **`Dunia.wsgi:application`**, avec un `D` majuscule. Le code actuel contient déjà WhiteNoise, son middleware, `STATIC_ROOT` et le stockage des fichiers statiques ; il manque notamment Gunicorn, PostgreSQL et les paramètres de domaine. [Guide Django de Render](https://render.com/docs/deploy-django).
+> **Important — offre gratuite :** elle convient à une démonstration, pas à la conservation de données de production. Le service web s'endort, son disque local est éphémère et la base PostgreSQL gratuite expire après 30 jours ; après une période de grâce de 14 jours, elle est supprimée et n'a pas de sauvegardes. Utiliser une base payante avec sauvegardes avant d'y enregistrer des comptes, paiements ou données durables. Vérifier les conditions dans [la documentation Render Free](https://render.com/docs/free).
 
-### 1. Ajouter les dépendances de production
+L'application est un **Web Service Python** avec le point d'entrée **`Dunia.wsgi:application`**. Les réglages PostgreSQL, HTTPS, Gunicorn, stockage objet privé S3-compatible, collecte des statiques et migrations sont préparés dans le dépôt. Le fichier `render.yaml` propose un Blueprint Frankfurt gratuit pour une démonstration. Il faut lui fournir un bucket objet durable et remplacer le plan PostgreSQL gratuit pour un usage de production.
 
-Depuis un environnement virtuel contenant les dépendances du projet :
+### 1. Dépendances et runtime
 
-```bash
-python -m pip install gunicorn "psycopg[binary]"
-```
+`requirements.txt` contient les dépendances verrouillées de l'application, notamment Gunicorn, Psycopg et `django-storages` pour S3. `.python-version` sélectionne Python 3.14. Render choisit le dernier correctif disponible de cette version mineure. Aucun `pip freeze` depuis un environnement global n'est nécessaire.
 
-Gunicorn exécute Django sur Render ; Psycopg permet de se connecter à PostgreSQL. `django-environ`, déjà installé, sait lire `DATABASE_URL` : aucun ajout de `dj-database-url` n'est nécessaire. [API de django-environ](https://django-environ.readthedocs.io/en/latest/api.html#environ.Env.db).
+### 2. Configuration Django déjà préparée
 
-Après avoir installé également le package de stockage si vous suivez l'étape 3, enregistrer les versions résolues dans `requirements.txt`. La commande suivante écrit en UTF-8 sur tous les systèmes, y compris Windows PowerShell :
-
-```bash
-python -c "from pathlib import Path; import subprocess, sys; Path('requirements.txt').write_text(subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'], text=True), encoding='utf-8')"
-```
-
-Faire cette opération dans l'environnement du projet, puis vérifier le diff pour ne pas ajouter les packages d'autres projets. Gunicorn sera lancé sur Linux chez Render ; continuer à utiliser `runserver` pour le développement Windows.
-
-### 2. Adapter `Dunia/settings.py`
-
-Conserver le chargement existant du `.env` et `SECRET_KEY = env.str('SECRET_KEY')`.
-
-**Remplacer** les affectations actuelles de `DEBUG` et `ALLOWED_HOSTS` par :
-
-```python
-DEBUG = env.bool('DEBUG', default=False)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '[::1]'])
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
-
-render_hostname = env.str('RENDER_EXTERNAL_HOSTNAME', default='')
-if render_hostname:
-    ALLOWED_HOSTS.append(render_hostname)
-    CSRF_TRUSTED_ORIGINS.append(f'https://{render_hostname}')
-
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-```
-
-Render fournit `RENDER_EXTERNAL_HOSTNAME`. Les paramètres HTTPS ci-dessus concernent l'application derrière son proxy. Pour un domaine personnalisé, fournir aussi son nom dans `ALLOWED_HOSTS` et son origine HTTPS dans `CSRF_TRUSTED_ORIGINS`. Les hôtes n'ont ni protocole ni chemin ; les origines incluent `https://`. [Guide Render](https://render.com/docs/deploy-django), [paramètres Django du proxy HTTPS](https://docs.djangoproject.com/en/6.0/ref/settings/#secure-proxy-ssl-header).
-
-**Remplacer** le bloc `DATABASES` actuel par :
-
-```python
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
-    DATABASES = {'default': env.db('DATABASE_URL')}
-    DATABASES['default']['CONN_MAX_AGE'] = 60
-    DATABASES['default']['CONN_HEALTH_CHECKS'] = True
-```
-
-Ainsi, `DEBUG=True` conserve SQLite pour l'équipe et `DEBUG=False` exige une URL de base de production. Ne pas garder un second bloc `DATABASES` plus bas qui écraserait celui-ci.
+`Dunia/settings.py` conserve SQLite en local avec `DEBUG=True`; en production (`DEBUG=False`), `DATABASE_URL` est obligatoire et configure PostgreSQL. Le domaine `.onrender.com` est ajouté automatiquement à `ALLOWED_HOSTS` et `CSRF_TRUSTED_ORIGINS` à partir de `RENDER_EXTERNAL_HOSTNAME`. HTTPS, proxy et cookies sécurisés sont activés pour `DEBUG=False`. Le Blueprint génère une clé secrète de production, distincte de la clé locale.
 
 ### 3. Prévoir le stockage des images téléversées
 
 Il faut distinguer deux catégories :
 
 - **`static/`** : ressources du dépôt, collectées au déploiement et servies par WhiteNoise.
-- **`media/`** : images ajoutées dans l'administration. Le code actuel ne les sert que lorsque `DEBUG=True`. WhiteNoise ne prend pas en charge ces téléversements en production. [Documentation WhiteNoise](https://whitenoise.readthedocs.io/en/stable/django.html#serving-media-files).
+- **`media/`** : images téléversées dans l'administration. Elles sont stockées dans un bucket objet privé S3-compatible ; les URL générées sont signées. Les ressources pédagogiques privées et preuves de paiement utilisent un préfixe privé séparé et restent servies par les vues Django avec vérification d'accès. WhiteNoise ne prend pas en charge les téléversements.
 
-Le disque ordinaire d'un service Render est éphémère : les nouvelles images et une base SQLite locale peuvent disparaître au redémarrage ou au redéploiement. Utiliser PostgreSQL pour les données et un stockage externe pour les images. Un disque persistant nécessite une offre compatible et ne résout pas, à lui seul, la manière de servir les médias. [Limites du stockage Render](https://render.com/docs/free#local-files-lost-on-redeploy).
+Le disque d'un service web Render gratuit est éphémère ; ne pas y conserver SQLite ou des téléversements. Le stockage objet est séparé de Render et peut avoir ses propres limites ou coûts. Garder le bucket privé et limiter ses identifiants au bucket de l'application.
 
-**Exemple utilisable avec Amazon S3**, à configurer avant de publier des contenus avec images :
+Configurer un bucket S3 ou compatible avant le premier déploiement :
 
-1. Préparer un bucket S3 privé et des identifiants applicatifs autorisés à lister ce bucket, lire, écrire et supprimer ses objets. Garder ces accès limités au bucket du projet.
-2. Installer le backend, puis réexécuter la commande d'enregistrement de `requirements.txt` de l'étape 1 :
+1. Créer un bucket **privé** et des identifiants à permissions minimales de lecture, écriture, suppression et listage sur ce bucket.
+2. Dans Render, renseigner `AWS_STORAGE_BUCKET_NAME`, `AWS_S3_REGION_NAME`, `AWS_ACCESS_KEY_ID` et `AWS_SECRET_ACCESS_KEY`. Le Blueprint demande ces valeurs sans les enregistrer dans Git. Pour un fournisseur compatible nécessitant une URL, ajouter `AWS_S3_ENDPOINT_URL`. Pour Cloudflare R2, la région est généralement `auto`; utiliser l'endpoint indiqué par Cloudflare. Ne pas rendre le bucket public : les URL des médias sont signées.
+3. Les fichiers existants de `media/` ne sont pas envoyés automatiquement au bucket. Si les contenus locaux sont importés, copier les fichiers en conservant le préfixe `media/` et leurs chemins relatifs, ou les téléverser de nouveau. Les comptes, contenus de la base locale et médias ne sont pas transférés par le déploiement.
 
-```bash
-python -m pip install "django-storages[s3]"
-```
-
-3. Ajouter ce bloc **après le bloc `STORAGES` existant**, en conservant son entrée `staticfiles` :
-
-```python
-if env.bool('USE_S3', default=False):
-    STORAGES['default'] = {
-        'BACKEND': 'storages.backends.s3.S3Storage',
-        'OPTIONS': {
-            'bucket_name': env.str('AWS_STORAGE_BUCKET_NAME'),
-            'region_name': env.str('AWS_S3_REGION_NAME'),
-            'access_key': env.str('AWS_ACCESS_KEY_ID'),
-            'secret_key': env.str('AWS_SECRET_ACCESS_KEY'),
-            'default_acl': None,
-            'querystring_auth': True,
-            'file_overwrite': False,
-            'location': 'media',
-        },
-    }
-```
-
-Ce backend génère des URL signées pour les images. Les templates du projet utilisent déjà `.image.url`. Laisser `USE_S3` absent en local pour conserver les fichiers locaux. Les fichiers existants ne sont pas transférés automatiquement : les importer sous le préfixe `media/` en préservant leurs chemins, ou les téléverser de nouveau. [Configuration et permissions S3](https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html).
-
-Pour une simple démonstration sans images téléversées, cette configuration externe peut être différée : les images statiques de remplacement restent disponibles. Ne pas considérer les téléversements locaux comme opérationnels en production sans avoir configuré ce stockage.
+Le stockage objet doit être configuré avant le premier déploiement avec des uploads. En production, l'application refuse de démarrer si ce stockage durable n'est pas activé.
 
 ### 4. Préparer le build
 
-Créer **`.python-version`** à la racine, avec cette seule ligne :
-
-```text
-3.13
-```
-
-Render accepte une version mineure dans ce fichier et choisit le correctif correspondant disponible. Si vous utilisez plutôt la variable `PYTHON_VERSION`, elle exige une version complète et prend priorité sur le fichier. [Version Python sur Render](https://render.com/docs/python-version).
-
-Créer **`build.sh`** à côté de `manage.py` :
-
-```bash
-#!/usr/bin/env bash
-set -o errexit
-
-python -m pip install -r requirements.txt
-python manage.py collectstatic --noinput
-```
-
-Enregistrer ce script avec des fins de ligne **LF**, notamment sur Windows. Render l'appellera avec `bash build.sh`, donc aucune commande `chmod` n'est nécessaire.
-
-Le dossier généré `staticfiles/` ne doit pas être ajouté au dépôt. Corriger la ligne actuelle `staticfiles/k` de `.gitignore` en :
-
-```gitignore
-staticfiles/
-```
-
-WhiteNoise et `STORAGES['staticfiles']` sont déjà configurés dans le projet : les conserver. `collectstatic` prépare les ressources pour la production ; il ne transfère pas les médias. [Configuration WhiteNoise](https://whitenoise.readthedocs.io/en/stable/django.html).
+`.python-version` et `build.sh` sont déjà présents. Render exécute `bash build.sh` : le script installe les packages, lance `collectstatic` puis `migrate --noinput`. Cette migration au build évite d'exiger une commande Pre-Deploy, réservée aux plans payants. Les migrations ne copient pas les données locales. WhiteNoise sert les statiques; `.gitignore` exclut déjà `staticfiles/`, `private_media/`, `.env` et SQLite.
 
 Avec le `.env` local et `DEBUG=True`, vérifier les modifications avant de les partager :
 
@@ -427,17 +326,19 @@ git status --short
 
 Enregistrer ensuite les fichiers concernés dans Git et pousser la branche à déployer. Le `.env`, `.venv/`, `db.sqlite3` et les fichiers générés ne doivent pas figurer dans ce commit.
 
-### 5. Créer la base PostgreSQL sur Render
+### 5. Créer les ressources Render
 
-Dans le [tableau de bord Render](https://dashboard.render.com/) :
+Méthode recommandée : dans le [tableau de bord Render](https://dashboard.render.com/), ouvrir **Blueprints → New Blueprint Instance**, connecter le dépôt GitHub contenant `render.yaml`, puis appliquer le Blueprint. Il crée le Web Service et PostgreSQL dans la région Frankfurt. Saisir les identifiants du bucket privé demandés à la création ; les secrets ne sont pas enregistrés dans Git. Ne pas lancer le service avec des valeurs S3 factices.
 
-1. Choisir **New → Postgres** et créer la base du projet.
-2. Choisir la même région pour la base et le futur service web.
-3. Copier son **Internal Database URL** : elle deviendra `DATABASE_URL` dans le service web. Garder cette URL secrète.
+La base créée par le Blueprint est indépendante de `db.sqlite3`. `migrate` crée les tables, mais ne copie ni comptes, ni formations, ni actualités. Huit images sont actuellement versionnées sous `media/`; elles doivent aussi être copiées dans le bucket sous le préfixe `media/` si elles sont référencées par des données importées. La reprise des données locales nécessite un export/import séparé. [Connexions Render Postgres](https://render.com/docs/postgresql-creating-connecting).
 
-La base Render est indépendante de `db.sqlite3`. `migrate` créera les tables ; il ne copiera pas vos formations, actualités ou comptes locaux. Pour un premier déploiement, créer le compte de production puis saisir les contenus. La reprise de données existantes nécessite un export/import séparé. [Connexions Render Postgres](https://render.com/docs/postgresql-creating-connecting).
+Le Blueprint utilise PostgreSQL gratuit uniquement pour une démonstration. Pour des données durables, créer/choisir une base payante avec sauvegardes et l'associer au service à la place.
 
-### 6. Créer le service web
+Pour une création manuelle, commencer par **New → Postgres**, choisir la région du service, puis ajouter son **Internal Database URL** comme variable secrète `DATABASE_URL` au Web Service. Garder cette URL confidentielle.
+
+### 6. Configuration du service (si création manuelle)
+
+Si vous avez appliqué le Blueprint de l'étape précédente, passez à l'étape 7.
 
 Choisir **New → Web Service**, connecter le fournisseur Git et sélectionner le dépôt et la branche voulus.
 
@@ -447,29 +348,27 @@ Choisir **New → Web Service**, connecter le fournisseur Git et sélectionner l
 | Root Directory | Laisser vide si `manage.py` est à la racine du dépôt. |
 | Region | Même région que PostgreSQL. |
 | Build Command | `bash build.sh` |
-| Pre-Deploy Command, si disponible | `python manage.py migrate --noinput` |
+| Pre-Deploy Command | Laisser vide : `build.sh` lance déjà les migrations pour le plan gratuit. |
 | Start Command | `python -m gunicorn Dunia.wsgi:application --bind 0.0.0.0:$PORT --access-logfile - --error-logfile -` |
 | Health Check Path | `/` |
 
 `$PORT` est fourni par Render. Conserver cette expression dans la commande du tableau de bord, même si votre ordinateur est sous Windows. [Ports des services web](https://render.com/docs/web-services#port-binding).
 
-La commande **Pre-Deploy** est disponible sur les services web payants. Sur une offre sans cette option, ajouter `python manage.py migrate --noinput` à la fin de `build.sh`. Cette variante applique les migrations pendant le build, même si une étape ultérieure du déploiement échoue : prévoir des migrations compatibles avec la version encore en service. [Étapes d'un déploiement Render](https://render.com/docs/deploys#pre-deploy-command).
+Le Blueprint utilise le plan gratuit, sans commande Pre-Deploy. Pour un service payant, déplacer `python manage.py migrate --noinput` du script de build vers le champ **Pre-Deploy Command** si disponible. Les migrations exécutées pendant le build peuvent être appliquées même si une étape ultérieure échoue ; garder les changements de schéma compatibles avec la version encore en service.
 
 ### 7. Ajouter les variables d'environnement
 
-Dans **Environment**, renseigner les variables avant de lancer le déploiement :
+Dans **Environment**, le Blueprint configure `SECRET_KEY`, `DEBUG`, `DATABASE_URL` et `USE_S3`. Il demande les informations du bucket. Pour une création manuelle, renseigner les variables avant de lancer le déploiement :
 
 | Variable | Valeur sur Render |
 | --- | --- |
 | `SECRET_KEY` | Nouvelle clé aléatoire de production, différente de la clé locale. Utiliser le générateur Render. |
 | `DEBUG` | `False` |
 | `DATABASE_URL` | Internal Database URL copiée depuis PostgreSQL. |
-| `ALLOWED_HOSTS` | Domaine du service, par exemple `dunia-equipe.onrender.com`. Ajouter les domaines personnalisés séparés par des virgules. |
-| `CSRF_TRUSTED_ORIGINS` | Origine correspondante, par exemple `https://dunia-equipe.onrender.com`. Séparer plusieurs origines par des virgules. |
+| `ALLOWED_HOSTS` | Le domaine `.onrender.com` est ajouté automatiquement. Ajouter les hôtes personnalisés sans protocole. |
+| `CSRF_TRUSTED_ORIGINS` | L'origine `.onrender.com` est ajoutée automatiquement. Ajouter les origines personnalisées avec `https://`. |
 
-Remplacer les domaines d'exemple par ceux du service. Après l'adaptation de `settings.py`, l'hôte `.onrender.com` est aussi ajouté automatiquement grâce à `RENDER_EXTERNAL_HOSTNAME` ; cette variable est fournie par Render.
-
-Pour le stockage S3 de l'étape 3, ajouter également :
+Le Blueprint active le stockage objet et demande les variables suivantes :
 
 | Variable | Valeur |
 | --- | --- |
@@ -478,6 +377,11 @@ Pour le stockage S3 de l'étape 3, ajouter également :
 | `AWS_S3_REGION_NAME` | Région réelle du bucket. |
 | `AWS_ACCESS_KEY_ID` | Identifiant d'accès de l'application. |
 | `AWS_SECRET_ACCESS_KEY` | Secret correspondant. |
+| `AWS_S3_ENDPOINT_URL` | Endpoint du fournisseur si le service n'est pas AWS S3 (par exemple R2). |
+
+Pour un fournisseur S3-compatible, ajouter `AWS_S3_ENDPOINT_URL` si nécessaire. Le stockage doit être disponible au premier lancement. Le domaine `.onrender.com` est ajouté automatiquement à `ALLOWED_HOSTS` et `CSRF_TRUSTED_ORIGINS`; pour un domaine personnalisé, ajouter son nom et son origine HTTPS. `SITE_URL` utilise par défaut le nom d'hôte Render ; le remplacer pour un domaine personnalisé.
+
+Pour les e-mails, ajouter les paramètres SMTP d'un fournisseur externe si les e-mails de bienvenue et de réinitialisation sont nécessaires. Les services Render gratuits bloquent les ports SMTP 25, 465 et 587 ; utiliser un fournisseur et un port autorisés. Pour les notifications Web Push, ajouter les clés VAPID dans l'environnement Render, jamais dans Git.
 
 Saisir les valeurs directement, sans ajouter de guillemets autour. Render propose aussi **Add from .env**, mais il faut alors remplacer les valeurs de développement, notamment la clé et `DEBUG`. Le fichier `.env` local n'a pas besoin d'être envoyé dans Git : les variables Render sont lues par `django-environ`. [Variables et secrets sur Render](https://render.com/docs/configure-environment-variables).
 
@@ -508,8 +412,10 @@ Ouvrir l'URL **HTTPS** du service et vérifier :
 1. L'accueil, `/formations/` et `/news/` répondent sans erreur.
 2. `/admin/` accepte la connexion et l'enregistrement d'une formation ou d'une actualité, sans erreur CSRF.
 3. Les styles, le logo et les autres fichiers statiques s'affichent.
-4. Si S3 est configuré, une image ajoutée depuis l'administration s'affiche et reste accessible après un redéploiement.
+4. Une image ajoutée depuis l'administration s'affiche et reste accessible après un redéploiement du service.
 5. Les enregistrements et le compte administrateur restent présents après ce redéploiement.
+
+Vérifier localement le comportement de configuration de production avec les variables d'environnement Render, et exécuter `python manage.py check --deploy`. Utiliser une vraie clé secrète longue et aléatoire pour ce contrôle ; ne pas conserver les valeurs temporaires d'exemple. La configuration préparée doit au minimum fournir `DEBUG=False`, une `DATABASE_URL`, l'hôte Render et la configuration du bucket. Examiner les avertissements selon la politique de domaine réelle ; cette commande ne remplace pas les tests fonctionnels. [Vérifications Django avant production](https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/).
 
 Depuis le Shell Render, si disponible, exécuter aussi :
 
@@ -517,34 +423,34 @@ Depuis le Shell Render, si disponible, exécuter aussi :
 python manage.py check --deploy
 ```
 
-Examiner les avertissements selon la configuration réelle ; les paramètres HTTPS proposés ne règlent pas automatiquement tous les points, notamment HSTS. Cette commande ne remplace pas les tests fonctionnels. [Vérifications Django avant production](https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/).
+Examiner les avertissements selon la configuration réelle ; les paramètres HTTPS ne règlent pas automatiquement tous les points, notamment la politique HSTS. Cette commande ne remplace pas les tests fonctionnels.
 
 Après les mises à jour, Render peut redéployer automatiquement la branche liée si l'option est activée, ou via **Manual Deploy**. Consulter les logs lorsqu'un déploiement échoue.
 
 ### Choisir l'offre
 
-Pour une démonstration, l'offre gratuite peut suffire, avec ses limites : mise en veille après 15 minutes d'inactivité, absence de shell et de disque persistant, et expiration de PostgreSQL gratuit après 30 jours. Pour un site utilisé durablement, choisir des services et une base adaptés avec sauvegardes. Vérifier les conditions au moment de créer les ressources ; elles peuvent évoluer. [Limites actuelles de Render Free](https://render.com/docs/free).
+Le gratuit convient à une démonstration seulement : le service s'endort après 15 minutes d'inactivité, n'a ni Shell ni disque persistant, et PostgreSQL expire après 30 jours. Render le supprime après 14 jours supplémentaires et ne fournit pas de sauvegardes pour ce plan. Pour un site durable, choisir une base payante avec sauvegardes et vérifier les tarifs avant création. [Limites actuelles de Render Free](https://render.com/docs/free).
 
 <a id="resoudre-les-problemes-frequents"></a>
 ## Résoudre les problèmes fréquents
 
 | Problème | Vérification / solution |
 | --- | --- |
-| `python`, `python3.13` ou `py` introuvable | Vérifier l'installation de Python, rouvrir le terminal et utiliser la commande prévue pour votre système. |
+| `python`, `python3.14` ou `py` introuvable | Vérifier l'installation de Python, rouvrir le terminal et utiliser la commande prévue pour votre système. |
 | Création de `.venv` impossible sur Linux | Installer le module `venv` correspondant à votre version de Python ; sur Ubuntu/Debian avec Python système, installer `python3-venv`. |
 | Activation PowerShell bloquée | Voir la commande `Set-ExecutionPolicy -Scope Process` ou utiliser `cmd` et `activate.bat`. |
 | `No module named django` ou `environ` | Activer `.venv`, vérifier `sys.executable`, puis relancer `python -m pip install -r requirements.txt`. |
-| `No matching distribution found` | Vérifier Python : au moins 3.12, de préférence 3.13. Mettre pip à jour, contrôler l'accès au registre de packages et la version demandée. Faire corriger les versions avec l'équipe si nécessaire ; ne pas les modifier au hasard. |
+| `No matching distribution found` | Render utilise Python 3.14 via `.python-version`. Contrôler l'accès au registre et la version demandée ; ne pas modifier les dépendances au hasard. |
 | `Set the SECRET_KEY environment variable` ou erreur sur `DEBUG` | Vérifier le nom `.env`, son emplacement à côté de `manage.py` et les deux variables obligatoires. |
 | Le `.env` semble ignoré | Une variable déjà définie dans le terminal a priorité sur le fichier. Vérifier notamment `DEBUG`, puis ouvrir un terminal propre et réactiver `.venv`. |
-| `You must set settings.ALLOWED_HOSTS` en local | Avec le code initial, utiliser `DEBUG=True` pour le développement. Pour Render, appliquer les adaptations et déclarer les domaines. |
-| `DisallowedHost` / HTTP 400 sur Render | Vérifier le domaine réel dans `ALLOWED_HOSTS`, sans `https://`, et la présence du bloc utilisant `RENDER_EXTERNAL_HOSTNAME`. |
+| `You must set settings.ALLOWED_HOSTS` en local | Vérifier `DEBUG=True` dans le `.env` de développement. Sur Render, `RENDER_EXTERNAL_HOSTNAME` est ajouté automatiquement ; ajouter manuellement les domaines personnalisés. |
+| `DisallowedHost` / HTTP 400 sur Render | Vérifier le domaine personnalisé dans `ALLOWED_HOSTS`, sans `https://`. |
 | Erreur CSRF / HTTP 403 lors d'un formulaire sur Render | Vérifier l'origine HTTPS exacte dans `CSRF_TRUSTED_ORIGINS`, les paramètres du proxy et l'usage de HTTPS. |
 | `no such table` ou `relation does not exist` | Exécuter les migrations sur la base concernée ; sur Render vérifier que l'étape de migration a réussi. |
 | Port 8000 déjà utilisé | Arrêter l'ancien serveur avec Ctrl+C, ou lancer `python manage.py runserver 8001`. |
 | Pages sans formations ni actualités | Une base neuve est vide. Ajouter des contenus depuis `/admin/`. |
 | Styles absents / erreur de manifeste statique | Vérifier la réussite de `collectstatic`, conserver la configuration WhiteNoise et corriger le fichier manquant indiqué dans les logs. |
-| Images de contenus absentes sur Render | Vérifier le stockage des médias et le transfert des fichiers existants ; `collectstatic` et la base PostgreSQL ne stockent pas ces images. |
+| Images de contenus absentes sur Render | Vérifier le bucket, les identifiants et l'endpoint S3 ; `collectstatic` et PostgreSQL ne stockent pas ces images. Importer les fichiers existants sous `media/` en préservant leurs chemins. |
 | Erreur `gunicorn` ou `psycopg` introuvable | Vérifier leur présence dans le `requirements.txt` commité et relancer le déploiement. |
 | Connexion PostgreSQL impossible | Vérifier `DATABASE_URL`, la disponibilité de la base et la région commune. L'URL interne est destinée aux services Render. |
 | HTTP 500, 502 ou redémarrages | Lire les logs Render et corriger la première erreur : variable manquante, migration, dépendance ou Start Command. Garder `DEBUG=False` sur le site public. |
