@@ -25,7 +25,7 @@ Le Blueprint demande le nom du bucket, sa région et ses deux clés secrètes, m
 Cette étape doit être terminée **avant** d'appliquer le Blueprint, car Render demande les valeurs de stockage pendant la création initiale.
 
 1. Connectez-vous à [Cloudflare](https://dash.cloudflare.com/) et ouvrez **R2 Object Storage**.
-2. Créez un bucket nommé par exemple `  `. Le nom ne doit contenir que des lettres minuscules, chiffres et tirets. Laissez le bucket **privé** ; ne configurez pas d'accès public.
+2. Créez un bucket nommé par exemple `dunia-media`. Le nom ne doit contenir que des lettres minuscules, chiffres et tirets. Laissez le bucket **privé** ; ne configurez pas d'accès public.
 3. Dans **Manage R2 API Tokens**, créez un jeton **Object Read & Write** limité uniquement au bucket `dunia-media`. Ne choisissez pas un jeton administrateur portant sur tout le compte.
 4. Copiez tout de suite l'**Access Key ID** et le **Secret Access Key** dans un gestionnaire de mots de passe. Cloudflare n'affiche pas de nouveau le secret après cette étape. Ne les envoyez pas dans le chat, ne les collez pas dans le dépôt et ne les mettez pas dans une capture d'écran.
 5. Notez l'identifiant de compte Cloudflare et composez l'endpoint R2 : `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`. La région S3 de R2 est `auto`.
